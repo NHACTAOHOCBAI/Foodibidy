@@ -3,7 +3,7 @@ import { Text, TextProps } from "react-native";
 
 const TextDefault = (props: TextProps) => {
     return (
-        <Text {...props} style={[{ fontFamily: "Sen-Regular", fontSize: 14 }, props.style]}>
+        <Text {...props} style={[{ fontFamily: "Sen-Regular", fontSize: 14, width: "auto" }, props.style]}>
             {props.children}
         </Text>
     );
