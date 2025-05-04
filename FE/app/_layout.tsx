@@ -4,7 +4,13 @@ import { StatusBar } from "react-native";
 export default function RootLayout() {
   return (
     <>
-      <Stack />
+      <StatusBar hidden />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: 'slide_from_right',
+        }}>
+      </Stack>
     </>
   )
 }

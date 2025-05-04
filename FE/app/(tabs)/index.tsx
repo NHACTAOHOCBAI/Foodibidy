@@ -1,10 +1,17 @@
+import TextDefault from '@/components/TextDefault'
+import { Link } from 'expo-router'
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+
 
 const index = () => {
   return (
     <View>
-      <Text className='text-slate-950'>index</Text>
+      <TextDefault >hello</TextDefault>
+      <Link href={"/search"}>Go to Search</Link>
+      <Link href={{
+        pathname: "/restaurants/[id]",
+        params: { id: 1 }
+      }}>Go to restaurant 1</Link>
     </View>
   )
 }
