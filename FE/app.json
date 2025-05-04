@@ -1,5 +1,13 @@
 {
   "expo": {
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "fonts": {
+      "Sen-Regular": "./assets/fonts/Sen-Regular.ttf",
+      "Sen-Bold": "./assets/fonts/Sen-Bold.ttf",
+      "Sen-Italic": "./assets/fonts/Sen-Italic.ttf"
+    },
     "name": "Movie",
     "slug": "native",
     "version": "1.0.0",
@@ -28,7 +36,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

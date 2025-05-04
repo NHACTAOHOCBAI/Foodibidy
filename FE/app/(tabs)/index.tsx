@@ -1,10 +1,11 @@
+import TextDefault from '@/components/TextDefault'
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+
 
 const index = () => {
   return (
     <View>
-      <Text className='text-slate-950'>index</Text>
+      <TextDefault >hello</TextDefault>
     </View>
   )
 }
