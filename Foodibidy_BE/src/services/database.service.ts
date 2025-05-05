@@ -37,9 +37,48 @@ class DatabaseService {
     }
   }
 
-  // Getter cho collection Users
   get users(): CollectionReference<UserType> {
     return this.db.collection('Users') as CollectionReference<UserType>
+  }
+
+  get addresses(): CollectionReference<UserType> {
+    return this.db.collection('Addresses') as CollectionReference<UserType>
+  }
+
+  get restaurants(): CollectionReference<UserType> {
+    return this.db.collection('Restaurants') as CollectionReference<UserType>
+  }
+
+  get categories(): CollectionReference<UserType> {
+    return this.db.collection('Categories') as CollectionReference<UserType>
+  }
+
+  get foods(): CollectionReference<UserType> {
+    return this.db.collection('Foods') as CollectionReference<UserType>
+  }
+
+  get carts(): CollectionReference<UserType> {
+    return this.db.collection('Carts') as CollectionReference<UserType>
+  }
+
+  get cart_details(): CollectionReference<UserType> {
+    return this.db.collection('Cart_details') as CollectionReference<UserType>
+  }
+
+  get orders(): CollectionReference<UserType> {
+    return this.db.collection('Orders') as CollectionReference<UserType>
+  }
+
+  get order_details(): CollectionReference<UserType> {
+    return this.db.collection('Order_details') as CollectionReference<UserType>
+  }
+
+  get reviews(): CollectionReference<UserType> {
+    return this.db.collection('Reviews') as CollectionReference<UserType>
+  }
+
+  get announcements(): CollectionReference<UserType> {
+    return this.db.collection('Announcements') as CollectionReference<UserType>
   }
 }
 
