@@ -2,14 +2,14 @@ import { Image, Pressable, Text, View } from 'react-native'
 import { MotiView } from 'moti';
 import { useRouter } from 'expo-router';
 import { icons } from '@/constants/icons';
-interface SmallFoodItemProps {
+interface SmallItemProps {
     image: string
     price: number
     restaurantName: string
     id: number
     name: string
 }
-const SmallFoodItem = ({ name, image, id, price, restaurantName }: SmallFoodItemProps) => {
+const SmallItem = ({ name, image, id, price, restaurantName }: SmallItemProps) => {
     const router = useRouter();
     const onPress = () => {
         router.push('/foods/[id]')
@@ -84,4 +84,4 @@ const SmallFoodItem = ({ name, image, id, price, restaurantName }: SmallFoodItem
     )
 }
 
-export default SmallFoodItem
+export default SmallItem

@@ -1,7 +1,8 @@
 
 import SearchInput from '@/components/SearchInput'
 import SmallCategoryItem from '@/components/SmallCategoryItem'
-import SmallFoodItem from '@/components/SmallFoodItem'
+import SmallItem from '@/components/SmallItem'
+
 import SmallRestaurantItem from '@/components/SmallRestaurantItem'
 import { icons } from '@/constants/icons'
 import { Link } from 'expo-router'
@@ -256,7 +257,7 @@ const Foods = () => (
       numColumns={2}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
-        <SmallFoodItem
+        <SmallItem
           image={item.image}
           price={item.price}
           restaurantName={item.restaurantName}

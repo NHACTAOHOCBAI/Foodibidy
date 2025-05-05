@@ -5,8 +5,9 @@ interface SmallCategoryItemProps {
     id: number,
     name: string;
     image?: string;
+    showImage?: boolean;
 }
-const SmallCategoryItem = ({ name, image, id }: SmallCategoryItemProps) => {
+const SmallCategoryItem = ({ name, image, id, showImage = true }: SmallCategoryItemProps) => {
     const router = useRouter();
     const onPress = () => {
         if (id === 0) {
@@ -21,7 +22,7 @@ const SmallCategoryItem = ({ name, image, id }: SmallCategoryItemProps) => {
         >
             {({ pressed }) => (
                 <MotiView
-                    className="flex-row items-center rounded-full px-[8px] py-[8px] gap-[12px] min-w-[104px]"
+                    className={`flex-row items-center rounded-full px-[8px] py-[8px] gap-[12px] min-h-[48px] ${showImage ? 'min-w-[104px]' : 'px-[16px] justify-center'}`}
                     style={{
                         boxShadow: " 0 1px 4px 0 rgba(0, 0, 0, 0.1)"
                     }}
@@ -34,11 +35,13 @@ const SmallCategoryItem = ({ name, image, id }: SmallCategoryItemProps) => {
                         duration: 100,
                     }}
                 >
-                    <Image
-                        source={image ? { uri: image } : undefined}
-                        className='w-[45px] h-[45px] rounded-full bg-accent'
-                    />
-                    <Text className='font-bold'>{name}</Text>
+                    {showImage && (
+                        <Image
+                            source={image ? { uri: image } : undefined}
+                            className='w-[45px] h-[45px] rounded-full bg-accent'
+                        />
+                    )}
+                    <Text className={`${showImage ? 'font-bold' : ''}`}>{name}</Text>
                 </MotiView>
             )}
         </Pressable>
