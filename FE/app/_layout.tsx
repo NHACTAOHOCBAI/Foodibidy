@@ -44,6 +44,13 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="foods/[id]"
+          options={{
+            header: () => <CustomHeader
+            />
+          }}
+        />
+        <Stack.Screen
           name="search/index"
           options={{
             header: () => <CustomHeader

@@ -33,4 +33,5 @@ interface Food {
     sold: number;
     remaining: number | null;
     createdAt: string;
+    rate: number;
 }

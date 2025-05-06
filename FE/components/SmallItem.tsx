@@ -14,7 +14,6 @@ const SmallItem = ({ food }: { food: Food }) => {
             {({ pressed }) => (
                 <MotiView className='relative w-[160px] '
                     animate={{
-
                         scale: pressed ? 0.85 : 1,
                     }}
                     transition={{
