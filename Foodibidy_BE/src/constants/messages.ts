@@ -86,3 +86,12 @@ export const BOOKMARKS_MESSAGES = {
   ALREADY_BOOKMARKED: 'Already bookmarked',
   ALREADY_UNBOOKMARKED: 'Already unbookmarked'
 } as const
+
+export const CATEGORY_MESSAGES = {
+  CREATE_SUCCESS: 'Category created successfully',
+  GET_SUCCESS: 'Get category successfully',
+  GET_ALL_SUCCESS: 'Get all categories successfully',
+  UPDATE_SUCCESS: 'Category updated successfully',
+  DELETE_SUCCESS: 'Category deleted successfully',
+  NOT_FOUND: 'Category not found'
+}

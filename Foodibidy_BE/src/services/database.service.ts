@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { getFirestore, Firestore, CollectionReference } from 'firebase-admin/firestore'
+import { CategoryType } from '~/models/schemas/category.schema'
 import { UserType } from '~/models/schemas/user.schema'
 dotenv.config()
 let credentials
@@ -49,7 +50,7 @@ class DatabaseService {
     return this.db.collection('Restaurants') as CollectionReference<UserType>
   }
 
-  get categories(): CollectionReference<UserType> {
+  get categories(): CollectionReference<CategoryType> {
     return this.db.collection('Categories') as CollectionReference<UserType>
   }
 
