@@ -3,18 +3,28 @@ import { initializeApp, cert } from 'firebase-admin/app'
 import { getFirestore, Firestore, CollectionReference } from 'firebase-admin/firestore'
 import { CategoryType } from '~/models/schemas/category.schema'
 import { UserType } from '~/models/schemas/user.schema'
+
 dotenv.config()
+
 let credentials
 try {
-  const uri = process.env.FIREBASE_ADMINSDK
-
-  credentials = require(uri as string)
+  const uri = process.env.FIREBASE_ADMINSDK as string
+  if (uri.startsWith('{')) {
+    credentials = JSON.parse(uri)
+  } else {
+    credentials = require(uri)
+  }
 } catch (error) {
   console.error('Error loading Firebase credentials:', error)
   throw error
 }
 
 // Khởi tạo Firebase App
+
+if (Math.abs(Date.now() - new Date().getTime()) > 30000) {
+  throw new Error('System clock is out of sync!')
+}
+
 initializeApp({
   credential: cert(credentials)
   // databaseURL: 'your-database-url' // Thêm nếu dùng Realtime Database
@@ -51,7 +61,7 @@ class DatabaseService {
   }
 
   get categories(): CollectionReference<CategoryType> {
-    return this.db.collection('Categories') as CollectionReference<UserType>
+    return this.db.collection('Categories') as CollectionReference<CategoryType>
   }
 
   get foods(): CollectionReference<UserType> {

@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write ."
+    "prettier:fix": "prettier --write .",
+    "firebase": "firebase"
   },
   "keywords": [],
   "author": "",
@@ -40,7 +41,7 @@
     "express": "^4.21.0",
     "firebase": "^11.6.1",
     "firebase-admin": "^13.3.0",
-    "firebase-tools": "^14.2.1",
+    "firebase-tools": "^14.2.2",
     "nodemon": "^3.1.10",
     "typescript": "^5.8.3"
   }
