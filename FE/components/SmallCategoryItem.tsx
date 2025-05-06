@@ -2,15 +2,12 @@ import { Image, Pressable, Text, View } from 'react-native'
 import { MotiView } from 'moti';
 import { useRouter } from 'expo-router';
 interface SmallCategoryItemProps {
-    id: number,
-    name: string;
-    image?: string;
-    showImage?: boolean;
+    category: category
 }
-const SmallCategoryItem = ({ name, image, id, showImage = true }: SmallCategoryItemProps) => {
+const SmallCategoryItem = ({ category }: SmallCategoryItemProps) => {
     const router = useRouter();
     const onPress = () => {
-        if (id === 0) {
+        if (category.id === 0) {
             router.push('/categories')
         }
         else
@@ -22,7 +19,7 @@ const SmallCategoryItem = ({ name, image, id, showImage = true }: SmallCategoryI
         >
             {({ pressed }) => (
                 <MotiView
-                    className={`flex-row items-center rounded-full px-[8px] py-[8px] gap-[12px] min-h-[48px] ${showImage ? 'min-w-[104px]' : 'px-[16px] justify-center'}`}
+                    className="flex-row items-center rounded-full px-[8px] py-[8px] gap-[12px] min-h-[48px]  min-w-[104px]"
                     style={{
                         boxShadow: " 0 1px 4px 0 rgba(0, 0, 0, 0.1)"
                     }}
@@ -35,13 +32,11 @@ const SmallCategoryItem = ({ name, image, id, showImage = true }: SmallCategoryI
                         duration: 100,
                     }}
                 >
-                    {showImage && (
-                        <Image
-                            source={image ? { uri: image } : undefined}
-                            className='w-[45px] h-[45px] rounded-full bg-accent'
-                        />
-                    )}
-                    <Text className={`${showImage ? 'font-bold' : ''}`}>{name}</Text>
+                    <Image
+                        source={category.image ? { uri: category.image } : undefined}
+                        className='w-[45px] h-[45px] rounded-full bg-accent'
+                    />
+                    <Text className='font-bold'>{category.name}</Text>
                 </MotiView>
             )}
         </Pressable>
