@@ -1,100 +1,9 @@
 import { FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
 import { icons } from '@/constants/icons';
-import SmallCategoryItem from '@/components/SmallCategoryItem';
 import SmallItem from '@/components/SmallItem';
+import SuggestedItem from '@/components/SuggestedItem';
 
-const restaurantData = {
-    id: 1,
-    name: "Burger Bistro",
-    description: "Maecenas sed diam eget risus varius blandit sit amet non magna. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.",
-    image: "https://example.com/restaurant1.jpg",
-    rate: 4.5,
-    reviews: 100,
-    location: "Location 1",
-    category: [
-        {
-            id: 1,
-            name: "Burger",
-        },
-        {
-            id: 2,
-            name: "Fast Food",
-        },
-    ]
-}
-const foods = [
-    {
-        id: 1,
-        name: 'Burger',
-        image: '',
-        price: 10,
-        restaurantName: 'Burger King',
-    },
-    {
-        id: 2,
-        name: 'Pizza',
-        image: '',
-        price: 15,
-        restaurantName: 'Pizza Hut',
-    },
-    {
-        id: 3,
-        name: 'Fried Chicken',
-        image: '',
-        price: 20,
-        restaurantName: 'KFC',
-    },
-    {
-        id: 4,
-        name: 'Salad',
-        image: '',
-        price: 5,
-        restaurantName: 'Healthy Food',
-    },
-    {
-        id: 5,
-        name: 'Sushi',
-        image: '',
-        price: 18,
-        restaurantName: 'Tokyo Sushi',
-    },
-    {
-        id: 6,
-        name: 'Tacos',
-        image: '',
-        price: 12,
-        restaurantName: 'Taco Bell',
-    },
-    {
-        id: 7,
-        name: 'Pho',
-        image: '',
-        price: 9,
-        restaurantName: 'Pho 24',
-    },
-    {
-        id: 8,
-        name: 'Banh Mi',
-        image: '',
-        price: 4,
-        restaurantName: 'Banh Mi Saigon',
-    },
-    {
-        id: 9,
-        name: 'Pasta',
-        image: '',
-        price: 14,
-        restaurantName: 'Little Italy',
-    },
-    {
-        id: 10,
-        name: 'Steak',
-        image: '',
-        price: 25,
-        restaurantName: 'Texas Grill',
-    },
-];
 const RestaurantDetail = () => {
     const { id } = useLocalSearchParams();
     return (
@@ -134,7 +43,7 @@ const RestaurantDetail = () => {
             </View>
 
             <FlatList className='py-[24px] '
-                data={restaurantData.category}
+                data={restaurantData.categories}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{
@@ -144,10 +53,9 @@ const RestaurantDetail = () => {
                 }}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
-                    <SmallCategoryItem
-                        showImage={false}
-                        id={item.id}
-                        name={item.name}
+                    <SuggestedItem
+                        type="categories"
+                        categories={item}
                     />
                 )}
             />
@@ -190,6 +98,82 @@ const Foods = () => (
         />
     </View>
 )
+
 export default RestaurantDetail
 
-const styles = StyleSheet.create({})
+const restaurantData: restaurant = {
+    id: 1,
+    name: 'Burger King',
+    ownerName: 'John Smith',
+    address: '123 King St, New York, NY',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Burger_King_Logo.svg',
+    rate: 4.5,
+    categories: [
+        { id: 1, name: 'Burger' },
+        { id: 2, name: 'Fast Food' }
+    ],
+    description: 'Popular American fast food chain known for its flame-grilled burgers.',
+    reviews: 1534
+}
+const foods = [
+    {
+        id: 1,
+        name: 'Burger',
+        categories: ['Fast Food', 'Beef'],
+        note: 'Classic beef burger with cheese and lettuce.',
+        image: 'https://www.allrecipes.com/thmb/5JVfA7MxfTUPfRerQMdF-nGKsLY=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/25473-the-perfect-basic-burger-DDMFS-4x3-56eaba3833fd4a26a82755bcd0be0c54.jpg',
+        price: 10,
+        restaurantName: 'Burger King',
+        sold: 25,
+        remaining: 75,
+        createdAt: '2025-05-01T08:00:00.000Z'
+    },
+    {
+        id: 2,
+        name: 'Salmon Sushi',
+        categories: ['Sushi', 'Japanese'],
+        note: 'Fresh salmon on vinegared rice.',
+        image: '',
+        price: 15,
+        restaurantName: 'Sushi World',
+        sold: 40,
+        remaining: 60,
+        createdAt: '2025-05-02T08:30:00.000Z'
+    },
+    {
+        id: 3,
+        name: 'Pepperoni Pizza',
+        categories: ['Pizza', 'Italian'],
+        note: 'Topped with spicy pepperoni and mozzarella.',
+        image: '',
+        price: 12,
+        restaurantName: 'Pizza Paradise',
+        sold: 30,
+        remaining: 70,
+        createdAt: '2025-05-03T09:00:00.000Z'
+    },
+    {
+        id: 9,
+        name: 'Veggie Pizza',
+        categories: ['Pizza', 'Vegetarian'],
+        note: 'Loaded with vegetables and mozzarella cheese.',
+        image: '',
+        price: 11,
+        restaurantName: 'Pizza Paradise',
+        sold: 22,
+        remaining: 78,
+        createdAt: '2025-05-09T15:00:00.000Z'
+    },
+    {
+        id: 10,
+        name: 'Tempura Shrimp',
+        categories: ['Japanese', 'Seafood'],
+        note: 'Crispy deep-fried shrimp with dipping sauce.',
+        image: '',
+        price: 14,
+        restaurantName: 'Sushi World',
+        sold: 18,
+        remaining: 82,
+        createdAt: '2025-05-10T16:00:00.000Z'
+    }
+];

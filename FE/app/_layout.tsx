@@ -5,7 +5,7 @@ import { icons } from "@/constants/icons";
 const CustomHeader = ({ title }: any) => {
   const router = useRouter();
   return (
-    <View className=" pt-[50px] pb-[10px] flex-row px-[24px] items-center ">
+    <View className="absolute z-20  pt-[50px] pb-[10px] flex-row px-[24px] items-center ">
       <TouchableOpacity
         onPress={() => router.back()}
         className='w-[45px] h-[45px] rounded-full items-center justify-center bg-[#ECF0F4]'>
@@ -25,6 +25,7 @@ export default function RootLayout() {
     <>
       <StatusBar hidden />
       <Stack
+        initialRouteName="search/index"
         screenOptions={{
           animation: 'slide_from_right',
           headerTransparent: true
@@ -39,6 +40,14 @@ export default function RootLayout() {
           name="restaurants/[id]"
           options={{
             header: () => <CustomHeader
+            />
+          }}
+        />
+        <Stack.Screen
+          name="search/index"
+          options={{
+            header: () => <CustomHeader
+              title='Search'
             />
           }}
         />

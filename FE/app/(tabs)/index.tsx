@@ -51,72 +51,42 @@ const restaurants: restaurant[] = [
     name: 'Burger King',
     ownerName: 'John Smith',
     address: '123 King St, New York, NY',
-    image: '',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Burger_King_Logo.svg',
     rate: 4.5,
-    categories: ['Burger', 'Fast Food']
+    categories: [
+      { id: 1, name: 'Burger' },
+      { id: 2, name: 'Fast Food' }
+    ],
+    description: 'Popular American fast food chain known for its flame-grilled burgers.',
+    reviews: 1534
   },
   {
     id: 2,
     name: 'Sushi World',
     ownerName: 'Akira Tanaka',
     address: '88 Tokyo Ave, San Francisco, CA',
-    image: '',
+    image: 'https://images.unsplash.com/photo-1576402187875-4cd7e6fdb9f5',
     rate: 4.8,
-    categories: ['Sushi', 'Japanese']
+    categories: [
+      { id: 3, name: 'Sushi' },
+      { id: 4, name: 'Japanese' }
+    ],
+    description: 'Authentic Japanese restaurant offering premium sushi and sashimi.',
+    reviews: 987
   },
   {
     id: 3,
     name: 'Pizza Paradise',
     ownerName: 'Mario Rossi',
     address: '456 Pizza Rd, Chicago, IL',
-    image: '',
+    image: 'https://images.unsplash.com/photo-1601924582975-df24e517bbf8',
     rate: 4.2,
-    categories: ['Pizza', 'Italian']
-  },
-  {
-    id: 4,
-    name: 'Taco Fiesta',
-    ownerName: 'Carlos Diaz',
-    address: '789 Fiesta Blvd, Austin, TX',
-    image: '',
-    rate: 4.6,
-    categories: ['Taco', 'Mexican']
-  },
-  {
-    id: 5,
-    name: 'Healthy Greens',
-    ownerName: 'Emma Green',
-    address: '321 Wellness Ln, Portland, OR',
-    image: '',
-    rate: 4.7,
-    categories: ['Salad', 'Healthy Food']
-  },
-  {
-    id: 6,
-    name: 'Hot Dog Heaven',
-    ownerName: 'Mike Johnson',
-    address: '101 Hotdog St, Los Angeles, CA',
-    image: '',
-    rate: 4.3,
-    categories: ['Hot Dog', 'Street Food']
-  },
-  {
-    id: 7,
-    name: 'Curry Corner',
-    ownerName: 'Raj Patel',
-    address: '212 Spice Rd, Houston, TX',
-    image: '',
-    rate: 4.4,
-    categories: ['Curry', 'Indian']
-  },
-  {
-    id: 8,
-    name: 'Pho Delight',
-    ownerName: 'Linh Nguyen',
-    address: '99 Pho St, Seattle, WA',
-    image: '',
-    rate: 4.9,
-    categories: ['Pho', 'Vietnamese']
+    categories: [
+      { id: 5, name: 'Pizza' },
+      { id: 6, name: 'Italian' }
+    ],
+    description: 'Serving classic Italian-style pizzas with a modern twist.',
+    reviews: 746
   }
 ];
 
@@ -243,7 +213,6 @@ const foods = [
   }
 ];
 
-
 const categoriesList: category[] = [{
   id: 0,
   name: 'All',
@@ -251,6 +220,7 @@ const categoriesList: category[] = [{
   createdAt: '',
   image: ""
 }, ...categories]
+
 const index = () => {
   return (
     <View className='flex-1 bg-slate-500 items-center '>
@@ -348,11 +318,7 @@ const Restaurants = () => (
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
         <SmallRestaurantItem
-          image={item.image}
-          rate={item.rate}
-          categories={item.categories}
-          id={item.id}
-          name={item.name}
+          restaurant={item}
         />
       )}
     />

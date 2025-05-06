@@ -3,13 +3,9 @@ import { MotiView } from 'moti';
 import { useRouter } from 'expo-router';
 import { icons } from '@/constants/icons';
 interface SmallRestaurantItemProps {
-    id: number,
-    name: string;
-    image?: string;
-    categories?: string[];
-    rate?: number;
+    restaurant: restaurant
 }
-const SmallRestaurantItem = ({ name, image, id, categories, rate }: SmallRestaurantItemProps) => {
+const SmallRestaurantItem = ({ restaurant }: SmallRestaurantItemProps) => {
     const router = useRouter();
     const onPress = () => {
         router.push('/restaurants/[id]')
@@ -35,8 +31,8 @@ const SmallRestaurantItem = ({ name, image, id, categories, rate }: SmallRestaur
                 >
                     <Image
                         className='bg-accent w-full h-[140px] rounded-xl' />
-                    <Text className='text-[20px] mt-[8px]'>{name}</Text>
-                    <Text className='text-[14px] text-[#A0A5BA] mt-[5px]'>{categories?.join(' - ')}</Text>
+                    <Text className='text-[20px] mt-[8px]'>{restaurant.name}</Text>
+                    <Text className='text-[14px] text-[#A0A5BA] mt-[5px]'>{restaurant.categories?.join(' - ')}</Text>
                     <View className='flex-row items-center mt-[14px] gap-[24px]'>
                         <View className='flex-row items-center gap-[4px]'>
                             <Image
@@ -44,7 +40,7 @@ const SmallRestaurantItem = ({ name, image, id, categories, rate }: SmallRestaur
                                 source={icons.star}
                                 className='size-6'
                             />
-                            <Text className='font-bold text-[16px]'>{rate}</Text>
+                            <Text className='font-bold text-[16px]'>{restaurant.rate}</Text>
                         </View>
                         <View className='flex-row items-center gap-[9px]'>
                             <Image

@@ -13,7 +13,13 @@ interface restaurant {
     address: string,
     image: string,
     rate: number,
-    categories: string[]
+    categories: {
+        id: number,
+        name: string
+    }[],
+    description: string,
+    reviews: number,
+
 }
 
 interface Food {
