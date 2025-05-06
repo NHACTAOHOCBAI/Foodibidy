@@ -60,6 +60,14 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="restaurants/index"
+          options={{
+            header: () => <CustomHeader
+              title='All Restaurants'
+            />
+          }}
+        />
+        <Stack.Screen
           name="categories/[id]"
           options={{
             header: () => <CustomHeader

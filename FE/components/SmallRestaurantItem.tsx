@@ -32,7 +32,13 @@ const SmallRestaurantItem = ({ restaurant }: SmallRestaurantItemProps) => {
                     <Image
                         className='bg-accent w-full h-[140px] rounded-xl' />
                     <Text className='text-[20px] mt-[8px]'>{restaurant.name}</Text>
-                    <Text className='text-[14px] text-[#A0A5BA] mt-[5px]'>{restaurant.categories?.join(' - ')}</Text>
+                    <Text className='text-[14px] text-[#A0A5BA] mt-[5px]'>{
+                        restaurant.categories.map((value, index) => {
+                            let tmp = "";
+                            index === 0 ? tmp = "" : tmp = " - "
+                            return (tmp += value.name)
+                        })
+                    }</Text>
                     <View className='flex-row items-center mt-[14px] gap-[24px]'>
                         <View className='flex-row items-center gap-[4px]'>
                             <Image
