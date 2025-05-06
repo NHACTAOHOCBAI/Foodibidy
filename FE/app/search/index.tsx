@@ -1,6 +1,6 @@
 import SearchInput from '@/components/SearchInput'
 import SmallItem from '@/components/SmallItem'
-import SuggestedItem from '@/components/SuggestedItem'
+import SuggestedItem from '@/components//SuggestedItem'
 import { icons } from '@/constants/icons'
 import { FlatList, StyleSheet, ScrollView, Text, View, Image } from 'react-native'
 
@@ -112,11 +112,7 @@ const Foods = () => (
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
                 <SmallItem
-                    image={item.image}
-                    price={item.price}
-                    restaurantName={item.restaurantName}
-                    id={item.id}
-                    name={item.name}
+                    food={item}
                 />
             )}
         />

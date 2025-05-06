@@ -346,11 +346,7 @@ const Foods = () => (
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
         <SmallItem
-          image={item.image}
-          price={item.price}
-          restaurantName={item.restaurantName}
-          id={item.id}
-          name={item.name}
+          food={item}
         />
       )}
     />

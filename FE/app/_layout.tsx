@@ -59,6 +59,14 @@ export default function RootLayout() {
             />
           }}
         />
+        <Stack.Screen
+          name="categories/[id]"
+          options={{
+            header: () => <CustomHeader
+              title='Id of Category'
+            />
+          }}
+        />
       </Stack>
     </>
   )

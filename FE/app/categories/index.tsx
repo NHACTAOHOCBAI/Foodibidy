@@ -1,8 +1,8 @@
 
 import { MotiView } from 'moti'
-import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Image, Pressable, ScrollView, Text, View } from 'react-native'
 
-const Category = () => {
+const AllCategories = () => {
     return (
         <View className='pt-[120px] bg-slate-100'>
             <ScrollView className='bg-slate-100 w-full h-full z-[1]'>
@@ -105,6 +105,4 @@ const categories: category[] = [
         image: ""
     }
 ];
-export default Category
-
-const styles = StyleSheet.create({})
+export default AllCategories

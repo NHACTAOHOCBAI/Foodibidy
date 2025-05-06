@@ -2,17 +2,10 @@ import { Image, Pressable, Text, View } from 'react-native'
 import { MotiView } from 'moti';
 import { useRouter } from 'expo-router';
 import { icons } from '@/constants/icons';
-interface SmallItemProps {
-    image: string
-    price: number
-    restaurantName: string
-    id: number
-    name: string
-}
-const SmallItem = ({ name, image, id, price, restaurantName }: SmallItemProps) => {
+const SmallItem = ({ food }: { food: Food }) => {
     const router = useRouter();
     const onPress = () => {
-        router.push(`/foods/${id}`)
+        router.push(`/foods/${food.id}`)
     }
     return (
         <Pressable
@@ -32,15 +25,15 @@ const SmallItem = ({ name, image, id, price, restaurantName }: SmallItemProps) =
                         className="w-full p-[8px] rounded-[12px] bg-transparent"
                     >
                         <Image
-                            source={image ? { uri: image } : undefined}
+                            source={food.image ? { uri: food.image } : undefined}
                             className='w-full h-[84px] rounded-[12px] bg-accent'
                         />
-                        <Text className='font-bold mt-[15px] text-[15px]'>{name}</Text>
-                        <Text className='mt-[5px] text-[13px]'>{restaurantName}</Text>
+                        <Text className='font-bold mt-[15px] text-[15px]'>{food.name}</Text>
+                        <Text className='mt-[5px] text-[13px]'>{food.restaurantName}</Text>
                         {/* button plus */}
 
                         <View className='flex-row items-center justify-between mt-[8px]'>
-                            <Text className='text-[#32343E] text-[16px] font-bold'>{`$${price}`}</Text>
+                            <Text className='text-[#32343E] text-[16px] font-bold'>{`$${food.price}`}</Text>
                             <Pressable
                             >
                                 {({ pressed }) => (
