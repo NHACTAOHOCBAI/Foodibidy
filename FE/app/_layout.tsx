@@ -2,6 +2,7 @@ import { Stack, useRouter } from "expo-router";
 import './global.css'
 import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { icons } from "@/constants/icons";
+import Filter from "@/components/Filter";
 const CustomHeader = ({ title }: any) => {
   const router = useRouter();
   return (
@@ -25,7 +26,6 @@ export default function RootLayout() {
     <>
       <StatusBar hidden />
       <Stack
-        initialRouteName="search/index"
         screenOptions={{
           animation: 'slide_from_right',
           headerTransparent: true

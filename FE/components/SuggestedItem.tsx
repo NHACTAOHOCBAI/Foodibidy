@@ -24,7 +24,7 @@ const SuggestedItem = ({ categories, recentKeywords, type }: SuggesteItemProps) 
         >
             {({ pressed }) => (
                 <MotiView
-                    className="flex-row items-center rounded-full px-[8px] h-[46px] min-w-[60px] justify-center max-w-[130px]"
+                    className="border-[1px] border-gray-200 flex-row items-center rounded-full px-[8px] h-[46px] min-w-[70px] justify-center max-w-[130px]"
                     style={{
                         boxShadow: " 0 1px 4px 0 rgba(0, 0, 0, 0.1)"
                     }}

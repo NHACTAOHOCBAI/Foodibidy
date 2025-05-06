@@ -2,11 +2,13 @@ import { View, Text, TouchableOpacity, Pressable } from 'react-native'
 import React from 'react'
 import { MotiView } from 'moti'
 interface IProps {
-    title: string
+    title: string,
+    onPress?: () => void
 }
-const Button = ({ title }: IProps) => {
+const Button = ({ title, onPress }: IProps) => {
     return (
         <Pressable
+            onPress={onPress}
         >
             {({ pressed }) => (
                 <MotiView className='h-[62px] rounded-[12px] w-full justify-center items-center bg-primary'
