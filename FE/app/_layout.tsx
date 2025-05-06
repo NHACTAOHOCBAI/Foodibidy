@@ -51,6 +51,14 @@ export default function RootLayout() {
             />
           }}
         />
+        <Stack.Screen
+          name="categories/index"
+          options={{
+            header: () => <CustomHeader
+              title='All Categories'
+            />
+          }}
+        />
       </Stack>
     </>
   )

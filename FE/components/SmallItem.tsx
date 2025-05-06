@@ -12,7 +12,7 @@ interface SmallItemProps {
 const SmallItem = ({ name, image, id, price, restaurantName }: SmallItemProps) => {
     const router = useRouter();
     const onPress = () => {
-        router.push('/foods/[id]')
+        router.push(`/foods/${id}`)
     }
     return (
         <Pressable
