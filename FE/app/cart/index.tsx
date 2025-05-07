@@ -1,6 +1,4 @@
-import { FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { useLocalSearchParams } from 'expo-router'
+import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { MotiView, ScrollView } from 'moti'
 import QuantitySelector from '@/components/QuantitySelector'
 import Button from '@/components/Button'
@@ -47,6 +45,7 @@ const Cart = () => {
                 </View>
                 <Button
                     title='Place order'
+                    size='large'
                 />
             </View>
         </View>

@@ -260,7 +260,7 @@ const Header = () => (
         </View>
       </View>
 
-      <Link href={'cart/index'}>
+      <Link href={'/cart'}>
         <View className='ml-auto w-[45px] h-[45px] rounded-full items-center justify-center bg-secondary'>
           <Image source={icons.bag} resizeMode='contain' className='w-[24px] h-[24px]' />
         </View>

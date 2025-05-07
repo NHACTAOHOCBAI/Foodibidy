@@ -44,7 +44,6 @@ export default function RootLayout() {
     <>
       <StatusBar hidden />
       <Stack
-        initialRouteName="cart/index"
         screenOptions={{
           animation: 'slide_from_right',
           headerTransparent: true

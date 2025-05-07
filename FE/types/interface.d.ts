@@ -36,6 +36,17 @@ interface Food {
     rate: number;
 }
 
+interface Order {
+    id: number;
+    name: string;
+    image: string;
+    price: number;
+    quantity: number;
+    orderedAt: string;
+    status: "Completed" | "Canceled" | "Shipping"
+    type: "Food" | "Drink"
+}
+
 interface cart {
     id: number,
     foodName: string,
