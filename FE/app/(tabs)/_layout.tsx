@@ -15,10 +15,10 @@ const _layout = () => {
             <Tabs.Screen
                 name="index"
                 options={{
-                    tabBarIcon: ({ color }) => (
+                    tabBarIcon: ({ focused }) => (
                         <TabItem
                             title='Home'
-                            color={color}
+                            focus={focused}
                             url={icons.home} />
                     )
                 }}
@@ -26,10 +26,10 @@ const _layout = () => {
             <Tabs.Screen
                 name="orders"
                 options={{
-                    tabBarIcon: ({ color }) => (
+                    tabBarIcon: ({ focused }) => (
                         <TabItem
                             title='Orders'
-                            color={color}
+                            focus={focused}
                             url={icons.order} />
                     )
                 }}
@@ -37,10 +37,10 @@ const _layout = () => {
             <Tabs.Screen
                 name="book_mark"
                 options={{
-                    tabBarIcon: ({ color }) => (
+                    tabBarIcon: ({ focused }) => (
                         <TabItem
                             title='Bookmark'
-                            color={color}
+                            focus={focused}
                             url={icons.save} />
                     )
                 }}
@@ -48,10 +48,10 @@ const _layout = () => {
             <Tabs.Screen
                 name="profile"
                 options={{
-                    tabBarIcon: ({ color }) => (
+                    tabBarIcon: ({ focused }) => (
                         <TabItem
                             title='Profile'
-                            color={color}
+                            focus={focused}
                             url={icons.profile} />
                     )
                 }}
