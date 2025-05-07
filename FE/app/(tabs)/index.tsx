@@ -260,9 +260,11 @@ const Header = () => (
         </View>
       </View>
 
-      <View className='ml-auto w-[45px] h-[45px] rounded-full items-center justify-center bg-secondary'>
-        <Image source={icons.bag} resizeMode='contain' className='w-[24px] h-[24px]' />
-      </View>
+      <Link href={'cart/index'}>
+        <View className='ml-auto w-[45px] h-[45px] rounded-full items-center justify-center bg-secondary'>
+          <Image source={icons.bag} resizeMode='contain' className='w-[24px] h-[24px]' />
+        </View>
+      </Link>
     </View>
 
     <View className='mt-[24px]' >

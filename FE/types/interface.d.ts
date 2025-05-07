@@ -35,3 +35,11 @@ interface Food {
     createdAt: string;
     rate: number;
 }
+
+interface cart {
+    id: number,
+    foodName: string,
+    quantity: number,
+    price: number,
+    restaurantName: string;
+}
