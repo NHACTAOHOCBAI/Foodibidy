@@ -44,7 +44,8 @@ interface Order {
     quantity: number;
     orderedAt: string;
     status: "Completed" | "Canceled" | "Shipping"
-    type: "Food" | "Drink"
+    type: "Food" | "Drink",
+    receivedAt: string
 }
 
 interface cart {

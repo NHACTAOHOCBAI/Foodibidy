@@ -1,11 +1,13 @@
 import Button from '@/components/Button';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { View, ScrollView, FlatList, Text, Image, TouchableOpacity } from 'react-native'
 
 const ongoing = () => {
     return (
         <View className='bg-white'>
-            <ScrollView className=' w-full h-full z-[1] px-[24px] '>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                className=' w-full h-full z-[1] px-[24px] '>
                 <FlatList className='py-[20px]'
                     data={orders}
                     scrollEnabled={false}
