@@ -20,7 +20,7 @@ const _layout = () => {
                         <TabItem
                             title='Home'
                             focus={focused}
-                            url={icons.home} />
+                            url={icons.homeIcon} />
                     )
                 }}
             />
@@ -42,7 +42,7 @@ const _layout = () => {
                         <TabItem
                             title='Bookmark'
                             focus={focused}
-                            url={icons.save} />
+                            url={icons.bookmark} />
                     )
                 }}
             />

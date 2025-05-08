@@ -1,6 +1,5 @@
-import SVG from '@/components/SvgImage'
-import TextDefault from '@/components/TextDefault'
-import { StyleSheet, Text, View } from 'react-native'
+import { icons } from '@/constants/icons'
+import { Image, StyleSheet, Text, View } from 'react-native'
 interface TabItemProps {
     url?: string
     title: string
@@ -10,9 +9,11 @@ interface TabItemProps {
 const TabItem = ({ url, title, focus }: TabItemProps) => {
     return (
         <View className='mt-3 w-[100px] items-center justify-center'>
-            {url && <SVG
-                color={focus ? "#FF7622" : "#A5A7B9"}
-                url={url} />}
+            {url && <Image
+                tintColor={focus ? "#FF7622" : "#A5A7B9"}
+                className='w-[16px] h-[17.5px]'
+                source={typeof url === 'string' ? { uri: url } : url}
+            />}
             <Text className='' style={{
                 color: focus ? "#FF7622" : "#A5A7B9",
                 fontWeight: focus ? "bold" : "regular"
