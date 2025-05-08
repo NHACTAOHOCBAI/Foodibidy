@@ -18,7 +18,9 @@ const CustomHeader = ({ title, isEdit = false }: any) => {
         {title}
       </Text>
       {isEdit && (
-        <Text className="ml-auto text-primary uppercase underline">Edit</Text>
+        <Text
+          onPress={() => router.push('/profile/edit_profile')}
+          className="ml-auto text-primary uppercase underline">Edit</Text>
       )}
     </View>
   );
@@ -27,6 +29,7 @@ export default function RootLayout() {
   return (
     <>
       <Stack
+        initialRouteName="address"
         screenOptions={{
           animation: 'slide_from_right',
           headerTransparent: true
@@ -43,6 +46,14 @@ export default function RootLayout() {
             header: () => <CustomHeader
               title="Personal Info"
               isEdit={true}
+            />
+          }}
+        />
+        <Stack.Screen
+          name="edit_profile"
+          options={{
+            header: () => <CustomHeader
+              title="Edit Profile"
             />
           }}
         />

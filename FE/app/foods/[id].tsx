@@ -57,6 +57,7 @@ const FoodDetail = () => {
                     />
                 </View>
                 <Button
+                    size='large'
                     title='Add to cart'
                 />
             </View>

@@ -1,20 +1,52 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, Image } from 'react-native'
 import React from 'react'
+import { icons } from '@/constants/icons'
 
 const address = () => {
     return (
-        <View>
-            <ScrollView>
-
-            </ScrollView>
-        </View>
+        <ScrollView
+            contentContainerStyle={{
+                alignItems: 'center',
+                paddingBottom: 400,
+                gap: 20
+            }}
+            className='bg-white flex-1 pt-[120px] px-[24px]'>
+            {myProfile.address.map((address) => {
+                return <AddressItem
+                    key={address.type}
+                    address={address}
+                />
+            })}
+        </ScrollView>
     )
 }
-const AddressItem = () => {
+const AddressItem = ({ address }: any) => {
     return (
-        <View className='rounded-[16px] bg-[#F0F5FA]'>
-            <View className='w-[48px] h-[48px'>
-
+        <View className='rounded-[16px] bg-[#F0F5FA] w-full p-[15px] flex-row ' >
+            <View className='w-[48px] h-[48px] justify-center items-center bg-white rounded-full'>
+                <Image
+                    resizeMode='contain'
+                    className='w-[20px] h-[20px]'
+                    source={address.type === 'home' ? icons.homeIcon : icons.workIcon} />
+            </View>
+            <View className='ml-[14px] gap-[11px] flex-1'>
+                <View className='flex-row w-full'>
+                    <Text className='uppercase'>{address.type}</Text>
+                    <Image
+                        resizeMode='contain'
+                        className='w-[16px] h-[16px] ml-auto mr-[21px]'
+                        source={icons.edit}
+                    />
+                    <Image
+                        resizeMode='contain'
+                        className='w-[16px] h-[16px]'
+                        source={icons.deleteIcon}
+                    />
+                </View>
+                <Text
+                    numberOfLines={2}
+                    className='text-[#A0A5BA] '
+                >{address.location}</Text>
             </View>
         </View>
     )

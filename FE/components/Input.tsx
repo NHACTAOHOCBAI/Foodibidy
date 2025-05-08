@@ -1,12 +1,22 @@
-import { View, Text, TextInput } from 'react-native'
-import React from 'react'
+import { TextInput } from 'react-native';
+import React from 'react';
+
 interface InputProps {
-    title?: string
-}
-const Input = ({ title }: InputProps) => {
-    return (
-        <TextInput className='rounded-[10px] text-[16px] text-[#A0A5BA] px-[12px] py-[21px] bg-[#F0F5FA]' value={title} />
-    )
+    title?: string;
+    textarea?: boolean;
 }
 
-export default Input
+const Input = ({ title, textarea }: InputProps) => {
+    return (
+        <TextInput
+            className={`rounded-[10px] text-[16px] text-[#A0A5BA] px-[12px] py-[21px] bg-[#F0F5FA] w-full ${textarea ? 'h-[120px]' : ''
+                }`}
+            value={title}
+            multiline={textarea}
+            numberOfLines={textarea ? 4 : 1}
+            textAlignVertical={textarea ? 'top' : 'center'}
+        />
+    );
+};
+
+export default Input;
