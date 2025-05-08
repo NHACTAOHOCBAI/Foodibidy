@@ -1,6 +1,5 @@
 
 import bag from '@/assets/icons/bag.png';
-import triangle from '@/assets/icons/triangle.png';
 import search from '@/assets/icons/search.png';
 import arrow from '@/assets/icons/arrow.png';
 import delivery from '@/assets/icons/delivery.png';
@@ -23,6 +22,7 @@ import workIcon from '@/assets/icons/workIcon.png'
 import order from '@/assets/icons/order.png'
 import bookmark from '@/assets/icons/bookmark.png'
 import profile from '@/assets/icons/profile.png'
+import triangle from '@/assets/icons/triangle.png'
 export const icons = {
     bag,
     triangle,

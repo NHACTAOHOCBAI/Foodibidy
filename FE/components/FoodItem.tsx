@@ -2,7 +2,7 @@ import { Image, Pressable, Text, View } from 'react-native'
 import { MotiView } from 'moti';
 import { useRouter } from 'expo-router';
 import { icons } from '@/constants/icons';
-const SmallItem = ({ food }: { food: Food }) => {
+const FoodItem = ({ food }: { food: Food }) => {
     const router = useRouter();
     const onPress = () => {
         router.push(`/foods/${food.id}`)
@@ -20,19 +20,23 @@ const SmallItem = ({ food }: { food: Food }) => {
                         type: 'timing',
                         duration: 100,
                     }}>
-                    <View
-                        className="w-full p-[8px] rounded-[12px] bg-transparent"
-                    >
+                    <View className="w-full p-[8px] bg-transparent">
                         <Image
                             source={food.image ? { uri: food.image } : undefined}
                             className='w-full h-[84px] rounded-[12px] bg-accent'
                         />
-                        <Text className='font-bold mt-[15px] text-[15px]'>{food.name}</Text>
-                        <Text className='mt-[5px] text-[13px]'>{food.restaurantName}</Text>
+                        <Text
+                            numberOfLines={1}
+                            className='font-bold mt-[15px] text-[15px]'>{food.name}</Text>
+                        <Text
+                            numberOfLines={1}
+                            className='mt-[5px] text-[13px]'>{food.restaurantName}</Text>
                         {/* button plus */}
 
-                        <View className='flex-row items-center justify-between mt-[8px]'>
-                            <Text className='text-[#32343E] text-[16px] font-bold'>{`$${food.price}`}</Text>
+                        <View className='flex-row items-center justify-between mt-[8px] gap-[10px]'>
+                            <Text
+                                numberOfLines={1}
+                                className='text-[#32343E] text-[16px] font-bold flex-1'>{`$${food.price}`}</Text>
                             <Pressable
                             >
                                 {({ pressed }) => (
@@ -76,4 +80,4 @@ const SmallItem = ({ food }: { food: Food }) => {
     )
 }
 
-export default SmallItem
+export default FoodItem

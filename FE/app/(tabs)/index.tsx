@@ -1,12 +1,161 @@
 
+import CategoryItem from '@/components/CategoryItem'
 import SearchInput from '@/components/SearchInput'
-import SmallCategoryItem from '@/components/SmallCategoryItem'
-import SmallItem from '@/components/SmallItem'
-
-import SmallRestaurantItem from '@/components/SmallRestaurantItem'
 import { icons } from '@/constants/icons'
 import { Link } from 'expo-router'
 import { FlatList, Image, ScrollView, Text, View } from 'react-native'
+import RestaurantItem from '@/components/RestaurantItem'
+import FoodItem from '@/components/FoodItem'
+
+const index = () => {
+  return (
+    <View className='flex-1 bg-white  '>
+      <Header />
+      <ScrollView
+        className='flex-1 pt-[250px]'
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 400
+        }}
+      >
+        <Categories />
+        <Restaurants />
+        <Foods />
+      </ScrollView>
+    </View>
+  )
+}
+
+const Header = () => (
+  <View className='px-[24px] absolute z-[1]  pb-[10px] bg-white w-full '>
+
+    <View className='flex-row mt-[54px] items-center'>
+      <Image
+        source={myProfile.avatar ? { uri: myProfile.avatar } : undefined}
+        className='w-[45px] h-[45px] rounded-full bg-accent'
+      />
+      <View className='ml-[18px] gap-[3px]'>
+        <Text className='font-bold uppercase text-[12px] text-primary'>Deliver to</Text>
+        <View className='flex-row items-center gap-[9px]'>
+          <Text className='text-[#676767]'>{myProfile.currentAddress.location}</Text>
+          <Image source={icons.triangle} resizeMode='contain' className='w-[13px] h-[10px]' />
+        </View>
+      </View>
+      <Link href={'/cart'} asChild>
+        <View className='ml-auto w-[45px] h-[45px] rounded-full items-center justify-center bg-secondary'>
+          <Image source={icons.bag} resizeMode='contain' className='w-[24px] h-[24px]' />
+        </View>
+      </Link>
+    </View>
+
+    <View className='mt-[24px]' >
+      <Text className='text-[16px] text-[#1E1D1D]'>{`Hey ${myProfile.name.split(" ").pop()}, `}<Text className='font-bold'>Good Afternoon!</Text></Text>
+    </View>
+
+    <SearchInput
+      className='mt-[16px]'
+      placeholder=' Search for food, groceries, drinks...' />
+
+  </View>
+)
+
+const Categories = () => (
+  <View>
+
+    <View className='px-[24px] flex-row justify-between items-center '>
+      <Text className='text-[#32343E] text-[20px]'>All Categories</Text>
+      <Link href={'/categories'} asChild>
+        <View className='flex-row items-center gap-[10px]'>
+          <Text className='text-[#333333] text-[16px] '>See All</Text>
+          <Image
+            tintColor={"#A0A5BA"}
+            source={icons.arrow}
+            resizeMode='contain'
+            className='w-[10px] h-[10px]'
+          />
+        </View>
+      </Link>
+    </View>
+
+    <FlatList className='py-[20px] '
+      data={categoriesList}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{
+        gap: 7,
+        paddingLeft: 24,
+        paddingRight: 40,
+      }}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <CategoryItem
+          category={item}
+        />
+      )}
+    />
+  </View>
+)
+
+const Restaurants = () => (
+  <View className='mt-[12px] px-[24px]'>
+    <View className='flex-row justify-between items-center '>
+      <Text className='text-[#32343E] text-[20px]'>Open Restaurants</Text>
+      <Link href={'/restaurants'} asChild>
+        <View className='flex-row items-center gap-[10px]'>
+          <Text className='text-[#333333] text-[16px] '>See All</Text>
+          <Image
+            tintColor={"#A0A5BA"}
+            source={icons.arrow}
+            resizeMode='contain'
+            className='w-[10px] h-[10px]' />
+        </View>
+      </Link>
+    </View>
+
+    <FlatList className='py-[20px]'
+      data={restaurants}
+      scrollEnabled={false}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{
+        gap: 28,
+      }}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <RestaurantItem
+          restaurant={item}
+        />
+      )}
+    />
+  </View >
+)
+
+const Foods = () => (
+  <View className='mt-[12px] px-[24px]'>
+    <Text className='text-[#32343E] text-[20px]'>Popular Foods</Text>
+
+    <FlatList
+      className='py-[20px]'
+      data={foods}
+      scrollEnabled={false}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{
+        gap: 28,
+      }}
+      columnWrapperStyle={{
+        justifyContent: 'space-between',
+
+      }}
+      numColumns={2}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <FoodItem
+          food={item}
+        />
+      )}
+    />
+  </View>
+)
+
 const categories: Category[] = [
   {
     id: 1,
@@ -223,6 +372,29 @@ const foods: Food[] = [
   }
 ];
 
+const myProfile: Account = {
+  id: 1,
+  name: "Nguyen Dang Phuc",
+  address: [
+    {
+      type: "home",
+      location: "Quang Binh"
+    },
+    {
+      type: "work",
+      location: "Di an, Binh Duong"
+    }
+  ],
+  currentAddress: {
+    type: "home",
+    location: "Quang Binh"
+  },
+  phone: "0838609516",
+  email: "dangphucnguyen20112005@gmail.com",
+  avatar: "",
+  bio: "I love chicken"
+}
+
 const categoriesList: Category[] = [{
   id: 0,
   name: 'All',
@@ -230,138 +402,4 @@ const categoriesList: Category[] = [{
   createdAt: '',
   image: ""
 }, ...categories]
-
-const index = () => {
-  return (
-    <View className='flex-1 bg-slate-500 items-center '>
-      <Header />
-      <ScrollView className='bg-slate-100 w-full h-full pt-[250px]'>
-        <Categories />
-        <Restaurants />
-        <Foods />
-      </ScrollView>
-    </View>
-  )
-}
-
-const Header = () => (
-  <View className='px-[24px] absolute z-[1] h-fit pb-[10px] bg-white w-full '>
-
-    <View className='flex-row mt-[54px] items-center'>
-      <Image
-        className='w-[45px] h-[45px] rounded-full bg-accent'
-      />
-
-      <View className='ml-[18px] gap-[3px]'>
-        <Text className='font-bold uppercase text-[12px] text-primary'>Deliver to</Text>
-        <View className='flex-row items-center gap-[9px]'>
-          <Text className='text-[#676767]'>Halal Lab office</Text>
-          <Image source={icons.triangle} resizeMode='contain' className='w-[10px] h-[10px]' />
-        </View>
-      </View>
-
-      <Link href={'/cart'}>
-        <View className='ml-auto w-[45px] h-[45px] rounded-full items-center justify-center bg-secondary'>
-          <Image source={icons.bag} resizeMode='contain' className='w-[24px] h-[24px]' />
-        </View>
-      </Link>
-    </View>
-
-    <View className='mt-[24px]' >
-      <Text className='text-[16px] text-[#1E1D1D]'>Hey Halal, <Text className='font-bold'>Good Afternoon!</Text></Text>
-    </View>
-
-    <View className='mt-[16px]'>
-      <SearchInput placeholder=' Search for food, groceries, drinks...' />
-    </View>
-
-  </View>
-)
-const Categories = () => (
-  <View className=''>
-    <View className='px-[24px] flex-row justify-between items-center '>
-      <Text className='text-[#32343E] text-[20px]'>All Categories</Text>
-      <Link href={'/categories'}>
-        <View className='flex-row items-center gap-[10px]'>
-          <Text className='text-[#333333] text-[16px] '>See All</Text>
-          <Image tintColor={"#A0A5BA"} source={icons.arrow} resizeMode='contain' className='w-[10px] h-[10px]' />
-        </View>
-      </Link>
-    </View>
-
-    <FlatList className='py-[20px] '
-      data={categoriesList}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{
-        gap: 7,
-        paddingLeft: 24,
-        paddingRight: 40,
-      }}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <SmallCategoryItem
-          category={item}
-        />
-      )}
-    />
-  </View>
-)
-const Restaurants = () => (
-  <View className='mt-[12px]'>
-    <View className='px-[24px] flex-row justify-between items-center '>
-      <Text className='text-[#32343E] text-[20px]'>Open Restaurants</Text>
-      <Link href={'/restaurants'}>
-        <View className='flex-row items-center gap-[10px]'>
-          <Text className='text-[#333333] text-[16px] '>See All</Text>
-          <Image tintColor={"#A0A5BA"} source={icons.arrow} resizeMode='contain' className='w-[10px] h-[10px]' />
-        </View>
-      </Link>
-    </View>
-
-    <FlatList className='py-[20px]'
-      data={restaurants}
-      scrollEnabled={false}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        gap: 28,
-        paddingHorizontal: 24,
-      }}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <SmallRestaurantItem
-          restaurant={item}
-        />
-      )}
-    />
-  </View>
-)
-const Foods = () => (
-  <View className='mt-[12px]'>
-    <View className='px-[24px] flex-row justify-between items-center '>
-      <Text className='text-[#32343E] text-[20px]'>Popular Foods</Text>
-    </View>
-
-    <FlatList className='py-[20px] pb-[400px]'
-      data={foods}
-      scrollEnabled={false}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        paddingHorizontal: 24,
-        gap: 28,
-      }}
-      columnWrapperStyle={{
-        justifyContent: 'space-between',
-
-      }}
-      numColumns={2}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <SmallItem
-          food={item}
-        />
-      )}
-    />
-  </View>
-)
 export default index

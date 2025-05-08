@@ -1,6 +1,5 @@
 import { View, Text, ScrollView, FlatList } from 'react-native'
-import React from 'react'
-import SmallRestaurantItem from '@/components/SmallRestaurantItem';
+import SmallRestaurantItem from '@/components/RestaurantItem';
 
 const AllRestaurants = () => {
     return (

@@ -75,6 +75,10 @@ const myProfile: Account = {
             location: "Di an, Binh Duong"
         }
     ],
+    currentAddress: {
+        type: "home",
+        location: "Quang Binh"
+    },
     phone: "0838609516",
     email: "dangphucnguyen20112005@gmail.com",
     avatar: "",

@@ -66,5 +66,9 @@ interface Account {
     phone: string,
     email: string,
     avatar: string,
-    bio: string
+    bio: string,
+    currentAddress: {
+        type: string,
+        location: string
+    },
 }

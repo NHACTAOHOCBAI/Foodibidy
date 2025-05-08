@@ -1,5 +1,5 @@
 import SearchInput from '@/components/SearchInput'
-import SmallItem from '@/components/SmallItem'
+import SmallItem from '@/components/FoodItem'
 import SuggestedItem from '@/components//SuggestedItem'
 import { icons } from '@/constants/icons'
 import { FlatList, StyleSheet, ScrollView, Text, View, Image } from 'react-native'

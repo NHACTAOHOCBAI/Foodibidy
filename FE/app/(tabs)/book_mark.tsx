@@ -1,5 +1,5 @@
 
-import SmallItem from '@/components/SmallItem';
+import SmallItem from '@/components/FoodItem';
 
 import { FlatList, ScrollView, Text, View } from 'react-native'
 
@@ -9,9 +9,6 @@ const BookMark = () => {
             <Text className='text-[17px] bg-white px-[24px] pt-[62px] pb-[24px]'>Favorite Foods</Text>
             <ScrollView className='bg-white w-full h-full z-[1]'>
                 <View className='mt-[12px]'>
-                    {/* <View className='px-[24px] flex-row justify-between items-center '>
-                        <Text className='text-[#32343E] text-[20px]'>Favorite Foods</Text>
-                    </View> */}
 
                     <FlatList className=' pb-[400px]'
                         data={foods}

@@ -1,5 +1,5 @@
 
-import SmallItem from '@/components/SmallItem';
+import SmallItem from '@/components/FoodItem';
 import { MotiView } from 'moti'
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 

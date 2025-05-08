@@ -1,7 +1,7 @@
 import { FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
 import { icons } from '@/constants/icons';
-import SmallItem from '@/components/SmallItem';
+import SmallItem from '@/components/FoodItem';
 import SuggestedItem from '@/components/SuggestedItem';
 
 const RestaurantDetail = () => {
