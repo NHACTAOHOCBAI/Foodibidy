@@ -1,18 +1,27 @@
-import { FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from 'react-native'
 import { icons } from '@/constants/icons';
-import SmallItem from '@/components/FoodItem';
 import SuggestedItem from '@/components/SuggestedItem';
-
+import { useState } from 'react';
+import FoodItem from '@/components/FoodItem';
+const PAGE_SIZE = 4;
 const RestaurantDetail = () => {
-    const { id } = useLocalSearchParams();
     return (
-        <ScrollView className="bg-white">
+        <ScrollView
+            className="bg-white"
+            contentContainerStyle={{
+                paddingBottom: 400
+            }}
+        >
             <Image
+                source={{ uri: restaurantData.image !== "" ? restaurantData.image : undefined }}
                 className='bg-accent w-full h-[400px] rounded-[20px]'
                 resizeMode="cover" />
-            <View className=' p-[24px] pb-0'>
-                <Text className='font-bold text-[20px]'>{restaurantData.name}</Text>
+            <View className='p-[24px]'>
+                <Text
+                    numberOfLines={1}
+                    className='font-bold text-[20px] w-full'>
+                    {restaurantData.name}
+                </Text>
 
                 <Text
                     style={{
@@ -66,34 +75,51 @@ const RestaurantDetail = () => {
     )
 }
 
-const Foods = () => (
-    <View className='mt-[12px]'>
-        <View className='px-[24px] flex-row justify-between items-center '>
-            <Text className='text-[#32343E] text-[20px]'>Popular Foods</Text>
+const Foods = () => {
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    const [loadingMore, setLoadingMore] = useState(false);
+
+    // Hàm load thêm dữ liệu
+    const handleLoadMore = () => {
+        if (visibleCount >= foods.length || loadingMore) return;
+
+        setLoadingMore(true);
+
+        // Mô phỏng delay tải dữ liệu (API call)
+        setTimeout(() => {
+            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, foods.length));
+            setLoadingMore(false);
+        }, 2000);
+    };
+
+    return (
+        <View className="mt-[12px] px-[24px]">
+            <Text className="text-[#32343E] text-[20px]">Popular Foods</Text>
+
+            <FlatList
+                className="py-[20px]"
+                data={foods.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
+                scrollEnabled={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ gap: 28 }}
+                columnWrapperStyle={{ justifyContent: 'space-between' }}
+                numColumns={2}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => <FoodItem food={item} />}
+
+                // Lazy loading props
+                onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
+                onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
+                initialNumToRender={PAGE_SIZE} // Render ban đầu
+                maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
+
+                ListFooterComponent={loadingMore ? (
+                    <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
+                ) : null} // Hiển thị loader khi đang tải thêm
+            />
         </View>
-
-        <FlatList className='py-[20px] pb-[400px]'
-            data={foods}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-                paddingHorizontal: 24,
-                gap: 28,
-            }}
-            columnWrapperStyle={{
-                justifyContent: 'space-between',
-
-            }}
-            numColumns={2}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-                <SmallItem
-                    food={item}
-                />
-            )}
-        />
-    </View>
-)
+    );
+};
 
 export default RestaurantDetail
 
