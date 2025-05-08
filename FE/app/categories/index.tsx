@@ -37,7 +37,7 @@ const AllCategories = () => {
     )
 }
 
-const CategoryItem = ({ category }: { category: category }) => {
+const CategoryItem = ({ category }: { category: Category }) => {
     return (
         <Pressable>
             {({ pressed }) => (
@@ -68,7 +68,7 @@ const CategoryItem = ({ category }: { category: category }) => {
 
     )
 }
-const categories: category[] = [
+const categories: Category[] = [
     {
         id: 1,
         name: 'Hot Dog',

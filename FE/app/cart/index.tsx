@@ -52,7 +52,7 @@ const Cart = () => {
     )
 }
 
-const CartItem = ({ cart }: { cart: cart }) => (
+const CartItem = ({ cart }: { cart: Cart }) => (
     <Pressable>
         {({ pressed }) => (
             <MotiView
@@ -94,7 +94,7 @@ const CartItem = ({ cart }: { cart: cart }) => (
     </Pressable>
 )
 
-const cartData: cart[] = [
+const cartData: Cart[] = [
     {
         id: 1,
         foodName: "Margherita Pizza",

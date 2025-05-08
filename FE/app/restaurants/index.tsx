@@ -31,7 +31,7 @@ const AllRestaurants = () => {
         </View>
     )
 }
-const restaurants: restaurant[] = [
+const restaurants: Restaurant[] = [
     {
         id: 1,
         name: 'Burger King',

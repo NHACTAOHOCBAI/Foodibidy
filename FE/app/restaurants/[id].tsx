@@ -97,7 +97,7 @@ const Foods = () => (
 
 export default RestaurantDetail
 
-const restaurantData: restaurant = {
+const restaurantData: Restaurant = {
     id: 1,
     name: 'Burger King',
     ownerName: 'John Smith',

@@ -69,7 +69,7 @@ const SuggestedRestaurant = () => (
     </View>
 )
 
-const SuggestedRestaurantItem = ({ item }: { item: restaurant }) => (
+const SuggestedRestaurantItem = ({ item }: { item: Restaurant }) => (
     <View className='flex-row gap-[10px] pb-[14px] w-full border-b-[1px] border-b-[#EBEBEB]'>
         <Image
             className='bg-accent w-[60px] h-[50px] rounded-[8px]'
@@ -132,7 +132,7 @@ const recentKeywords = [
     "Pizza"
 ]
 
-const restaurants: restaurant[] = [
+const restaurants: Restaurant[] = [
     {
         id: 1,
         name: 'Burger King',

@@ -3,7 +3,7 @@ import { MotiView } from 'moti';
 import { useRouter } from 'expo-router';
 import { icons } from '@/constants/icons';
 interface SmallRestaurantItemProps {
-    restaurant: restaurant
+    restaurant: Restaurant
 }
 const SmallRestaurantItem = ({ restaurant }: SmallRestaurantItemProps) => {
     const router = useRouter();

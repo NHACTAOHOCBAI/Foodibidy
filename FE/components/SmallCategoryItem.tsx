@@ -2,7 +2,7 @@ import { Image, Pressable, Text, View } from 'react-native'
 import { MotiView } from 'moti';
 import { useRouter } from 'expo-router';
 interface SmallCategoryItemProps {
-    category: category
+    category: Category
 }
 const SmallCategoryItem = ({ category }: SmallCategoryItemProps) => {
     const router = useRouter();

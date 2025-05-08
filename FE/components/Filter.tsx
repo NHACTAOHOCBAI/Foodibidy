@@ -107,6 +107,7 @@ const Filter = () => {
                     <Button
                         onPress={handleFilter}
                         title='Filter'
+                        size='large'
                     />
                 </View>
             </View>
@@ -130,7 +131,7 @@ const filterData = [
 const priceData = [
     "$", "$$", "$$$"
 ]
-const categories: category[] = [
+const categories: Category[] = [
     {
         id: 1,
         name: 'Tung tung tung shaur',

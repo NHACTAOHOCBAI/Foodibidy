@@ -7,7 +7,7 @@ import SmallRestaurantItem from '@/components/SmallRestaurantItem'
 import { icons } from '@/constants/icons'
 import { Link } from 'expo-router'
 import { FlatList, Image, ScrollView, Text, View } from 'react-native'
-const categories: category[] = [
+const categories: Category[] = [
   {
     id: 1,
     name: 'Hot Dog',
@@ -45,7 +45,7 @@ const categories: category[] = [
   }
 ];
 
-const restaurants: restaurant[] = [
+const restaurants: Restaurant[] = [
   {
     id: 1,
     name: 'Burger King',
@@ -223,7 +223,7 @@ const foods: Food[] = [
   }
 ];
 
-const categoriesList: category[] = [{
+const categoriesList: Category[] = [{
   id: 0,
   name: 'All',
   note: '',
