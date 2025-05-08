@@ -2,8 +2,8 @@
 import CategoryItem from '@/components/CategoryItem'
 import SearchInput from '@/components/SearchInput'
 import { icons } from '@/constants/icons'
-import { Link } from 'expo-router'
-import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from 'react-native'
+import { Link, useRouter } from 'expo-router'
+import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, Text, View } from 'react-native'
 import RestaurantItem from '@/components/RestaurantItem'
 import FoodItem from '@/components/FoodItem'
 import { useState } from 'react'
@@ -63,75 +63,84 @@ const Header = () => (
   </View>
 )
 
-const Categories = () => (
-  <View>
+const Categories = () => {
+  const router = useRouter();
+  return (
+    <Pressable
+      onPress={() => router.push('/categories')}>
 
-    <View className='px-[24px] flex-row justify-between items-center '>
-      <Text className='text-[#32343E] text-[20px]'>All Categories</Text>
-      <Link href={'/categories'} asChild>
-        <View className='flex-row items-center gap-[10px]'>
-          <Text className='text-[#333333] text-[16px] '>See All</Text>
-          <Image
-            tintColor={"#A0A5BA"}
-            source={icons.arrow}
-            resizeMode='contain'
-            className='w-[10px] h-[10px]'
+      <View className='px-[24px] flex-row justify-between items-center '>
+        <Text className='text-[#32343E] text-[20px]'>All Categories</Text>
+        <Link href={'/categories'} asChild>
+          <View className='flex-row items-center gap-[10px]'>
+            <Text className='text-[#333333] text-[16px] '>See All</Text>
+            <Image
+              tintColor={"#A0A5BA"}
+              source={icons.arrow}
+              resizeMode='contain'
+              className='w-[10px] h-[10px]'
+            />
+          </View>
+        </Link>
+      </View>
+
+      <FlatList className='py-[20px] '
+        data={categoriesList}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          gap: 7,
+          paddingLeft: 24,
+          paddingRight: 40,
+        }}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <CategoryItem
+            category={item}
           />
-        </View>
-      </Link>
-    </View>
+        )}
+      />
+    </Pressable>
+  )
+}
 
-    <FlatList className='py-[20px] '
-      data={categoriesList}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{
-        gap: 7,
-        paddingLeft: 24,
-        paddingRight: 40,
-      }}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <CategoryItem
-          category={item}
-        />
-      )}
-    />
-  </View>
-)
+const Restaurants = () => {
+  const router = useRouter();
+  return (
+    <Pressable
+      className='mt-[12px] px-[24px]'
+      onPress={() => router.push('/restaurants')}>
+      <View className='flex-row justify-between items-center '>
+        <Text className='text-[#32343E] text-[20px]'>Open Restaurants</Text>
+        <Link href={'/restaurants'} asChild>
+          <View className='flex-row items-center gap-[10px]'>
+            <Text className='text-[#333333] text-[16px] '>See All</Text>
+            <Image
+              tintColor={"#A0A5BA"}
+              source={icons.arrow}
+              resizeMode='contain'
+              className='w-[10px] h-[10px]' />
+          </View>
+        </Link>
+      </View>
 
-const Restaurants = () => (
-  <View className='mt-[12px] px-[24px]'>
-    <View className='flex-row justify-between items-center '>
-      <Text className='text-[#32343E] text-[20px]'>Open Restaurants</Text>
-      <Link href={'/restaurants'} asChild>
-        <View className='flex-row items-center gap-[10px]'>
-          <Text className='text-[#333333] text-[16px] '>See All</Text>
-          <Image
-            tintColor={"#A0A5BA"}
-            source={icons.arrow}
-            resizeMode='contain'
-            className='w-[10px] h-[10px]' />
-        </View>
-      </Link>
-    </View>
-
-    <FlatList className='py-[20px]'
-      data={restaurants}
-      scrollEnabled={false}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        gap: 28,
-      }}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <RestaurantItem
-          restaurant={item}
-        />
-      )}
-    />
-  </View >
-)
+      <FlatList className='py-[20px]'
+        data={restaurants}
+        scrollEnabled={false}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          gap: 28,
+        }}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <RestaurantItem
+            restaurant={item}
+          />
+        )}
+      />
+    </Pressable >
+  )
+}
 
 const Foods = () => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
