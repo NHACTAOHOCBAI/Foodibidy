@@ -55,3 +55,16 @@ interface cart {
     price: number,
     restaurantName: string;
 }
+
+interface Account {
+    id: number,
+    name: string,
+    address: {
+        type: string,
+        location: string
+    }[],
+    phone: string,
+    email: string,
+    avatar: string,
+    bio: string
+}

@@ -10,6 +10,14 @@ import subtract from '@/assets/icons/subtract.png';
 import close from '@/assets/icons/close.png';
 import dots from '@/assets/icons/dots.png';
 import heart from '@/assets/icons/heart.png'
+import person from '@/assets/icons/person.png'
+import map from '@/assets/icons/map.png'
+import logout from '@/assets/icons/logout.png'
+import email from '@/assets/icons/email.png'
+import call from '@/assets/icons/call.png';
+import deleteIcon from '@/assets/icons/delete.png'
+import edit from '@/assets/icons/edit.png'
+
 export const icons = {
     home: 'M16.1225 6.00751L11.21 2.07751C10.25 1.31251 8.74997 1.30501 7.79747 2.07001L2.88497 6.00751C2.17997 6.57001 1.75247 7.69501 1.90247 8.58001L2.84747 14.235C3.06497 15.5025 4.24247 16.5 5.52497 16.5H13.475C14.7425 16.5 15.9425 15.48 16.16 14.2275L17.105 8.57251C17.24 7.69501 16.8125 6.57001 16.1225 6.00751ZM10.0625 13.5C10.0625 13.8075 9.80747 14.0625 9.49997 14.0625C9.19247 14.0625 8.93747 13.8075 8.93747 13.5V11.25C8.93747 10.9425 9.19247 10.6875 9.49997 10.6875C9.80747 10.6875 10.0625 10.9425 10.0625 11.25V13.5Z',
     order: 'M11.8368 13.6666H1.17008C0.801898 13.6666 0.503418 13.3681 0.503418 12.9999V0.999919C0.503418 0.631732 0.801898 0.333252 1.17008 0.333252H11.8368C12.205 0.333252 12.5034 0.631732 12.5034 0.999919V12.9999C12.5034 13.3681 12.205 13.6666 11.8368 13.6666ZM11.1701 12.3333V1.66659H1.83675V12.3333H11.1701ZM4.50342 2.99992V4.33325C4.50342 5.43782 5.39883 6.33325 6.50343 6.33325C7.60796 6.33325 8.50343 5.43782 8.50343 4.33325V2.99992H9.83676V4.33325C9.83676 6.17418 8.34436 7.66658 6.50343 7.66658C4.66247 7.66658 3.17008 6.17418 3.17008 4.33325V2.99992H4.50342Z',
@@ -25,7 +33,14 @@ export const icons = {
     subtract,
     close,
     dots,
-    heart
+    heart,
+    person,
+    map,
+    logout,
+    email,
+    call,
+    deleteIcon,
+    edit
 };
 
 
