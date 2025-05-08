@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import { View, Text, Pressable, Image } from 'react-native'
-interface SuggesteItemProps {
+interface Props {
     type: "recentKeywords" | "categories"
     recentKeywords?: string
     categories?: {
@@ -9,7 +9,7 @@ interface SuggesteItemProps {
         name: string,
     },
 }
-const SuggestedItem = ({ categories, recentKeywords, type }: SuggesteItemProps) => {
+const SuggestedItem = ({ categories, recentKeywords, type }: Props) => {
     // const router = useRouter();
     // const onPress = () => {
     //     if (categories.id === 0) {
@@ -24,7 +24,7 @@ const SuggestedItem = ({ categories, recentKeywords, type }: SuggesteItemProps) 
         >
             {({ pressed }) => (
                 <MotiView
-                    className="border-[1px] border-gray-200 flex-row items-center rounded-full px-[8px] h-[46px] min-w-[70px] justify-center max-w-[130px]"
+                    className="border-[1px] border-gray-200 items-center rounded-full px-[8px] h-[46px] min-w-[70px] justify-center max-w-[130px]"
                     style={{
                         boxShadow: " 0 1px 4px 0 rgba(0, 0, 0, 0.1)"
                     }}

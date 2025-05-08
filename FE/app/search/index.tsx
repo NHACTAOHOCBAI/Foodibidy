@@ -1,15 +1,26 @@
 import SearchInput from '@/components/SearchInput'
-import SmallItem from '@/components/FoodItem'
 import SuggestedItem from '@/components//SuggestedItem'
 import { icons } from '@/constants/icons'
-import { FlatList, StyleSheet, ScrollView, Text, View, Image } from 'react-native'
-
+import { FlatList, ScrollView, Text, View, Image, ActivityIndicator } from 'react-native'
+import { useState } from 'react'
+import FoodItem from '@/components/FoodItem'
+import { Link } from 'expo-router'
+const PAGE_SIZE = 4;
 const SearchScreen = () => {
+    const handleSearch = (value: string) => {
+        console.log(value)
+    }
     return (
-        <View className="bg-slate-300">
+        <View className="bg-slate-300 flex-1">
             {/* <Header /> */}
-            <Header />
-            <ScrollView className='bg-slate-100 w-full h-full z-[1]'>
+            <Header
+                handleSearch={handleSearch}
+            />
+            <ScrollView
+                className='bg-white flex-1 z-[1]'
+                contentContainerStyle={{
+                    paddingBottom: 400
+                }}>
                 <RecentKeyword />
                 <SuggestedRestaurant />
                 <Foods />
@@ -18,11 +29,12 @@ const SearchScreen = () => {
     )
 }
 
-const Header = () => (
-    <View className=' pt-[123px] pb-[10px] bg-white'>
-        <View className='px-[24px]'>
-            <SearchInput placeholder=' Search for food, groceries, drinks...' />
-        </View>
+const Header = ({ handleSearch }: any) => (
+    <View className='pt-[123px] px-[24px] pb-[10px] bg-white'>
+        <SearchInput
+            handleSubmit={handleSearch}
+            autoFocus={true}
+            placeholder=' Search for food, groceries, drinks...' />
     </View>
 )
 
@@ -49,14 +61,13 @@ const RecentKeyword = () => (
 )
 
 const SuggestedRestaurant = () => (
-    <View className='pt-[20px]'>
-        <Text className='text-[#32343E] text-[20px] px-[24px]'>Suggested Restaurants</Text>
+    <View className='pt-[20px]  px-[24px]'>
+        <Text className='text-[#32343E] text-[20px]'>Suggested Restaurants</Text>
         <FlatList className='py-[20px]'
             data={restaurants}
             scrollEnabled={false}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
-                paddingHorizontal: 24,
                 gap: 14,
             }}
             keyExtractor={(item) => item.id.toString()}
@@ -70,54 +81,75 @@ const SuggestedRestaurant = () => (
 )
 
 const SuggestedRestaurantItem = ({ item }: { item: Restaurant }) => (
-    <View className='flex-row gap-[10px] pb-[14px] w-full border-b-[1px] border-b-[#EBEBEB]'>
-        <Image
-            className='bg-accent w-[60px] h-[50px] rounded-[8px]'
-        />
-        <View className='gap-[6px]' >
-            <Text className='text-[16px]'>
-                {item.name}
-            </Text>
-            <View className='flex-row gap-[2px] items-center'>
-                <Image
-                    resizeMode='contain'
-                    source={icons.star}
-                    className='w-7 h-5'
-                />
-                <Text className='text-[16px]'>{item.rate}</Text>
+    <Link href={`/restaurants/${item.id}`}>
+        <View className='flex-row gap-[10px] pb-[14px] w-full border-b-[1px] border-b-[#EBEBEB]'>
+            <Image
+                className='bg-accent w-[60px] h-[50px] rounded-[8px]'
+            />
+            <View className='gap-[6px] flex-1' >
+                <Text
+                    numberOfLines={1}
+                    className='text-[16px]'>
+                    {item.name}
+                </Text>
+                <View className='flex-row gap-[2px] items-center'>
+                    <Image
+                        resizeMode='contain'
+                        source={icons.star}
+                        className='w-7 h-5'
+                    />
+                    <Text className='text-[16px]'>{item.rate}</Text>
+                </View>
             </View>
         </View>
-    </View>
+    </Link>
 )
 
-const Foods = () => (
-    <View className='mt-[12px]'>
-        <View className='px-[24px] flex-row justify-between items-center '>
-            <Text className='text-[#32343E] text-[20px]'>Popular Foods</Text>
+const Foods = () => {
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    const [loadingMore, setLoadingMore] = useState(false);
+
+    // Hàm load thêm dữ liệu
+    const handleLoadMore = () => {
+        if (visibleCount >= foods.length || loadingMore) return;
+
+        setLoadingMore(true);
+
+        // Mô phỏng delay tải dữ liệu (API call)
+        setTimeout(() => {
+            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, foods.length));
+            setLoadingMore(false);
+        }, 2000);
+    };
+
+    return (
+        <View className="mt-[12px] px-[24px]">
+            <Text className="text-[#32343E] text-[20px]">Popular Foods</Text>
+
+            <FlatList
+                className="py-[20px]"
+                data={foods.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
+                scrollEnabled={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ gap: 28 }}
+                columnWrapperStyle={{ justifyContent: 'space-between' }}
+                numColumns={2}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => <FoodItem food={item} />}
+
+                // Lazy loading props
+                onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
+                onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
+                initialNumToRender={PAGE_SIZE} // Render ban đầu
+                maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
+
+                ListFooterComponent={loadingMore ? (
+                    <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
+                ) : null} // Hiển thị loader khi đang tải thêm
+            />
         </View>
-
-        <FlatList className='py-[20px] pb-[400px]'
-            data={foods}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-                paddingHorizontal: 24,
-                gap: 28,
-            }}
-            columnWrapperStyle={{
-                justifyContent: 'space-between',
-
-            }}
-            numColumns={2}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-                <SmallItem
-                    food={item}
-                />
-            )}
-        />
-    </View>
-)
+    );
+};
 export default SearchScreen
 // data
 const recentKeywords = [

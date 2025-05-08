@@ -3,10 +3,11 @@ import CategoryItem from '@/components/CategoryItem'
 import SearchInput from '@/components/SearchInput'
 import { icons } from '@/constants/icons'
 import { Link } from 'expo-router'
-import { FlatList, Image, ScrollView, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from 'react-native'
 import RestaurantItem from '@/components/RestaurantItem'
 import FoodItem from '@/components/FoodItem'
-
+import { useState } from 'react'
+const PAGE_SIZE = 4;
 const index = () => {
   return (
     <View className='flex-1 bg-white  '>
@@ -52,10 +53,13 @@ const Header = () => (
       <Text className='text-[16px] text-[#1E1D1D]'>{`Hey ${myProfile.name.split(" ").pop()}, `}<Text className='font-bold'>Good Afternoon!</Text></Text>
     </View>
 
-    <SearchInput
+    <Link
       className='mt-[16px]'
-      placeholder=' Search for food, groceries, drinks...' />
-
+      href={'/search'}>
+      <SearchInput
+        editable={false}
+        placeholder=' Search for food, groceries, drinks...' />
+    </Link>
   </View>
 )
 
@@ -129,32 +133,52 @@ const Restaurants = () => (
   </View >
 )
 
-const Foods = () => (
-  <View className='mt-[12px] px-[24px]'>
-    <Text className='text-[#32343E] text-[20px]'>Popular Foods</Text>
+const Foods = () => {
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-    <FlatList
-      className='py-[20px]'
-      data={foods}
-      scrollEnabled={false}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        gap: 28,
-      }}
-      columnWrapperStyle={{
-        justifyContent: 'space-between',
+  // Hàm load thêm dữ liệu
+  const handleLoadMore = () => {
+    if (visibleCount >= foods.length || loadingMore) return;
 
-      }}
-      numColumns={2}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <FoodItem
-          food={item}
-        />
-      )}
-    />
-  </View>
-)
+    setLoadingMore(true);
+
+    // Mô phỏng delay tải dữ liệu (API call)
+    setTimeout(() => {
+      setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, foods.length));
+      setLoadingMore(false);
+    }, 2000);
+  };
+
+  return (
+    <View className="mt-[12px] px-[24px]">
+      <Text className="text-[#32343E] text-[20px]">Popular Foods</Text>
+
+      <FlatList
+        className="py-[20px]"
+        data={foods.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
+        scrollEnabled={false}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ gap: 28 }}
+        columnWrapperStyle={{ justifyContent: 'space-between' }}
+        numColumns={2}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <FoodItem food={item} />}
+
+        // Lazy loading props
+        onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
+        onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
+        initialNumToRender={PAGE_SIZE} // Render ban đầu
+        maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
+
+        ListFooterComponent={loadingMore ? (
+          <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
+        ) : null} // Hiển thị loader khi đang tải thêm
+      />
+    </View>
+  );
+};
+
 
 const categories: Category[] = [
   {
