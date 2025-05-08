@@ -29,7 +29,6 @@ export default function RootLayout() {
   return (
     <>
       <Stack
-        initialRouteName="address"
         screenOptions={{
           animation: 'slide_from_right',
           headerTransparent: true
