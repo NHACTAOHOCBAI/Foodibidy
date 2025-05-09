@@ -1,5 +1,4 @@
 import { TextInput } from 'react-native';
-import React from 'react';
 
 interface InputProps {
     title?: string;

@@ -1,10 +1,12 @@
 
+import { useData } from '@/context/DataContext';
 import { Link } from 'expo-router';
 import { MotiView } from 'moti'
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, Text, View } from 'react-native'
 const PAGE_SIZE = 6;
 const AllCategories = () => {
+    const { categories } = useData();
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [loadingMore, setLoadingMore] = useState(false);
 
@@ -94,55 +96,4 @@ const CategoryItem = ({ category }: { category: Category }) => {
         </Link>
     )
 }
-const categories: Category[] = [
-    {
-        id: 1,
-        name: 'Hot Dog',
-        note: 'A popular fast food with sausage and bun.',
-        createdAt: '2025-05-01T09:00:00.000Z',
-        image: ""
-    },
-    {
-        id: 1,
-        name: 'Hot Dog',
-        note: 'A popular fast food with sausage and bun.',
-        createdAt: '2025-05-01T09:00:00.000Z',
-        image: ""
-    },
-    {
-        id: 1,
-        name: 'Hot Dog',
-        note: 'A popular fast food with sausage and bun.',
-        createdAt: '2025-05-01T09:00:00.000Z',
-        image: ""
-    },
-    {
-        id: 2,
-        name: 'Pizza',
-        note: 'An Italian baked dish with various toppings.',
-        createdAt: '2025-05-02T09:00:00.000Z',
-        image: ""
-    },
-    {
-        id: 3,
-        name: 'Sushi',
-        note: 'A Japanese dish made with rice and fresh seafood.',
-        createdAt: '2025-05-03T09:00:00.000Z',
-        image: ""
-    },
-    {
-        id: 4,
-        name: 'Burger',
-        note: 'An American sandwich with meat, cheese, and veggies.',
-        createdAt: '2025-05-04T09:00:00.000Z',
-        image: ""
-    },
-    {
-        id: 5,
-        name: 'Salad',
-        note: 'A healthy mix of vegetables, great for diets.',
-        createdAt: '2025-05-05T09:00:00.000Z',
-        image: ""
-    }
-];
 export default AllCategories

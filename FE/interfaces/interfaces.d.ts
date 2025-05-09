@@ -19,17 +19,17 @@ interface Restaurant {
     }[],
     description: string,
     reviews: number,
-
+    status: "cho_duyet" | "hoat_dong" | "dong_cua"
 }
 
 interface Food {
     id: number;
-    name: string;
-    categories: string[];
-    note: string;
-    image: string;
-    price: number;
     restaurantName: string;
+    category: string;
+    name: string;
+    note: string;
+    price: number;
+    image: string;
     sold: number;
     remaining: number | null;
     createdAt: string;
@@ -38,17 +38,32 @@ interface Food {
 
 interface Order {
     id: number;
-    name: string;
-    image: string;
+    food: {
+        idFood: number,
+        foodName: string,
+        image: string;
+        quantity: number
+    }[]
     price: number;
     quantity: number;
     orderedAt: string;
-    status: "Completed" | "Canceled" | "Shipping"
-    type: "Food" | "Drink",
+    status: "Completed" | "Canceled" | "Shipping",
+    restaurantName: string,
     receivedAt: string
 }
 
-interface Cart {
+interface DetailOrder {
+    id: number,
+    foodName: string,
+    price: number,
+    quantity: number,
+    receivedAt: string,
+    image: string,
+    status: "Completed" | "Canceled",
+    category: string
+}
+
+interface CartItem {
     id: number,
     foodName: string,
     quantity: number,

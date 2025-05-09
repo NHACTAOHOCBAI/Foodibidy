@@ -4,21 +4,23 @@ import QuantitySelector from '@/components/QuantitySelector'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
 import { useState } from 'react'
+import { useData } from '@/context/DataContext'
 
 const PAGE_SIZE = 4
 const Cart = () => {
+    const { cart } = useData();
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [loadingMore, setLoadingMore] = useState(false);
 
     // Hàm load thêm dữ liệu
     const handleLoadMore = () => {
-        if (visibleCount >= cartData.length || loadingMore) return;
+        if (visibleCount >= cart.length || loadingMore) return;
 
         setLoadingMore(true);
 
         // Mô phỏng delay tải dữ liệu (API call)
         setTimeout(() => {
-            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, cartData.length));
+            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, cart.length));
             setLoadingMore(false);
         }, 2000);
     };
@@ -31,7 +33,7 @@ const Cart = () => {
                 className=' w-full h-full z-[1] px-[24px] '>
                 <FlatList
                     className="py-[20px]"
-                    data={cartData.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
+                    data={cart.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
                     scrollEnabled={false}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ gap: 28 }}
@@ -75,7 +77,7 @@ const Cart = () => {
     )
 }
 
-const CartItem = ({ cart }: { cart: Cart }) => (
+const CartItem = ({ cart }: { cart: CartItem }) => (
     <Pressable>
         {({ pressed }) => (
             <MotiView
@@ -124,43 +126,6 @@ const CartItem = ({ cart }: { cart: Cart }) => (
     </Pressable>
 )
 
-const cartData: Cart[] = [
-    {
-        id: 1,
-        foodName: "Margherita Pizza",
-        quantity: 2,
-        price: 12.99,
-        restaurantName: "Luigi's Italian Kitchen"
-    },
-    {
-        id: 2,
-        foodName: "Beef Burger",
-        quantity: 1,
-        price: 8.5,
-        restaurantName: "Burger Town"
-    },
-    {
-        id: 3,
-        foodName: "Salmon Sushi Set",
-        quantity: 3,
-        price: 18.0,
-        restaurantName: "Tokyo Sushi"
-    },
-    {
-        id: 4,
-        foodName: "Pad Thai",
-        quantity: 2,
-        price: 10.75,
-        restaurantName: "Thai Express"
-    },
-    {
-        id: 5,
-        foodName: "Chicken Biryani",
-        quantity: 1,
-        price: 9.99,
-        restaurantName: "Spice of India"
-    }
-];
 
 export default Cart
 

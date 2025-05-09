@@ -1,10 +1,12 @@
 import Button from '@/components/Button';
+import { useData } from '@/context/DataContext';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View, ScrollView, FlatList, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 
 const PAGE_SIZE = 4;
 const ongoing = () => {
+    const { orders } = useData();
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [loadingMore, setLoadingMore] = useState(false);
 
@@ -54,6 +56,12 @@ const ongoing = () => {
 
 const OrderItem = ({ order }: { order: Order }) => {
     const router = useRouter();
+    const orderTitle = order.food.map((value) => (
+        `${value.foodName} (${value.quantity})`
+    )).join(',')
+    const orderQuantity = order.food.reduce((total, value) => (
+        total + value.quantity
+    ), 0)
     return (
         <TouchableOpacity
             activeOpacity={1}
@@ -61,24 +69,31 @@ const OrderItem = ({ order }: { order: Order }) => {
         >
             <View className='pb-[16px] border-b-[1px] border-b-gray-100'>
                 <Text className='text-[14px]'>
-                    {order.type}
+                    {order.restaurantName}
                 </Text>
             </View>
 
             <View className='mt-[16px] flex-row items-center '>
-                <Image
-                    className='bg-accent w-[60px] h-[60px] rounded-[8px]'
-                />
+                <View>
+                    {order.food.length > 1 && <Image
+                        source={{ uri: order.food[1].image ? order.food[1].image : undefined }}
+                        className='bg-blue-200 absolute w-[60px] h-[60px] border-[1px] rounded-[8px] rotate-12'
+                    />}
+                    <Image
+                        source={{ uri: order.food[0].image ? order.food[0].image : undefined }}
+                        className='bg-accent w-[60px] h-[60px] rounded-[8px] border-[1px]'
+                    />
+                </View>
 
                 <View className='ml-[14px] flex-1 gap-[10px]'>
                     <View className='flex-row justify-between' >
-                        <Text className='text-[14px] font-bold'>{order.name}</Text>
+                        <Text className='text-[14px] font-medium'>{orderTitle}</Text>
                         <Text className='text-[#6B6E82] underline'>{`#${order.id}`}</Text>
                     </View>
                     <View className='flex-row gap-[14px]'>
                         <Text className='text-[14px] font-bold'>{`$${order.price}`}</Text>
                         <View className='w-[1px] h-full bg-gray-100'></View>
-                        <Text className='text-[14px] text-[#6B6E82]'>{`${order.quantity} Items`}</Text>
+                        <Text className='text-[14px] text-[#6B6E82]'>{`${orderQuantity} Items`}</Text>
                     </View>
                 </View>
             </View>
@@ -98,62 +113,5 @@ const OrderItem = ({ order }: { order: Order }) => {
     )
 }
 
-const orders: Order[] = [
-    {
-        id: 1,
-        name: "Grilled Chicken Rice",
-        image: "",
-        price: 7.5,
-        quantity: 2,
-        orderedAt: "2025-05-01T12:30:00Z",
-        status: "Completed",
-        type: "Food",
-        receivedAt: '2025-05-01T12:30:00Z'
-    },
-    {
-        id: 2,
-        name: "Mango Smoothie",
-        image: "",
-        price: 4.0,
-        quantity: 1,
-        orderedAt: "2025-05-02T09:15:00Z",
-        status: "Shipping",
-        type: "Drink",
-        receivedAt: '2025-05-01T12:30:00Z'
-    },
-    {
-        id: 3,
-        name: "Beef Noodle Soup",
-        image: "",
-        price: 8.5,
-        quantity: 1,
-        orderedAt: "2025-05-03T18:00:00Z",
-        status: "Canceled",
-        type: "Food",
-        receivedAt: '2025-05-01T12:30:00Z'
-    },
-    {
-        id: 4,
-        name: "Lemon Tea",
-        image: "",
-        price: 3.0,
-        quantity: 3,
-        orderedAt: "2025-05-04T14:45:00Z",
-        status: "Completed",
-        type: "Drink",
-        receivedAt: '2025-05-01T12:30:00Z'
-    },
-    {
-        id: 5,
-        name: "Spaghetti Carbonara",
-        image: "",
-        price: 9.5,
-        quantity: 1,
-        orderedAt: "2025-05-05T19:30:00Z",
-        status: "Shipping",
-        type: "Food",
-        receivedAt: '2025-05-01T12:30:00Z'
-    }
-];
 
 export default ongoing

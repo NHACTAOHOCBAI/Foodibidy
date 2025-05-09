@@ -4,6 +4,7 @@ import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { icons } from "@/constants/icons";
 import Filter from "@/components/Filter";
 import { FilterProvider, useFilter } from "@/context/FilterContext";
+import { DataProvider } from "@/context/DataContext";
 
 const CustomHeader = ({ title, isShowDots, isShowHeart, color = "" }: any) => {
   const router = useRouter();
@@ -135,8 +136,10 @@ const InnerLayout = () => {
 
 export default function RootLayout() {
   return (
-    <FilterProvider>
-      <InnerLayout />
-    </FilterProvider>
+    <DataProvider>
+      <FilterProvider>
+        <InnerLayout />
+      </FilterProvider>
+    </DataProvider>
   )
 }
