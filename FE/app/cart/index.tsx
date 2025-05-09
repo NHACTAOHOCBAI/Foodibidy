@@ -1,29 +1,52 @@
-import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { MotiView, ScrollView } from 'moti'
 import QuantitySelector from '@/components/QuantitySelector'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
+import { useState } from 'react'
 
+const PAGE_SIZE = 4
 const Cart = () => {
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    const [loadingMore, setLoadingMore] = useState(false);
 
+    // Hàm load thêm dữ liệu
+    const handleLoadMore = () => {
+        if (visibleCount >= cartData.length || loadingMore) return;
+
+        setLoadingMore(true);
+
+        // Mô phỏng delay tải dữ liệu (API call)
+        setTimeout(() => {
+            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, cartData.length));
+            setLoadingMore(false);
+        }, 2000);
+    };
     return (
-        <View className='pt-[120px] bg-slate-100'>
-            <ScrollView className=' w-full h-full z-[1] px-[24px] '>
-                <FlatList className='py-[20px]'
-                    data={cartData}
+        <View className='pt-[120px] bg-slate-700'>
+            <ScrollView
+                contentContainerStyle={{
+                    paddingBottom: 400
+                }}
+                className=' w-full h-full z-[1] px-[24px] '>
+                <FlatList
+                    className="py-[20px]"
+                    data={cartData.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
                     scrollEnabled={false}
                     showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{
-                        gap: 12,
-                        paddingBottom: 400
-                    }}
+                    contentContainerStyle={{ gap: 28 }}
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <CartItem
-                            key={item.id}
-                            cart={item}
-                        />
-                    )}
+                    renderItem={({ item }) => <CartItem cart={item} />}
+
+                    // Lazy loading props
+                    onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
+                    onEndReachedThreshold={0.5} // Khi cuộn đến 50% cuối danh sách
+                    initialNumToRender={PAGE_SIZE} // Render ban đầu
+                    maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
+
+                    ListFooterComponent={loadingMore ? (
+                        <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
+                    ) : null} // Hiển thị loader khi đang tải thêm
                 />
             </ScrollView>
 
@@ -56,7 +79,7 @@ const CartItem = ({ cart }: { cart: Cart }) => (
     <Pressable>
         {({ pressed }) => (
             <MotiView
-                className=" bg-slate-700 flex-row gap-[20px] w-full rounded-[20px] p-[10px]"
+                className=" bg-slate-700 flex-row gap-[20px] w-full rounded-[20px] p-[10px] py-[0px]"
                 style={{
                     boxShadow: " 0 1px 4px 0 rgba(0, 0, 0, 0.1)"
                 }}
@@ -69,20 +92,27 @@ const CartItem = ({ cart }: { cart: Cart }) => (
                 }}
             >
                 <Image
-                    className="bg-accent w-[130px] h-[130px] rounded-[20px]"
+                    resizeMode='cover'
+                    source={{ uri: "https://file.hstatic.net/200000391061/article/sushi-mon-an-quoc-dan-cua-nguoi-nhat-2_c940b210a8094194b29216c31a3620d0_1024x1024.jpg" }}
+                    className="bg-accent w-[130px] h-[150px] rounded-[20px]"
+                    style={{
+                        transform: [
+                            { rotateX: '40deg' },
+                        ],
+                    }}
                 />
                 <View className='flex-1'>
                     <Text
-                        className='font-medium text-[18px] text-white'
+                        className='font-medium text-[18px] text-white mt-[20px]'
                         numberOfLines={1}>
                         {cart.foodName}
                     </Text>
                     <Text
-                        className='font-bold text-[20px] mt-auto text-white'
+                        className='font-bold text-[20px] text-white mt-[10px]'
                     >
                         {`$${cart.price}`}
                     </Text>
-                    <View className='mt-auto  items-end' >
+                    <View className=' items-end mt-auto mb-[15px]' >
                         <QuantitySelector
                             value={cart.quantity}
                             setValue={() => { }}

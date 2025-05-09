@@ -5,7 +5,7 @@ import { icons } from "@/constants/icons";
 import Filter from "@/components/Filter";
 import { FilterProvider, useFilter } from "@/context/FilterContext";
 
-const CustomHeader = ({ title, isShowDots, isShowHeart }: any) => {
+const CustomHeader = ({ title, isShowDots, isShowHeart, color = "" }: any) => {
   const router = useRouter();
   const { openFilter } = useFilter();
   return (
@@ -18,7 +18,11 @@ const CustomHeader = ({ title, isShowDots, isShowHeart }: any) => {
           source={icons.arrow} resizeMode='contain' className='w-[12px] h-[12px] rotate-180'
         />
       </TouchableOpacity>
-      <Text className="text-[17px] ml-[16px]">
+      <Text className="text-[17px] ml-[16px]"
+        style={{
+          color: color !== "" ? color : ""
+        }}
+      >
         {title}
       </Text>
 
@@ -120,6 +124,7 @@ const InnerLayout = () => {
           options={{
             header: () => <CustomHeader
               title='Cart'
+              color="white"
             />
           }}
         />
