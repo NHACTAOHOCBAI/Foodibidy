@@ -1,29 +1,51 @@
 import Button from '@/components/Button';
 import { useRouter } from 'expo-router';
-import { View, ScrollView, FlatList, Text, Image, TouchableOpacity } from 'react-native'
-import moment from 'moment';
-
+import { useState } from 'react';
+import { View, ScrollView, FlatList, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
+import moment from 'moment'
+const PAGE_SIZE = 4;
 const History = () => {
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    const [loadingMore, setLoadingMore] = useState(false);
+
+    // Hàm load thêm dữ liệu
+    const handleLoadMore = () => {
+        if (visibleCount >= orders.length || loadingMore) return;
+
+        setLoadingMore(true);
+
+        // Mô phỏng delay tải dữ liệu (API call)
+        setTimeout(() => {
+            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, orders.length));
+            setLoadingMore(false);
+        }, 2000);
+    };
     return (
-        <View className='bg-white'>
+        <View className='bg-white flex-1'>
             <ScrollView
-                className=' w-full h-full z-[1] px-[24px] '
                 showsVerticalScrollIndicator={false}
-            >
-                <FlatList className='py-[20px]'
-                    data={orders}
+                className='z-[1] px-[24px]'
+                contentContainerStyle={{
+                    paddingBottom: 400
+                }}>
+                <FlatList
+                    className="py-[20px]"
+                    data={orders.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
                     scrollEnabled={false}
                     showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{
-                        gap: 24,
-                        paddingBottom: 400
-                    }}
+                    contentContainerStyle={{ gap: 28 }}
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <OrderItem
-                            order={item}
-                        />
-                    )}
+                    renderItem={({ item }) => <OrderItem order={item} />}
+
+                    // Lazy loading props
+                    onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
+                    onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
+                    initialNumToRender={PAGE_SIZE} // Render ban đầu
+                    maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
+
+                    ListFooterComponent={loadingMore ? (
+                        <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
+                    ) : null} // Hiển thị loader khi đang tải thêm
                 />
             </ScrollView>
         </View>
