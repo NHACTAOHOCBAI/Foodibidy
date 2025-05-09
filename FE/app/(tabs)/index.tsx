@@ -27,41 +27,44 @@ const index = () => {
   )
 }
 
-const Header = () => (
-  <View className='px-[24px] absolute z-[1]  pb-[10px] bg-white w-full '>
+const Header = () => {
+  const router = useRouter();
+  return (
+    <View className='px-[24px] absolute z-[1]  pb-[10px] bg-white w-full '>
 
-    <View className='flex-row mt-[54px] items-center'>
-      <Image
-        source={myProfile.avatar ? { uri: myProfile.avatar } : undefined}
-        className='w-[45px] h-[45px] rounded-full bg-accent'
-      />
-      <View className='ml-[18px] gap-[3px]'>
-        <Text className='font-bold uppercase text-[12px] text-primary'>Deliver to</Text>
-        <View className='flex-row items-center gap-[9px]'>
-          <Text className='text-[#676767]'>{myProfile.currentAddress.location}</Text>
-          <Image source={icons.triangle} resizeMode='contain' className='w-[13px] h-[10px]' />
+      <View className='flex-row mt-[54px] items-center'>
+        <Image
+          source={myProfile.avatar ? { uri: myProfile.avatar } : undefined}
+          className='w-[45px] h-[45px] rounded-full bg-accent'
+        />
+        <View className='ml-[18px] gap-[3px]'>
+          <Text className='font-bold uppercase text-[12px] text-primary'>Deliver to</Text>
+          <View className='flex-row items-center gap-[9px]'>
+            <Text className='text-[#676767]'>{myProfile.currentAddress.location}</Text>
+            <Image source={icons.triangle} resizeMode='contain' className='w-[13px] h-[10px]' />
+          </View>
         </View>
-      </View>
-      <Link href={'/cart'} asChild>
-        <View className='ml-auto w-[45px] h-[45px] rounded-full items-center justify-center bg-secondary'>
+        <Pressable
+          className='mt-[16px] ml-auto w-[45px] h-[45px] rounded-full items-center justify-center bg-secondary'
+          onPress={() => router.push('/cart')}>
           <Image source={icons.bag} resizeMode='contain' className='w-[24px] h-[24px]' />
-        </View>
+        </Pressable>
+      </View>
+
+      <View className='mt-[24px]' >
+        <Text className='text-[16px] text-[#1E1D1D]'>{`Hey ${myProfile.name.split(" ").pop()}, `}<Text className='font-bold'>Good Afternoon!</Text></Text>
+      </View>
+
+      <Link
+        className='mt-[16px]'
+        href={'/search'}>
+        <SearchInput
+          editable={false}
+          placeholder=' Search for food, groceries, drinks...' />
       </Link>
     </View>
-
-    <View className='mt-[24px]' >
-      <Text className='text-[16px] text-[#1E1D1D]'>{`Hey ${myProfile.name.split(" ").pop()}, `}<Text className='font-bold'>Good Afternoon!</Text></Text>
-    </View>
-
-    <Link
-      className='mt-[16px]'
-      href={'/search'}>
-      <SearchInput
-        editable={false}
-        placeholder=' Search for food, groceries, drinks...' />
-    </Link>
-  </View>
-)
+  )
+}
 
 const Categories = () => {
   const router = useRouter();

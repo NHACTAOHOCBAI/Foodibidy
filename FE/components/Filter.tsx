@@ -1,6 +1,6 @@
 import Button from '@/components/Button';
-import SuggestedItem from '@/components/SuggestedItem';
 import { icons } from '@/constants/icons'
+import { useFilter } from '@/context/FilterContext';
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, Pressable } from 'react-native'
 
@@ -9,7 +9,7 @@ const Filter = () => {
     const [filter, setFilter] = useState<string[]>([]);
     const [priceFilter, setPriceFilter] = useState<string[]>([]);
 
-
+    const { closeFilter } = useFilter();
     const toggleCategoriesSelect = (item: number) => {
         if (categoriesFilter.includes(item)) {
             setCategoriesFilter(categoriesFilter.filter((x) => x !== item));
@@ -36,80 +36,79 @@ const Filter = () => {
         console.log(categoriesFilter, filter, priceFilter)
     }
     return (
-        <View className='w-full h-full absolute z-20 bg-[#273f554f] items-center'>
-            <View className='p-[20px] w-[374px] h-[650px] bg-white absolute mt-[120px] rounded-[12px]'>
-                <View className='flex-row justify-between items-center'>
-                    <Text className='text-[17px]'>Filter your search</Text>
-                    <TouchableOpacity
-                        className='w-[45px] h-[45px] rounded-full items-center justify-center bg-[#ECF0F4]'>
-                        <Image
-                            tintColor="#181C2E"
-                            source={icons.close} resizeMode='contain' className='w-[12px] h-[12px] rotate-180'
-                        />
-                    </TouchableOpacity>
-                </View>
-
-                <View className='mt-[19px]'>
-                    <Text className='uppercase'>Categories</Text>
-                    <View className='flex-row flex-wrap gap-[10px] mt-[13px]'>
-                        {categories.map((value) => {
-                            const isSelected = categoriesFilter.includes(value.id);
-                            return (
-                                <FilterItem
-                                    target={value.id}
-                                    key={value.id}
-                                    title={value.name}
-                                    isSelected={isSelected}
-                                    onPress={toggleCategoriesSelect}
-                                />
-                            )
-                        })}
-                    </View>
-                </View>
-
-                <View className='mt-[32px]'>
-                    <Text className='uppercase'>Filter by</Text>
-                    <View className='flex-row flex-wrap gap-[10px] mt-[13px]'>
-                        {filterData.map((value) => {
-                            const isSelected = filter.includes(value);
-                            return (
-                                <FilterItem
-                                    target={value}
-                                    key={value}
-                                    title={value}
-                                    isSelected={isSelected}
-                                    onPress={toggleFilter}
-                                />
-                            )
-                        })}
-                    </View>
-                </View>
-
-                <View className='mt-[32px]'>
-                    <Text className='uppercase'>Price</Text>
-                    <View className='flex-row flex-wrap gap-[10px] mt-[13px]'>
-                        {priceData.map((value) => {
-                            const isSelected = priceFilter.includes(value);
-                            return (
-                                <FilterItem
-                                    target={value}
-                                    key={value}
-                                    title={value}
-                                    isSelected={isSelected}
-                                    onPress={togglePriceSelect}
-                                />
-                            );
-                        })}
-                    </View>
-                </View>
-
-                <View className='mt-auto'>
-                    <Button
-                        onPress={handleFilter}
-                        title='Filter'
-                        size='large'
+        <View className='p-[20px] w-[374px] h-[650px] bg-white absolute mt-[120px] rounded-[12px]'>
+            <View className='flex-row justify-between items-center'>
+                <Text className='text-[17px]'>Filter your search</Text>
+                <TouchableOpacity
+                    onPress={() => closeFilter()}
+                    className='w-[45px] h-[45px] rounded-full items-center justify-center bg-[#ECF0F4]'>
+                    <Image
+                        tintColor="#181C2E"
+                        source={icons.close} resizeMode='contain' className='w-[12px] h-[12px] rotate-180'
                     />
+                </TouchableOpacity>
+            </View>
+
+            <View className='mt-[19px]'>
+                <Text className='uppercase'>Categories</Text>
+                <View className='flex-row flex-wrap gap-[10px] mt-[13px]'>
+                    {categories.map((value) => {
+                        const isSelected = categoriesFilter.includes(value.id);
+                        return (
+                            <FilterItem
+                                target={value.id}
+                                key={value.id}
+                                title={value.name}
+                                isSelected={isSelected}
+                                onPress={toggleCategoriesSelect}
+                            />
+                        )
+                    })}
                 </View>
+            </View>
+
+            <View className='mt-[32px]'>
+                <Text className='uppercase'>Filter by</Text>
+                <View className='flex-row flex-wrap gap-[10px] mt-[13px]'>
+                    {filterData.map((value) => {
+                        const isSelected = filter.includes(value);
+                        return (
+                            <FilterItem
+                                target={value}
+                                key={value}
+                                title={value}
+                                isSelected={isSelected}
+                                onPress={toggleFilter}
+                            />
+                        )
+                    })}
+                </View>
+            </View>
+
+            <View className='mt-[32px]'>
+                <Text className='uppercase'>Price</Text>
+                <View className='flex-row flex-wrap gap-[10px] mt-[13px]'>
+                    {priceData.map((value) => {
+                        const isSelected = priceFilter.includes(value);
+                        return (
+                            <FilterItem
+                                target={value}
+                                key={value}
+                                title={value}
+                                isSelected={isSelected}
+                                onPress={togglePriceSelect}
+                            />
+                        );
+                    })}
+                </View>
+            </View>
+
+            <View className='mt-auto'>
+                <Button
+                    onPress={handleFilter}
+                    title='Filter'
+                    size='large'
+                />
             </View>
         </View>
     )

@@ -1,5 +1,4 @@
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
 import { icons } from '@/constants/icons'
 import Button from '@/components/Button'
 import QuantitySelector from '@/components/QuantitySelector'
@@ -8,9 +7,14 @@ import { useState } from 'react'
 const FoodDetail = () => {
     const [quantity, setQuantity] = useState(1);
     return (
-        <View className='h-full'>
-            <ScrollView className="bg-white">
+        <View className='flex-1'>
+            <ScrollView
+                className="bg-white"
+                contentContainerStyle={{
+                    paddingBottom: 400
+                }}>
                 <Image
+                    source={{ uri: foodData.image !== "" ? foodData.image : undefined }}
                     className='bg-accent w-full h-[400px] rounded-[20px]'
                     resizeMode="cover" />
                 <View className=' p-[24px] pb-0'>

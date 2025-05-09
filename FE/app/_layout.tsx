@@ -2,9 +2,12 @@ import { Stack, useRouter } from "expo-router";
 import './global.css'
 import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { icons } from "@/constants/icons";
+import Filter from "@/components/Filter";
+import { FilterProvider, useFilter } from "@/context/FilterContext";
 
 const CustomHeader = ({ title, isShowDots, isShowHeart }: any) => {
   const router = useRouter();
+  const { openFilter } = useFilter();
   return (
     <View className="absolute z-20  pt-[50px] pb-[10px] flex-row px-[24px] items-center w-full">
       <TouchableOpacity
@@ -21,6 +24,7 @@ const CustomHeader = ({ title, isShowDots, isShowHeart }: any) => {
 
       {isShowDots &&
         <TouchableOpacity
+          onPress={() => openFilter()}
           className='ml-auto w-[45px] h-[45px] rounded-full items-center justify-center bg-[#ECF0F4]'>
           <Image
             tintColor="#181C2E"
@@ -39,10 +43,19 @@ const CustomHeader = ({ title, isShowDots, isShowHeart }: any) => {
     </View>
   );
 };
-export default function RootLayout() {
+const InnerLayout = () => {
+  const { isFilterOpen } = useFilter();
   return (
-    <>
+    <View className="flex-1">
       <StatusBar hidden />
+      {
+        isFilterOpen && (
+          <View className="absolute top-0 left-0 right-0 bottom-0 z-50 bg-[#020b1493] items-center justify-center">
+            <Filter />
+          </View>
+        )
+      }
+
       <Stack
         screenOptions={{
           animation: 'slide_from_right',
@@ -111,6 +124,14 @@ export default function RootLayout() {
           }}
         />
       </Stack>
-    </>
+    </View>
+  )
+}
+
+export default function RootLayout() {
+  return (
+    <FilterProvider>
+      <InnerLayout />
+    </FilterProvider>
   )
 }
