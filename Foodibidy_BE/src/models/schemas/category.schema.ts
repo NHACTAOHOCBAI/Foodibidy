@@ -14,7 +14,7 @@ export default class Category {
   constructor(category: CategoryType) {
     this.name = category.name || ''
     this.description = category.description || ''
-    this.restaurant_id = category.restaurant_id ?? ''
+    this.restaurant_id = category.restaurant_id || ''
     this.created_at = category.created_at || new Date()
   }
 

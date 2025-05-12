@@ -35,3 +35,6 @@ export const deleteCategory = async (req: Request<CategoryParams>, res: Response
   const result = await categoryService.deleteCategory(req.params.categoryId)
   return res.json({ message: CATEGORY_MESSAGES.DELETE_SUCCESS, result })
 }
+
+
+
