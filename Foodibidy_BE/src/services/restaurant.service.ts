@@ -5,11 +5,7 @@ import Restaurant, { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { RESTAURANT_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { handleFormatDate } from '~/utils/utils'
-import { UserType } from '~/models/schemas/user.schema'
-import { id } from 'date-fns/locale'
-import { snapshot } from 'node:test'
-import { string } from 'zod'
-import { updateRestaurant, deleteRestaurant, getAllRestaurants } from '~/controllers/restaurant.controller'
+
 import { DocumentData, QuerySnapshot } from 'firebase-admin/firestore'
 
 class RestaurantService {

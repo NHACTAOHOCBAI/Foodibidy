@@ -1,31 +1,33 @@
 export interface DishType {
-  id: string
+  id?: string
   restaurant_id: string
   category_id: string
   dish_name: string
   description: string
   price: string
-  dish_image: string
-  purchase_count: string
-  available: boolean
-  remaining_quantity: string | null
-  created_at: Date
-  rating: string
+  dish_image?: string
+  purchase_count?: string
+  available?: boolean
+  remaining_quantity?: number
+  rating?: string
+  created_at?: Date
+  updated_at?: Date
 }
 
 export default class Dish {
-  id: string
+  id?: string
   restaurant_id: string
   category_id: string
   dish_name: string
   description: string
   price: string
-  dish_image: string
-  purchase_count: string
-  available: boolean
-  remaining_quantity: string | null
-  created_at: Date
-  rating: string
+  dish_image?: string
+  purchase_count?: string
+  available?: boolean
+  remaining_quantity?: number
+  rating?: string
+  created_at?: Date
+  updated_at?: Date
 
   constructor(dish: DishType) {
     this.id = dish.id
@@ -38,8 +40,9 @@ export default class Dish {
     this.purchase_count = dish.purchase_count
     this.available = dish.available
     this.remaining_quantity = dish.remaining_quantity
-    this.created_at = dish.created_at
     this.rating = dish.rating
+    this.created_at = dish.created_at
+    this.updated_at = dish.updated_at
   }
 
   toObject(): DishType {
@@ -54,8 +57,9 @@ export default class Dish {
       purchase_count: this.purchase_count,
       available: this.available,
       remaining_quantity: this.remaining_quantity,
+      rating: this.rating,
       created_at: this.created_at,
-      rating: this.rating
+      updated_at: this.updated_at
     }
   }
 }

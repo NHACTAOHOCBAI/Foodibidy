@@ -1,25 +1,33 @@
 export interface AddressType {
-  id: string
-  addressName: string
-  accountId: string
+  id?: string
+  address_name: string
+  account_id: string
+  created_at?: Date
+  updated_at?: Date
 }
 
 export default class Address {
-  id: string
-  addressName: string
-  accountId: string
+  id?: string
+  address_name: string
+  account_id: string
+  created_at?: Date
+  updated_at?: Date
 
   constructor(address: AddressType) {
     this.id = address.id
-    this.addressName = address.addressName
-    this.accountId = address.accountId
+    this.address_name = address.address_name
+    this.account_id = address.account_id
   }
 
   toObject(): AddressType {
+    const createdAt = this.created_at ? this.created_at : Date.now()
+    const updatedAt = this.updated_at ? this.updated_at : Date.now()
     return {
       id: this.id,
-      addressName: this.addressName,
-      accountId: this.accountId
+      address_name: this.address_name,
+      account_id: this.account_id,
+      created_at: createdAt as Date,
+      updated_at: updatedAt as Date
     }
   }
 }

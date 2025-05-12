@@ -1,15 +1,15 @@
 export interface NotificationType {
-  id: string
+  id?: string
   account_id: string
   content: string
-  is_read: boolean
+  is_read?: boolean
 }
 
 export default class Notification {
-  id: string
+  id?: string
   account_id: string
   content: string
-  is_read: boolean
+  is_read?: boolean
 
   constructor(notification: NotificationType) {
     this.id = notification.id

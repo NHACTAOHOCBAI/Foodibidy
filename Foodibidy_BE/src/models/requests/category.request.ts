@@ -10,3 +10,5 @@ export interface CreateCategoryReqBody {
   purchase?: number
   image?: string
 }
+
+export interface UpdateDishReqBody {}

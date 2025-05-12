@@ -73,7 +73,8 @@ export const CATEGORY_MESSAGES = {
   GET_ALL_SUCCESS: 'Get all categories successfully',
   UPDATE_SUCCESS: 'Category updated successfully',
   DELETE_SUCCESS: 'Category deleted successfully',
-  NOT_FOUND: 'Category not found'
+  NOT_FOUND: 'Category not found',
+  SERVER_FAIL: 'Server get an error'
 }
 
 export const ADDRESS_MESSAGES = {
@@ -82,7 +83,8 @@ export const ADDRESS_MESSAGES = {
   GET_ALL_SUCCESS: 'Get all addresses successfully',
   UPDATE_SUCCESS: 'Address updated successfully',
   DELETE_SUCCESS: 'Address deleted successfully',
-  NOT_FOUND: 'Address not found'
+  ADDRESS_NOT_FOUND: 'Address not found',
+  SERVER_FAIL: 'Server get an error'
 }
 
 export const CART_MESSAGES = {
@@ -91,7 +93,8 @@ export const CART_MESSAGES = {
   GET_ALL_SUCCESS: 'Get all carts successfully',
   UPDATE_SUCCESS: 'Cart updated successfully',
   DELETE_SUCCESS: 'Cart deleted successfully',
-  NOT_FOUND: 'Cart not found'
+  CART_NOT_FOUND: 'Cart not found',
+  SERVER_FAIL: 'Server get an error'
 }
 export const DISH_MESSAGES = {
   CREATE_SUCCESS: 'Dish created successfully',
@@ -99,7 +102,8 @@ export const DISH_MESSAGES = {
   GET_ALL_SUCCESS: 'Get all dishes successfully',
   UPDATE_SUCCESS: 'Dish updated successfully',
   DELETE_SUCCESS: 'Dish deleted successfully',
-  NOT_FOUND: 'Dish not found'
+  DISH_NOT_FOUND: 'Dish not found',
+  SERVER_FAIL: 'Server get an error'
 }
 
 export const NOTIFICATION_MESSAGES = {
@@ -108,7 +112,8 @@ export const NOTIFICATION_MESSAGES = {
   GET_ALL_SUCCESS: 'Get all notifications successfully',
   UPDATE_SUCCESS: 'Notification updated successfully',
   DELETE_SUCCESS: 'Notification deleted successfully',
-  NOT_FOUND: 'Notification not found'
+  NOTIFICATION_NOT_FOUND: 'Notification not found',
+  SERVER_FAIL: 'Server get an error'
 }
 export const ORDER_MESSAGES = {
   CREATE_SUCCESS: 'Order placed successfully',
@@ -116,7 +121,8 @@ export const ORDER_MESSAGES = {
   GET_ALL_SUCCESS: 'Get all orders successfully',
   UPDATE_SUCCESS: 'Order updated successfully',
   DELETE_SUCCESS: 'Order deleted successfully',
-  NOT_FOUND: 'Order not found'
+  ORDER_NOT_FOUND: 'Order not found',
+  SERVER_FAIL: 'Server get an error'
 }
 export const REVIEW_MESSAGES = {
   CREATE_SUCCESS: 'Review submitted successfully',
@@ -124,7 +130,8 @@ export const REVIEW_MESSAGES = {
   GET_ALL_SUCCESS: 'Get all reviews successfully',
   UPDATE_SUCCESS: 'Review updated successfully',
   DELETE_SUCCESS: 'Review deleted successfully',
-  NOT_FOUND: 'Review not found'
+  REVIEW_NOT_FOUND: 'Review not found',
+  SERVER_FAIL: 'Server get an error'
 }
 export const RESTAURANT_MESSAGES = {
   CREATE_SUCCESS: 'Restaurant created successfully',

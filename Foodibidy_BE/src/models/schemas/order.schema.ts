@@ -1,7 +1,7 @@
 import { OrderStatus } from '~/constants/enums'
 
 export interface OrderType {
-  id: string
+  id?: string
   account_id: string
   restaurant_id: string
   total_amount: number
@@ -11,7 +11,7 @@ export interface OrderType {
 }
 
 export default class Order {
-  id: string
+  id?: string
   account_id: string
   restaurant_id: string
   total_amount: number
