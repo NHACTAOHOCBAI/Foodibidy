@@ -1,7 +1,16 @@
 import dotenv from 'dotenv'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { getFirestore, Firestore, CollectionReference } from 'firebase-admin/firestore'
+import { AddressType } from '~/models/schemas/address.schema'
+import { CartType } from '~/models/schemas/cart.schema'
+import { CartDetailsType } from '~/models/schemas/cartDetail.schema'
 import { CategoryType } from '~/models/schemas/category.schema'
+import { DishType } from '~/models/schemas/dish.schema'
+import { NotificationType } from '~/models/schemas/notification.schema'
+import { OrderType } from '~/models/schemas/order.schema'
+import { OrderDetailsType } from '~/models/schemas/orderDetail.schema'
+import { RestaurantType } from '~/models/schemas/restaurant.schema'
+import { ReviewType } from '~/models/schemas/review.schema'
 import { UserType } from '~/models/schemas/user.schema'
 
 dotenv.config()
@@ -52,44 +61,44 @@ class DatabaseService {
     return this.db.collection('Users') as CollectionReference<UserType>
   }
 
-  get addresses(): CollectionReference<UserType> {
-    return this.db.collection('Addresses') as CollectionReference<UserType>
+  get addresses(): CollectionReference<AddressType> {
+    return this.db.collection('Addresses') as CollectionReference<AddressType>
   }
 
-  get restaurants(): CollectionReference<UserType> {
-    return this.db.collection('Restaurants') as CollectionReference<UserType>
+  get restaurants(): CollectionReference<RestaurantType> {
+    return this.db.collection('Restaurants') as CollectionReference<RestaurantType>
   }
 
   get categories(): CollectionReference<CategoryType> {
     return this.db.collection('Categories') as CollectionReference<CategoryType>
   }
 
-  get foods(): CollectionReference<UserType> {
-    return this.db.collection('Foods') as CollectionReference<UserType>
+  get dishes(): CollectionReference<DishType> {
+    return this.db.collection('Dishes') as CollectionReference<DishType>
   }
 
-  get carts(): CollectionReference<UserType> {
-    return this.db.collection('Carts') as CollectionReference<UserType>
+  get carts(): CollectionReference<CartType> {
+    return this.db.collection('Carts') as CollectionReference<CartType>
   }
 
-  get cart_details(): CollectionReference<UserType> {
-    return this.db.collection('Cart_details') as CollectionReference<UserType>
+  get cart_details(): CollectionReference<CartDetailsType> {
+    return this.db.collection('Cart_details') as CollectionReference<CartDetailsType>
   }
 
-  get orders(): CollectionReference<UserType> {
-    return this.db.collection('Orders') as CollectionReference<UserType>
+  get orders(): CollectionReference<OrderType> {
+    return this.db.collection('Orders') as CollectionReference<OrderType>
   }
 
-  get order_details(): CollectionReference<UserType> {
-    return this.db.collection('Order_details') as CollectionReference<UserType>
+  get order_details(): CollectionReference<OrderDetailsType> {
+    return this.db.collection('Order_details') as CollectionReference<OrderDetailsType>
   }
 
-  get reviews(): CollectionReference<UserType> {
-    return this.db.collection('Reviews') as CollectionReference<UserType>
+  get reviews(): CollectionReference<ReviewType> {
+    return this.db.collection('Reviews') as CollectionReference<ReviewType>
   }
 
-  get announcements(): CollectionReference<UserType> {
-    return this.db.collection('Announcements') as CollectionReference<UserType>
+  get notifications(): CollectionReference<NotificationType> {
+    return this.db.collection('Notifications') as CollectionReference<NotificationType>
   }
 }
 

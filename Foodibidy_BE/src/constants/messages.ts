@@ -67,26 +67,6 @@ export const USERS_MESSAGES = {
   GMAIL_NOT_VERIFIED: 'Gmail not verified'
 } as const
 
-export const TWEETS_MESSAGES = {
-  CREATE_SUCCESS: 'Create tweet success',
-  INVALID_TYPE: 'Invalid type',
-  INVALID_AUDIENCE: 'Invalid audience',
-  PARENT_ID_MUST_BE_NULL: 'Parent id must be null',
-  PARENT_ID_MUST_BE_A_VALID_TWEET_ID: 'Parent id must be a valid tweet id',
-  CONTENT_MUST_BE_A_NON_EMPTY_STRING: 'Content must be a non-empty string',
-  CONTENT_MUST_BE_EMPTY_STRING: 'Content must be an empty string',
-  HASHTAGS_MUST_BE_ARRAY_OF_STRING: 'Hashtags must be an array of string',
-  MENTIONS_MUST_BE_ARRAY_OF_USER_ID: 'Mentions must be an array of user id',
-  MEDIAS_MUST_BE_ARRAY_OF_MEDIA_OBJECT: 'Medias must be an array of media object'
-} as const
-
-export const BOOKMARKS_MESSAGES = {
-  BOOKMARK_SUCCESS: 'Bookmark success',
-  UNBOOKMARK_SUCCESS: 'Unbookmark success',
-  ALREADY_BOOKMARKED: 'Already bookmarked',
-  ALREADY_UNBOOKMARKED: 'Already unbookmarked'
-} as const
-
 export const CATEGORY_MESSAGES = {
   CREATE_SUCCESS: 'Category created successfully',
   GET_SUCCESS: 'Get category successfully',
@@ -94,4 +74,64 @@ export const CATEGORY_MESSAGES = {
   UPDATE_SUCCESS: 'Category updated successfully',
   DELETE_SUCCESS: 'Category deleted successfully',
   NOT_FOUND: 'Category not found'
+}
+
+export const ADDRESS_MESSAGES = {
+  CREATE_SUCCESS: 'Address created successfully',
+  GET_SUCCESS: 'Get address successfully',
+  GET_ALL_SUCCESS: 'Get all addresses successfully',
+  UPDATE_SUCCESS: 'Address updated successfully',
+  DELETE_SUCCESS: 'Address deleted successfully',
+  NOT_FOUND: 'Address not found'
+}
+
+export const CART_MESSAGES = {
+  CREATE_SUCCESS: 'Cart created successfully',
+  GET_SUCCESS: 'Get cart successfully',
+  GET_ALL_SUCCESS: 'Get all carts successfully',
+  UPDATE_SUCCESS: 'Cart updated successfully',
+  DELETE_SUCCESS: 'Cart deleted successfully',
+  NOT_FOUND: 'Cart not found'
+}
+export const DISH_MESSAGES = {
+  CREATE_SUCCESS: 'Dish created successfully',
+  GET_SUCCESS: 'Get dish successfully',
+  GET_ALL_SUCCESS: 'Get all dishes successfully',
+  UPDATE_SUCCESS: 'Dish updated successfully',
+  DELETE_SUCCESS: 'Dish deleted successfully',
+  NOT_FOUND: 'Dish not found'
+}
+
+export const NOTIFICATION_MESSAGES = {
+  CREATE_SUCCESS: 'Notification created successfully',
+  GET_SUCCESS: 'Get notification successfully',
+  GET_ALL_SUCCESS: 'Get all notifications successfully',
+  UPDATE_SUCCESS: 'Notification updated successfully',
+  DELETE_SUCCESS: 'Notification deleted successfully',
+  NOT_FOUND: 'Notification not found'
+}
+export const ORDER_MESSAGES = {
+  CREATE_SUCCESS: 'Order placed successfully',
+  GET_SUCCESS: 'Get order successfully',
+  GET_ALL_SUCCESS: 'Get all orders successfully',
+  UPDATE_SUCCESS: 'Order updated successfully',
+  DELETE_SUCCESS: 'Order deleted successfully',
+  NOT_FOUND: 'Order not found'
+}
+export const REVIEW_MESSAGES = {
+  CREATE_SUCCESS: 'Review submitted successfully',
+  GET_SUCCESS: 'Get review successfully',
+  GET_ALL_SUCCESS: 'Get all reviews successfully',
+  UPDATE_SUCCESS: 'Review updated successfully',
+  DELETE_SUCCESS: 'Review deleted successfully',
+  NOT_FOUND: 'Review not found'
+}
+export const RESTAURANT_MESSAGES = {
+  CREATE_SUCCESS: 'Restaurant created successfully',
+  GET_SUCCESS: 'Get restaurant successfully',
+  GET_ALL_SUCCESS: 'Get all restaurants successfully',
+  UPDATE_SUCCESS: 'Restaurant updated successfully',
+  DELETE_SUCCESS: 'Restaurant deleted successfully',
+  NOT_FOUND: 'Restaurant not found',
+  SERVER_FAIL: 'Server get an error'
 }
