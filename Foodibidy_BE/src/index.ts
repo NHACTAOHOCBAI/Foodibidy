@@ -5,6 +5,7 @@ import databaseService from './services/database.service'
 import usersService from './services/user.service'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
 import categoriesRouter from './routes/category.route'
+import authRoutes from './routes/auth.route'
 const app = express()
 
 const port = 3000
@@ -15,6 +16,7 @@ app.use(express.json())
 //routes
 app.use('/users', usersRouter)
 app.use('/categories', categoriesRouter)
+app.use('/api/auth', authRoutes);
 
 //handle loi
 app.use(defaultErrorHandler)
