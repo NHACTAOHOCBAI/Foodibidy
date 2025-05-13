@@ -5,13 +5,12 @@ import User, { UserType } from '~/models/schemas/user.schema'
 import { hashPassword } from '~/utils/hashPassword'
 import { USERS_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { CollectionReference, DocumentData, getDoc, updateDoc } from 'firebase/firestore'
+import { handleFormatDate } from '~/utils/utils'
 class UsersService {
   private userCollection = databaseService.users
 
   async createUser(userData: CreateUserReqBody) {
     try {
-      const userId = this.userCollection.doc().id
       const newUser = new User({
         ...userData,
         password_hash: hashPassword(userData.password),
@@ -27,11 +26,34 @@ class UsersService {
     }
   }
 
+  async getAllUsers(): Promise<UserType[]> {
+    try {
+      const snapshot = await this.userCollection.get()
+      const users: UserType[] = []
+
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+
+        let updated_at = handleFormatDate(data.updated_at as Date)
+        let created_at = handleFormatDate(data.created_at as Date)
+        users.push({ id: doc.id, ...doc.data(), created_at, updated_at } as UserType)
+      })
+      console.log('All users:', users)
+      return users
+    } catch (error) {
+      console.error('Error getting all users:', error)
+      throw new Error(`Failed to get all users: ${error}`)
+    }
+  }
+
   async getUser(userId: string) {
     const doc = await this.userCollection.doc(userId).get()
     if (doc.exists) {
       console.log(`Get user success with ID ${doc.id}`)
-      return { ...doc.data() } as User
+      const data = doc.data() as UserType
+      let updated_at = handleFormatDate(data.updated_at as Date)
+      let created_at = handleFormatDate(data.created_at as Date)
+      return { id: doc.id, ...doc.data(), updated_at, created_at }
     } else {
       console.error(`Error getting user with ID ${userId}`)
     }
@@ -40,14 +62,13 @@ class UsersService {
 
   async updateUser(userId: string, updateData: UpdateUserReqBody) {
     const doc = await this.userCollection.doc(userId).get()
-    const data = doc.data() as UserType
     const updatedUser = {
       ...updateData,
       updated_at: new Date()
     }
 
     try {
-      const doc2 = await this.userCollection.doc(userId).update(updatedUser)
+      await this.userCollection.doc(userId).update(updatedUser)
       console.log(`Update user success with ID ${doc.id}`)
     } catch {
       throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
@@ -61,21 +82,6 @@ class UsersService {
     } catch (error) {
       console.error(`Error deleting user with ID ${userId}:`, error)
       throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
-    }
-  }
-
-  async getAllUsers(): Promise<User[]> {
-    try {
-      const snapshot = await this.userCollection.get()
-      const users: User[] = []
-      snapshot.forEach((doc) => {
-        users.push({ ...doc.data() } as User)
-      })
-      console.log('All users:', users)
-      return users
-    } catch (error) {
-      console.error('Error getting all users:', error)
-      throw new Error(`Failed to get all users: ${error}`)
     }
   }
 }

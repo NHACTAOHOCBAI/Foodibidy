@@ -1,12 +1,13 @@
 import { Router } from 'express'
 import { wrapRequestHandler } from '~/utils/handler'
 import {
-    createCategory,
-    getAllCategories,
-    getCategory,
-    updateCategory,
-    deleteCategory
+  createCategory,
+  getAllCategories,
+  getCategory,
+  updateCategory,
+  deleteCategory
 } from '~/controllers/category.controller'
+import { CreateCategorySchema } from '~/middlewares/category.middlewares'
 
 const categoriesRouter = Router()
 
@@ -15,7 +16,7 @@ const categoriesRouter = Router()
  * Path: /categories
  * Method: POST
  */
-categoriesRouter.post('/', wrapRequestHandler(createCategory))
+categoriesRouter.post('/', CreateCategorySchema, wrapRequestHandler(createCategory))
 
 /**
  * Description. Get all categories
