@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firebase JavaScript Project</title>
+  </head>
+  <body>
+    <h1>Welcome to Firebase with JavaScript</h1>
+    <div>
+      <h2>Authentication</h2>
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="signUp()">Sign Up</button>
+      <button onclick="logIn()">Log In</button>
+    </div>
+    <div>
+      <h2>Realtime Database</h2>
+      <input type="text" id="message" placeholder="Message" />
+      <button onclick="sendMessage()">Send Message</button>
+      <div id="messages"></div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
