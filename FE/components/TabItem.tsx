@@ -1,19 +1,23 @@
-import SVG from '@/components/SvgImage'
-import TextDefault from '@/components/TextDefault'
-import { StyleSheet, Text, View } from 'react-native'
+import { icons } from '@/constants/icons'
+import { Image, StyleSheet, Text, View } from 'react-native'
 interface TabItemProps {
-    url: string
-    color: string
+    url?: string
     title: string
+    focus: boolean
 }
 
-const TabItem = ({ url, color, title }: TabItemProps) => {
+const TabItem = ({ url, title, focus }: TabItemProps) => {
     return (
         <View className='mt-3 w-[100px] items-center justify-center'>
-            <SVG
-                color={color}
-                url={url} />
-            <TextDefault className='' style={{ color: color }}>{title}</TextDefault>
+            {url && <Image
+                tintColor={focus ? "#FF7622" : "#A5A7B9"}
+                className='w-[16px] h-[17.5px]'
+                source={typeof url === 'string' ? { uri: url } : url}
+            />}
+            <Text className='' style={{
+                color: focus ? "#FF7622" : "#A5A7B9",
+                fontWeight: focus ? "bold" : "regular"
+            }}>{title}</Text>
         </View>
     )
 }

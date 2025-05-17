@@ -2,61 +2,65 @@
 import TabItem from '@/components/TabItem'
 import { icons } from '@/constants/icons'
 import { Tabs } from 'expo-router'
+import { QueryClient, QueryClientProvider } from 'react-query'
 const _layout = () => {
+    const queryClient = new QueryClient()
     return (
-        <Tabs
-            screenOptions={{
-                tabBarShowLabel: false,
-                headerShown: false,
-                tabBarActiveTintColor: '#FF7622',
-                tabBarInactiveTintColor: '#878787',
-            }}
-        >
-            <Tabs.Screen
-                name="index"
-                options={{
-                    tabBarIcon: ({ color }) => (
-                        <TabItem
-                            title='Home'
-                            color={color}
-                            url={icons.home} />
-                    )
+        <QueryClientProvider client={queryClient}>
+            <Tabs
+                screenOptions={{
+                    tabBarShowLabel: false,
+                    headerShown: false,
+                    tabBarActiveTintColor: '#FF7622',
+                    tabBarInactiveTintColor: '#878787',
                 }}
-            />
-            <Tabs.Screen
-                name="orders"
-                options={{
-                    tabBarIcon: ({ color }) => (
-                        <TabItem
-                            title='Orders'
-                            color={color}
-                            url={icons.order} />
-                    )
-                }}
-            />
-            <Tabs.Screen
-                name="book_mark"
-                options={{
-                    tabBarIcon: ({ color }) => (
-                        <TabItem
-                            title='Bookmark'
-                            color={color}
-                            url={icons.save} />
-                    )
-                }}
-            />
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    tabBarIcon: ({ color }) => (
-                        <TabItem
-                            title='Profile'
-                            color={color}
-                            url={icons.profile} />
-                    )
-                }}
-            />
-        </Tabs>
+            >
+                <Tabs.Screen
+                    name="index"
+                    options={{
+                        tabBarIcon: ({ focused }) => (
+                            <TabItem
+                                title='Home'
+                                focus={focused}
+                                url={icons.homeIcon} />
+                        )
+                    }}
+                />
+                <Tabs.Screen
+                    name="orders"
+                    options={{
+                        tabBarIcon: ({ focused }) => (
+                            <TabItem
+                                title='Orders'
+                                focus={focused}
+                                url={icons.order} />
+                        )
+                    }}
+                />
+                <Tabs.Screen
+                    name="book_mark"
+                    options={{
+                        tabBarIcon: ({ focused }) => (
+                            <TabItem
+                                title='Bookmark'
+                                focus={focused}
+                                url={icons.bookmark} />
+                        )
+                    }}
+                />
+                <Tabs.Screen
+                    name="profile"
+                    options={{
+                        tabBarIcon: ({ focused }) => (
+                            <TabItem
+                                title='Profile'
+                                focus={focused}
+                                url={icons.profile} />
+                        )
+                    }}
+                />
+            </Tabs>
+        </QueryClientProvider>
     )
 }
 

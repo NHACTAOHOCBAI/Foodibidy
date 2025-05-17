@@ -5,6 +5,7 @@ import databaseService from './services/database.service'
 import usersService from './services/user.service'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
 import categoriesRouter from './routes/category.route'
+import authRoutes from './routes/auth.route'
 import restaurantsRouter from './routes/restaurant.route'
 import addressesRouter from './routes/address.route'
 import cartsRouter from './routes/cart.route'
@@ -25,6 +26,7 @@ app.use(express.json())
 //routes
 app.use('/users', usersRouter)
 app.use('/categories', categoriesRouter)
+app.use('/api/auth', authRoutes);
 app.use('/restaurants', restaurantsRouter)
 // app.use('/addresses', addressesRouter)
 // app.use('/carts', cartsRouter)

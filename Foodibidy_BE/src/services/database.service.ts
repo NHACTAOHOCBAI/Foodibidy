@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import admin from 'firebase-admin';
 import { initializeApp, cert } from 'firebase-admin/app'
 import { getFirestore, Firestore, CollectionReference } from 'firebase-admin/firestore'
 import { AddressType } from '~/models/schemas/address.schema'
@@ -12,6 +13,7 @@ import { OrderDetailType } from '~/models/schemas/orderDetail.schema'
 import { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { ReviewType } from '~/models/schemas/review.schema'
 import { UserType } from '~/models/schemas/user.schema'
+import { getAuth } from 'firebase-admin/auth'
 
 dotenv.config()
 
@@ -39,6 +41,8 @@ initializeApp({
   // databaseURL: 'your-database-url' // Thêm nếu dùng Realtime Database
 })
 
+// Getter cho Firebase Auth
+export const auth = getAuth()
 class DatabaseService {
   private db: Firestore
 
@@ -56,7 +60,7 @@ class DatabaseService {
       throw error
     }
   }
-
+  //#region Collections
   get users(): CollectionReference<UserType> {
     return this.db.collection('Users') as CollectionReference<UserType>
   }
@@ -101,6 +105,7 @@ class DatabaseService {
     return this.db.collection('Notifications') as CollectionReference<NotificationType>
   }
 }
-
+//#endregion
 const databaseService = new DatabaseService()
 export default databaseService
+export { admin };
