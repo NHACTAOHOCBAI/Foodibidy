@@ -8,7 +8,7 @@ import { CategoryType } from '~/models/schemas/category.schema'
 import { DishType } from '~/models/schemas/dish.schema'
 import { NotificationType } from '~/models/schemas/notification.schema'
 import { OrderType } from '~/models/schemas/order.schema'
-import { OrderDetailsType } from '~/models/schemas/orderDetail.schema'
+import { OrderDetailType } from '~/models/schemas/orderDetail.schema'
 import { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { ReviewType } from '~/models/schemas/review.schema'
 import { UserType } from '~/models/schemas/user.schema'
@@ -89,8 +89,8 @@ class DatabaseService {
     return this.db.collection('Orders') as CollectionReference<OrderType>
   }
 
-  get order_details(): CollectionReference<OrderDetailsType> {
-    return this.db.collection('Order_details') as CollectionReference<OrderDetailsType>
+  get order_details(): CollectionReference<OrderDetailType> {
+    return this.db.collection('Order_details') as CollectionReference<OrderDetailType>
   }
 
   get reviews(): CollectionReference<ReviewType> {

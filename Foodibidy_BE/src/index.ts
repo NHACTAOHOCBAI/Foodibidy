@@ -1,6 +1,6 @@
 import express from 'express'
 import usersRouter from './routes/user.route'
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
 import databaseService from './services/database.service'
 import usersService from './services/user.service'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
@@ -15,8 +15,11 @@ import notificationsRouter from './routes/notification.route'
 const app = express()
 
 const port = 3000
+const corsOptions: CorsOptions = {
+  origin: '*'
+}
 
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json())
 
 //routes
@@ -26,7 +29,7 @@ app.use('/restaurants', restaurantsRouter)
 // app.use('/addresses', addressesRouter)
 // app.use('/carts', cartsRouter)
 // app.use('/orders', ordersRouter)
-// app.use('/dishes', dishesRouter)
+app.use('/dishes', dishesRouter)
 // app.use('/reviews', reviewsRouter)
 // app.use('/notifications', notificationsRouter)
 

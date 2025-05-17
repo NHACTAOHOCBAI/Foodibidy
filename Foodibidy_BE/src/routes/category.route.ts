@@ -7,7 +7,7 @@ import {
   updateCategory,
   deleteCategory
 } from '~/controllers/category.controller'
-import { CreateCategorySchema } from '~/middlewares/category.middlewares'
+import { CreateCategoryValidator } from '~/middlewares/category.middlewares'
 
 const categoriesRouter = Router()
 
@@ -16,7 +16,7 @@ const categoriesRouter = Router()
  * Path: /categories
  * Method: POST
  */
-categoriesRouter.post('/', CreateCategorySchema, wrapRequestHandler(createCategory))
+categoriesRouter.post('/', CreateCategoryValidator, wrapRequestHandler(createCategory))
 
 /**
  * Description. Get all categories

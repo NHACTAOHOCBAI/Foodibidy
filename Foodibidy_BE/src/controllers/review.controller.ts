@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { REVIEW_MESSAGES } from '~/constants/messages'
 import { CreateReviewReqBody, ReviewParams } from '~/models/requests/review.request'
-import { reviewService } from '~/services/review.service'
+import reviewService from '~/services/review.service'
 
 export const createReview = async (req: Request<any, any, CreateReviewReqBody>, res: Response, next: NextFunction) => {
   const result = await reviewService.createReview(req.body)

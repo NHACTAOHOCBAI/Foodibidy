@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { ORDER_MESSAGES } from '~/constants/messages'
 import { CreateOrderReqBody, OrderParams } from '~/models/requests/order.request'
-import { orderService } from '~/services/order.service'
+import orderService from '~/services/order.service'
 
 export const createOrder = async (req: Request<any, any, CreateOrderReqBody>, res: Response, next: NextFunction) => {
   const result = await orderService.createOrder(req.body)

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { DISH_MESSAGES } from '~/constants/messages'
-import { CreateDishReqBody, DishParams } from '~/models/requests/dish.request'
-import { dishService } from '~/services/dish.service'
+import { CreateDishReqBody, DishParams, UpdateDishReqBody } from '~/models/requests/dish.request'
+import dishService from '~/services/dish.service'
 
 export const createDish = async (req: Request<any, any, CreateDishReqBody>, res: Response, next: NextFunction) => {
   const result = await dishService.createDish(req.body)
@@ -19,7 +19,7 @@ export const getAllDishes = async (req: Request, res: Response, next: NextFuncti
 }
 
 export const updateDish = async (
-  req: Request<DishParams, any, Partial<CreateDishReqBody>>,
+  req: Request<DishParams, any, UpdateDishReqBody>,
   res: Response,
   next: NextFunction
 ) => {

@@ -1,9 +1,10 @@
 import { ErrorWithStatus } from '~/models/errors'
 import databaseService from './database.service'
 import { CreateDishReqBody, UpdateDishReqBody } from '~/models/requests/dish.request'
-import Dish from '~/models/schemas/dish.schema'
+import Dish, { DishType } from '~/models/schemas/dish.schema'
 import { DISH_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { handleFormatDate } from '~/utils/utils'
 
 class DishService {
   private dishCollection = databaseService.dishes
@@ -27,7 +28,10 @@ class DishService {
     const doc = await this.dishCollection.doc(id).get()
     if (doc.exists) {
       console.log(`Get dish success with ID ${doc.id}`)
-      return { id: doc.id, ...doc.data() } as Dish
+      const data = doc.data() as DishType
+      let updated_at = handleFormatDate(data.updated_at as Date)
+      let created_at = handleFormatDate(data.created_at as Date)
+      return { id: doc.id, ...doc.data(), created_at, updated_at } as DishType
     } else {
       console.error(`Error getting dish with ID ${id}`)
     }
@@ -65,12 +69,16 @@ class DishService {
     }
   }
 
-  async getAllDishes(): Promise<Dish[]> {
+  async getAllDishes(): Promise<DishType[]> {
     try {
       const snapshot = await this.dishCollection.get()
-      const dishes: Dish[] = []
+      const dishes: DishType[] = []
       snapshot.forEach((doc) => {
-        dishes.push({ ...doc.data(), id: doc.id } as Dish)
+        const data = doc.data()
+        console.log(doc.id)
+        let updated_at = handleFormatDate(data.updated_at as Date)
+        let created_at = handleFormatDate(data.created_at as Date)
+        dishes.push({ ...doc.data(), id: doc.id, created_at, updated_at } as DishType)
       })
       console.log('All dishes:', dishes)
       return dishes

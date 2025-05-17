@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { ADDRESS_MESSAGES } from '~/constants/messages'
-import { CreateAddressReqBody, AddressParams } from '~/models/requests/address.request'
-import { addressService } from '~/services/address.service'
+import { CreateAddressReqBody, AddressParams, UpdateAddressReqBody } from '~/models/requests/address.request'
+import addressService from '~/services/address.service'
 
 export const createAddress = async (
   req: Request<any, any, CreateAddressReqBody>,
@@ -23,7 +23,7 @@ export const getAllAddresses = async (req: Request, res: Response, next: NextFun
 }
 
 export const updateAddress = async (
-  req: Request<AddressParams, any, Partial<CreateAddressReqBody>>,
+  req: Request<AddressParams, any, UpdateAddressReqBody>,
   res: Response,
   next: NextFunction
 ) => {

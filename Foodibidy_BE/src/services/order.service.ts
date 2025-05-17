@@ -4,6 +4,7 @@ import { CreateOrderReqBody, UpdateOrderReqBody } from '~/models/requests/order.
 import Order, { OrderType } from '~/models/schemas/order.schema'
 import { ORDER_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { handleFormatDate } from '~/utils/utils'
 
 class OrderService {
   private orderCollection = databaseService.orders
@@ -27,7 +28,10 @@ class OrderService {
     const doc = await this.orderCollection.doc(id).get()
     if (doc.exists) {
       console.log(`Get order success with ID ${doc.id}`)
-      return { ...doc.data() } as Order
+      const data = doc.data() as OrderType
+      let updated_at = handleFormatDate(data.updated_at as Date)
+      let created_at = handleFormatDate(data.created_at as Date)
+      return { id: doc.id, ...doc.data(), updated_at, created_at }
     } else {
       console.error(`Error getting order with ID ${id}`)
     }
@@ -64,7 +68,11 @@ class OrderService {
       const snapshot = await this.orderCollection.get()
       const orders: OrderType[] = []
       snapshot.forEach((doc) => {
-        orders.push({ ...doc.data(), id: doc.id } as OrderType)
+        const data = doc.data()
+        console.log(doc.id)
+        let updated_at = handleFormatDate(data.updated_at as Date)
+        let created_at = handleFormatDate(data.created_at as Date)
+        orders.push({ ...doc.data(), id: doc.id, created_at, updated_at } as OrderType)
       })
       console.log('All orders:', orders)
       return orders

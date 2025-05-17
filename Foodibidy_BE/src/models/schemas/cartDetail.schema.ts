@@ -10,7 +10,7 @@ export default class CartDetails {
   quantity: number
 
   constructor(cartDetails: CartDetailsType) {
-    this.id = cartDetails.id
+    this.id = cartDetails.id || ''
     this.dish_id = cartDetails.dish_id
     this.quantity = cartDetails.quantity
   }

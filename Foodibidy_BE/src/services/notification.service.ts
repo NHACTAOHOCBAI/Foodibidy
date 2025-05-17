@@ -1,9 +1,10 @@
 import { ErrorWithStatus } from '~/models/errors'
 import databaseService from './database.service'
 import { CreateNotificationReqBody, UpdateNotificationReqBody } from '~/models/requests/notification.request'
-import Notification from '~/models/schemas/notification.schema'
+import Notification, { NotificationType } from '~/models/schemas/notification.schema'
 import { NOTIFICATION_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { handleFormatDate } from '~/utils/utils'
 
 class NotificationService {
   private notificationCollection = databaseService.notifications
@@ -27,7 +28,10 @@ class NotificationService {
     const doc = await this.notificationCollection.doc(id).get()
     if (doc.exists) {
       console.log(`Get notification success with ID ${doc.id}`)
-      return { ...doc.data() } as Notification
+      const data = doc.data() as NotificationType
+      let updated_at = handleFormatDate(data.updated_at as Date)
+      let created_at = handleFormatDate(data.created_at as Date)
+      return { id: doc.id, ...doc.data(), updated_at, created_at }
     } else {
       console.error(`Error getting notification with ID ${id}`)
     }
@@ -65,12 +69,16 @@ class NotificationService {
     }
   }
 
-  async getAllNotifications(): Promise<Notification[]> {
+  async getAllNotifications(): Promise<NotificationType[]> {
     try {
       const snapshot = await this.notificationCollection.get()
-      const notifications: Notification[] = []
+      const notifications: NotificationType[] = []
       snapshot.forEach((doc) => {
-        notifications.push({ id: doc.id, ...doc.data() } as Notification)
+        const data = doc.data()
+        console.log(doc.id)
+        let updated_at = handleFormatDate(data.updated_at as Date)
+        let created_at = handleFormatDate(data.created_at as Date)
+        notifications.push({ ...doc.data(), id: doc.id, created_at, updated_at } as NotificationType)
       })
       console.log('All notifications:', notifications)
       return notifications

@@ -11,15 +11,17 @@ class UsersService {
 
   async createUser(userData: CreateUserReqBody) {
     try {
-      const newUser = new User({
-        ...userData,
-        password_hash: hashPassword(userData.password),
-        date_of_birth: new Date(userData.date_of_birth)
-      }).toObject()
+      if (!this.checkEmailExists(userData.email)) {
+        const newUser = new User({
+          ...userData,
+          password_hash: hashPassword(userData.password),
+          date_of_birth: new Date(userData.date_of_birth)
+        }).toObject()
 
-      const docRef = await this.userCollection.add(newUser)
-      console.log('User created with ID:', docRef.id)
-      return docRef.id
+        const docRef = await this.userCollection.add(newUser)
+        console.log('User created with ID:', docRef.id)
+        return docRef.id
+      } else throw new Error(`Email already exist`)
     } catch (error) {
       console.error('Error creating user:', error)
       throw new Error(`Failed to create user: ${error}`)
@@ -83,6 +85,11 @@ class UsersService {
       console.error(`Error deleting user with ID ${userId}:`, error)
       throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
     }
+  }
+
+  async checkEmailExists(email: string): Promise<boolean> {
+    const userSnapshot = await databaseService.users.where('email', '==', email).limit(1).get()
+    return userSnapshot.empty
   }
 }
 

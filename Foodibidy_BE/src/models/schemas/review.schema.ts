@@ -4,8 +4,8 @@ export interface ReviewType {
   dish_id: string
   rating: number
   comment: string
-  created_at?: Date
-  updated_at?: Date
+  created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export default class Review {
@@ -14,11 +14,11 @@ export default class Review {
   dish_id: string
   rating: number
   comment: string
-  created_at?: Date
-  updated_at?: Date
+  created_at?: Date | string
+  updated_at?: Date | string
 
   constructor(review: ReviewType) {
-    this.id = review.id
+    this.id = review.id || ''
     this.account_id = review.account_id
     this.dish_id = review.dish_id
     this.rating = review.rating

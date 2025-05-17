@@ -5,8 +5,6 @@ import { ErrorWithStatus } from '~/models/errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { CATEGORY_MESSAGES } from '~/constants/messages'
 import { GetAllCategoryResBody } from '~/models/responses/category.response'
-import { format } from 'date-fns'
-import { Timestamp } from 'firebase-admin/firestore'
 import { handleFormatDate } from '~/utils/utils'
 
 class CategoryService {

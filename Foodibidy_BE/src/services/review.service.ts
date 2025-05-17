@@ -1,9 +1,10 @@
 import { ErrorWithStatus } from '~/models/errors'
 import databaseService from './database.service'
 import { CreateReviewReqBody, UpdateReviewReqBody } from '~/models/requests/review.request'
-import Review from '~/models/schemas/review.schema'
+import Review, { ReviewType } from '~/models/schemas/review.schema'
 import { REVIEW_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { handleFormatDate } from '~/utils/utils'
 
 class ReviewService {
   private reviewCollection = databaseService.reviews
@@ -27,7 +28,10 @@ class ReviewService {
     const doc = await this.reviewCollection.doc(id).get()
     if (doc.exists) {
       console.log(`Get review success with ID ${doc.id}`)
-      return { id: doc.id, ...doc.data() } as Review
+      const data = doc.data() as ReviewType
+      let updated_at = handleFormatDate(data.updated_at as Date)
+      let created_at = handleFormatDate(data.created_at as Date)
+      return { id: doc.id, ...doc.data(), updated_at, created_at }
     }
     throw new ErrorWithStatus({ message: REVIEW_MESSAGES.REVIEW_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
   }
@@ -63,12 +67,16 @@ class ReviewService {
     }
   }
 
-  async getAllReviews(): Promise<Review[]> {
+  async getAllReviews(): Promise<ReviewType[]> {
     try {
       const snapshot = await this.reviewCollection.get()
-      const reviews: Review[] = []
+      const reviews: ReviewType[] = []
       snapshot.forEach((doc) => {
-        reviews.push({ id: doc.id, ...doc.data() } as Review)
+        const data = doc.data()
+        console.log(doc.id)
+        let updated_at = handleFormatDate(data.updated_at as Date)
+        let created_at = handleFormatDate(data.created_at as Date)
+        reviews.push({ ...doc.data(), id: doc.id, created_at, updated_at } as ReviewType)
       })
       console.log('All reviews:', reviews)
       return reviews
