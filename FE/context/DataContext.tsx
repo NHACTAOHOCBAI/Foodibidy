@@ -27,43 +27,43 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     ];
     const restaurants: Restaurant[] = [
         {
-            id: 1, name: "Pho 24", ownerName: "Tran Van A", address: "Hanoi", image: "pho24.jpg", rate: 4.5,
+            id: 1, name: "Pho 24", address: "Hanoi", image: "pho24.jpg", rate: 4.5,
             categories: [{ id: 2, name: "Vietnamese" }], description: "Authentic pho and noodles", reviews: 120, status: "hoat_dong"
         },
         {
-            id: 2, name: "Sushi King", ownerName: "Yamato", address: "Ho Chi Minh City", image: "sushiking.jpg", rate: 4.7,
+            id: 2, name: "Sushi King", address: "Ho Chi Minh City", image: "sushiking.jpg", rate: 4.7,
             categories: [{ id: 3, name: "Japanese" }], description: "Premium sushi", reviews: 90, status: "hoat_dong"
         },
         {
-            id: 3, name: "Pizza Home", ownerName: "Mario Rossi", address: "Da Nang", image: "pizzahome.jpg", rate: 4.2,
+            id: 3, name: "Pizza Home", address: "Da Nang", image: "pizzahome.jpg", rate: 4.2,
             categories: [{ id: 6, name: "Italian" }], description: "Pizza and pasta", reviews: 85, status: "hoat_dong"
         },
         {
-            id: 4, name: "Bun Cha Obama", ownerName: "Le Thi B", address: "Hanoi", image: "buncha.jpg", rate: 4.9,
+            id: 4, name: "Bun Cha Obama", address: "Hanoi", image: "buncha.jpg", rate: 4.9,
             categories: [{ id: 2, name: "Vietnamese" }], description: "Famous Bun Cha", reviews: 200, status: "hoat_dong"
         },
         {
-            id: 5, name: "Dimsum House", ownerName: "Chen Wei", address: "Hai Phong", image: "dimsum.jpg", rate: 4.0,
+            id: 5, name: "Dimsum House", address: "Hai Phong", image: "dimsum.jpg", rate: 4.0,
             categories: [{ id: 7, name: "Chinese" }], description: "Variety of dimsum", reviews: 75, status: "hoat_dong"
         },
         {
-            id: 6, name: "KBBQ Seoul", ownerName: "Kim Hyun", address: "Nha Trang", image: "kbbq.jpg", rate: 4.6,
+            id: 6, name: "KBBQ Seoul", address: "Nha Trang", image: "kbbq.jpg", rate: 4.6,
             categories: [{ id: 8, name: "Korean" }], description: "Korean BBQ experience", reviews: 110, status: "hoat_dong"
         },
         {
-            id: 7, name: "The Smoothie Bar", ownerName: "Linh", address: "Da Lat", image: "smoothie.jpg", rate: 4.3,
+            id: 7, name: "The Smoothie Bar", address: "Da Lat", image: "smoothie.jpg", rate: 4.3,
             categories: [{ id: 5, name: "Drinks" }, { id: 9, name: "Healthy" }], description: "Healthy and fresh", reviews: 60, status: "hoat_dong"
         },
         {
-            id: 8, name: "Seafood Paradise", ownerName: "Nguyen Van C", address: "Vung Tau", image: "seafood.jpg", rate: 4.8,
+            id: 8, name: "Seafood Paradise", address: "Vung Tau", image: "seafood.jpg", rate: 4.8,
             categories: [{ id: 10, name: "Seafood" }], description: "Ocean's finest", reviews: 140, status: "hoat_dong"
         },
         {
-            id: 9, name: "Candy House", ownerName: "My Linh", address: "Hue", image: "candy.jpg", rate: 3.9,
+            id: 9, name: "Candy House", address: "Hue", image: "candy.jpg", rate: 3.9,
             categories: [{ id: 4, name: "Desserts" }], description: "All sweet things", reviews: 50, status: "cho_duyet"
         },
         {
-            id: 10, name: "Burger Time", ownerName: "John Doe", address: "Can Tho", image: "burger.jpg", rate: 4.1,
+            id: 10, name: "Burger Time", address: "Can Tho", image: "burger.jpg", rate: 4.1,
             categories: [{ id: 1, name: "Fast Food" }], description: "Burgers and fries", reviews: 70, status: "dong_cua"
         }
     ];

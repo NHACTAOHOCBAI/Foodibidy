@@ -125,17 +125,6 @@ const Foods = ({ foods }: { foods: Food[] }) => {
 export default RestaurantDetail
 
 const restaurantData: Restaurant = {
-    id: 1,
-    name: 'Burger King',
-    ownerName: 'John Smith',
-    address: '123 King St, New York, NY',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Burger_King_Logo.svg',
-    rate: 4.5,
-    categories: [
-        { id: 1, name: 'Burger' },
-        { id: 2, name: 'Fast Food' }
-    ],
-    description: 'Popular American fast food chain known for its flame-grilled burgers.',
-    reviews: 1534,
-    status: "hoat_dong"
+    id: 1, name: "Pho 24", address: "Hanoi", image: "pho24.jpg", rate: 4.5,
+    categories: [{ id: 2, name: "Vietnamese" }], description: "Authentic pho and noodles", reviews: 120, status: "hoat_dong"
 }

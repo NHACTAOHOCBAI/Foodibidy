@@ -6,7 +6,7 @@ import { Link, useRouter } from 'expo-router'
 import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, Text, View } from 'react-native'
 import RestaurantItem from '@/components/RestaurantItem'
 import FoodItem from '@/components/FoodItem'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useData } from '@/context/DataContext'
 const PAGE_SIZE = 4;
 const index = () => {
@@ -42,7 +42,7 @@ const Header = ({ myProfile }: { myProfile: Account }) => {
         <View className='ml-[18px] gap-[3px]'>
           <Text className='font-bold uppercase text-[12px] text-primary'>Deliver to</Text>
           <View className='flex-row items-center gap-[9px]'>
-            <Text className='text-[#676767]'>{myProfile.currentAddress.location}</Text>
+            <Text className='text-[#676767]'>{myProfile.address[0].value}</Text>
             <Image source={icons.triangle} resizeMode='contain' className='w-[13px] h-[10px]' />
           </View>
         </View>
@@ -54,7 +54,7 @@ const Header = ({ myProfile }: { myProfile: Account }) => {
       </View>
 
       <View className='mt-[24px]' >
-        <Text className='text-[16px] text-[#1E1D1D]'>{`Hey ${myProfile.name.split(" ").pop()}, `}<Text className='font-bold'>Good Afternoon!</Text></Text>
+        <Text className='text-[16px] text-[#1E1D1D]'>{`Hey ${myProfile.fullName.split(" ").pop()}, `}<Text className='font-bold'>Good Afternoon!</Text></Text>
       </View>
 
       <Link
@@ -118,6 +118,7 @@ const Restaurants = ({ restaurants }: { restaurants: Restaurant[] }) => {
       <View className='flex-row justify-between items-center '>
         <Text className='text-[#32343E] text-[20px]'>Open Restaurants</Text>
         <Link href={'/restaurants'} asChild>
+          {/* {restaurantData.map((value) => <Text>value.id</Text>)} */}
           <View className='flex-row items-center gap-[10px]'>
             <Text className='text-[#333333] text-[16px] '>See All</Text>
             <Image
