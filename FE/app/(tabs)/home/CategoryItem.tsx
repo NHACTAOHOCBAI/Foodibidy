@@ -14,10 +14,7 @@ const CategoryItem = ({ category }: Props) => {
         <Pressable onPress={onPress}>
             {({ pressed }) => (
                 <MotiView
-                    className="flex-row items-center rounded-full px-[8px] py-[8px] gap-[12px] "
-                    style={{
-                        boxShadow: " 0 1px 4px 0 rgba(0, 0, 0, 0.1)"
-                    }}
+                    className="flex-row items-center rounded-full px-[8px] py-[8px] gap-[12px] shadow-md"
                     animate={{
                         backgroundColor: pressed ? '#FFA57C' : '#FFFFFF',
                         scale: pressed ? 0.85 : 1,

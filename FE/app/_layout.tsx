@@ -106,7 +106,7 @@ const InnerLayout = () => {
           }}
         />
         <Stack.Screen
-          name="categories/[id]"
+          name="categories/detail_category"
           options={{
             header: () => <CustomHeader
               title='Detail Category'

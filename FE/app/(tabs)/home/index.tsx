@@ -1,5 +1,3 @@
-
-import CategoryItem from '@/components/CategoryItem'
 import SearchInput from '@/components/SearchInput'
 import { icons } from '@/constants/icons'
 import { Link, useRouter } from 'expo-router'
@@ -8,6 +6,7 @@ import RestaurantItem from '@/components/RestaurantItem'
 import FoodItem from '@/components/FoodItem'
 import { useEffect, useState } from 'react'
 import { getCategoriesPaginated, getMyProfile, getRestaurantsPaginated } from '@/services/mockAPI'
+import CategoryItem from '@/app/(tabs)/home/CategoryItem'
 const PAGE_SIZE = 4;
 const index = () => {
   return (

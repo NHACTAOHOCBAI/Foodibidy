@@ -1,9 +1,9 @@
-import { Link, useRouter } from 'expo-router';
-import { MotiView } from 'moti';
+
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Pressable, Text, View } from 'react-native';
 import { getCategoriesPaginated } from '@/services/mockAPI';
-import { useRoute } from '@react-navigation/native';
+import CategoryItem from '@/app/categories/CategoryItem';
+
 
 const PAGE_SIZE = 6;
 
@@ -47,43 +47,6 @@ const AllCategories = () => {
                 }
             />
         </View>
-    );
-};
-
-const CategoryItem = ({ category }: { category: Category }) => {
-    const router = useRouter();
-    return (
-        <Pressable onPress={() => router.push({
-            pathname: '/categories/[id]',
-            params: {
-                id: category.id,
-                name: category.name,
-                description: category.description,
-                image: category.image,
-                createdAt: category.createdAt
-            },
-        })}>
-            {({ pressed }) => (
-                <MotiView
-                    className='relative w-[160px]'
-                    animate={{ scale: pressed ? 0.95 : 1 }}
-                    transition={{ type: 'timing', duration: 100 }}
-                >
-                    <View className="w-full p-[8px] rounded-[12px] bg-white h-[200px] drop-shadow-sm">
-                        <Image
-                            source={category.image ? { uri: category.image } : undefined}
-                            className='w-full h-[84px] rounded-[12px] bg-accent'
-                        />
-                        <Text numberOfLines={1} className='font-bold mt-[15px] text-[15px] '>
-                            {category.name}
-                        </Text>
-                        <Text numberOfLines={3} className='mt-[5px] text-[13px]'>
-                            {category.description}
-                        </Text>
-                    </View>
-                </MotiView>
-            )}
-        </Pressable>
     );
 };
 
