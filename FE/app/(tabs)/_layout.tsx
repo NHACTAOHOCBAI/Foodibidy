@@ -14,9 +14,10 @@ const _layout = () => {
                     tabBarActiveTintColor: '#FF7622',
                     tabBarInactiveTintColor: '#878787',
                 }}
+                initialRouteName='home/index'
             >
                 <Tabs.Screen
-                    name="index"
+                    name="home/index"
                     options={{
                         tabBarIcon: ({ focused }) => (
                             <TabItem
