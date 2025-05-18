@@ -4,11 +4,9 @@ import QuantitySelector from '@/components/QuantitySelector'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
 import { useState } from 'react'
-import { useData } from '@/context/DataContext'
 
 const PAGE_SIZE = 4
 const Cart = () => {
-    const { cart } = useData();
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [loadingMore, setLoadingMore] = useState(false);
 

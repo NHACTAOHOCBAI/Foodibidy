@@ -1,12 +1,10 @@
 import Button from '@/components/Button';
-import { useData } from '@/context/DataContext';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View, ScrollView, FlatList, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 
 const PAGE_SIZE = 4;
 const ongoing = () => {
-    const { orders } = useData();
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [loadingMore, setLoadingMore] = useState(false);
 

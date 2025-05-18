@@ -4,11 +4,25 @@ import { useRouter } from 'expo-router';
 interface Props {
     category: Category
 }
+interface Category {
+    id: number;
+    name: string;
+    description: string;
+    image: string;
+    createdAt: string;
+}
 const CategoryItem = ({ category }: Props) => {
     const router = useRouter();
-    const onPress = () => {
-        router.push(category.id === 0 ? '/categories' : `/categories/${category.id}`)
-    }
+    const onPress = () => router.push({
+        pathname: '/categories/[id]',
+        params: {
+            id: category.id,
+            name: category.name,
+            description: category.description,
+            image: category.image,
+            createdAt: category.createdAt
+        },
+    })
     return (
         <Pressable
             onPress={onPress}

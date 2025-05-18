@@ -1,72 +1,69 @@
-
 import FoodItem from '@/components/FoodItem';
-import SmallItem from '@/components/FoodItem';
-import { useData } from '@/context/DataContext';
-import { useState } from 'react';
-import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { getFoodsByCategoryPaginated } from '@/services/mockAPI';
+import { useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
+
 const PAGE_SIZE = 6;
+
 const Category = () => {
-    const { foods } = useData();
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    const { id, name, image, description } = useLocalSearchParams();
+    const idCategory = parseInt(id as string);
+
+    const [foods, setFoods] = useState<Food[]>([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
 
-    // Hàm load thêm dữ liệu
-    const handleLoadMore = () => {
-        if (visibleCount >= foods.length || loadingMore) return;
+    const loadFoods = async () => {
+        if (!hasMore || loadingMore) return;
 
         setLoadingMore(true);
 
-        // Mô phỏng delay tải dữ liệu (API call)
-        setTimeout(() => {
-            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, foods.length));
-            setLoadingMore(false);
-        }, 2000);
+        const newFoods = await getFoodsByCategoryPaginated({
+            idCategory,
+            page,
+            limit: PAGE_SIZE,
+        });
+
+        setFoods(prev => [...prev, ...newFoods]);
+        setPage(prev => prev + 1);
+        setHasMore(newFoods.length === PAGE_SIZE);
+        setLoadingMore(false);
     };
 
-    return (
-        <View className='pt-[120px] bg-white flex-1'>
-            <ScrollView
-                className='flex-1 z-[1] mt-[12px] px-[24px]'
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                    paddingBottom: 400
-                }}
-            >
-                <Text className="text-[#32343E] text-[20px]">Popular Foods</Text>
+    useEffect(() => {
+        loadFoods();
+    }, [idCategory]);
 
-                <FlatList
-                    className="py-[20px]"
-                    data={foods.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
-                    scrollEnabled={false}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 28 }}
-                    columnWrapperStyle={{ justifyContent: 'space-between' }}
-                    numColumns={2}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => <FoodItem food={item} />}
-
-                    // Lazy loading props
-                    onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
-                    onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
-                    initialNumToRender={PAGE_SIZE} // Render ban đầu
-                    maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
-
-                    ListFooterComponent={loadingMore ? (
-                        <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
-                    ) : null} // Hiển thị loader khi đang tải thêm
-                />
-            </ScrollView>
+    const renderHeader = () => (
+        <View style={{ paddingTop: 100, backgroundColor: 'white', paddingHorizontal: 24 }}>
+            <Text className='text-[24px] font-bold'>{name}</Text>
+            <Image
+                source={typeof image === 'string' ? { uri: image } : undefined}
+                className='w-full h-[154px] mt-[10px] rounded-[12px] bg-accent'
+            />
+            <Text className='mt-[10px] px-[8px]'>{description}</Text>
+            <Text className='text-[20px] text-[#32343E] mt-[16px]'>Popular Foods</Text>
         </View>
     );
-}
 
-const category: Category = {
-    id: 1,
-    name: 'Hot Dog',
-    note: 'A popular fast food with sausage and bun.',
-    createdAt: '2025-05-01T09:00:00.000Z',
-    image: ""
-}
-export default Category
+    return (
+        <FlatList
+            data={foods}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 24 }}
+            contentContainerStyle={{ paddingBottom: 400, gap: 20, backgroundColor: "white" }}
+            renderItem={({ item }) => <FoodItem food={item} />}
+            onEndReached={loadFoods}
+            onEndReachedThreshold={0.5}
+            ListHeaderComponent={renderHeader}
+            ListFooterComponent={
+                loadingMore ? <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} /> : null
+            }
+        />
+    );
+};
 
-const styles = StyleSheet.create({})
+export default Category;

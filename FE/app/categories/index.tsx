@@ -1,5 +1,5 @@
 
-import { useData } from '@/context/DataContext';
+
 import { Link } from 'expo-router';
 import { MotiView } from 'moti'
 import { useState } from 'react';

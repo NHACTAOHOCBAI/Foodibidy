@@ -7,13 +7,12 @@ import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, Text, View }
 import RestaurantItem from '@/components/RestaurantItem'
 import FoodItem from '@/components/FoodItem'
 import { useEffect, useState } from 'react'
-import { useData } from '@/context/DataContext'
+import { getCategoriesPaginated, getMyProfile } from '@/services/mockAPI'
 const PAGE_SIZE = 4;
 const index = () => {
-  const { categories, foods, restaurants, account } = useData();
   return (
     <View className='flex-1 bg-white  '>
-      <Header myProfile={account} />
+      <Header />
       <ScrollView
         className='flex-1 pt-[250px]'
         showsVerticalScrollIndicator={false}
@@ -21,15 +20,16 @@ const index = () => {
           paddingBottom: 400
         }}
       >
-        <Categories categories={categories} />
-        <Restaurants restaurants={restaurants} />
-        <Foods foods={foods} />
+        <Categories />
+        {/* <Restaurants/>
+        <Foods /> */}
       </ScrollView>
     </View>
   )
 }
 
-const Header = ({ myProfile }: { myProfile: Account }) => {
+const Header = () => {
+  const myProfile = getMyProfile();
   const router = useRouter();
   return (
     <View className='px-[24px] absolute z-[1]  pb-[10px] bg-white w-full '>
@@ -68,12 +68,17 @@ const Header = ({ myProfile }: { myProfile: Account }) => {
   )
 }
 
-const Categories = ({ categories }: { categories: Category[] }) => {
-  const router = useRouter();
+const Categories = () => {
+  const [categories, setCategories] = useState<Category[]>([])
+  const fetchCategories = async () => {
+    const data = await getCategoriesPaginated({ limit: 7, page: 1 })
+    setCategories(data)
+  }
+  useEffect(() => {
+    fetchCategories();
+  }, [])
   return (
-    <Pressable
-      onPress={() => router.push('/categories')}>
-
+    <Pressable>
       <View className='px-[24px] flex-row justify-between items-center '>
         <Text className='text-[#32343E] text-[20px]'>All Categories</Text>
         <Link href={'/categories'} asChild>

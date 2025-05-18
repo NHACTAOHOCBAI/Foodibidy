@@ -1,6 +1,6 @@
 
 import RestaurantItem from '@/components/RestaurantItem';
-import { useData } from '@/context/DataContext';
+
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, Text, View } from 'react-native'
 const PAGE_SIZE = 6;

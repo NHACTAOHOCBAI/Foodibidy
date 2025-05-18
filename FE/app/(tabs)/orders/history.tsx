@@ -3,10 +3,8 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View, ScrollView, FlatList, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import moment from 'moment'
-import { useData } from '@/context/DataContext';
 const PAGE_SIZE = 4;
 const History = () => {
-    const { detailOrders } = useData();
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [loadingMore, setLoadingMore] = useState(false);
 

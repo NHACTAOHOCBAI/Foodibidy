@@ -103,15 +103,11 @@ interface Account {
     updateAt: string,
     phoneNumber: string;
     avatar: string;
-    address: [
-        { id: number, typeName: string, value: string }
-    ]
-    cart: [
-        {
-            food: Pick<Food, 'id' | 'name' | 'price'>;
-            quantity: number;
-        }
-    ]
+    address: { id: number, typeName: string, value: string }[]
+    cart: {
+        food: Pick<Food, 'id' | 'name' | 'price'>;
+        quantity: number;
+    }[]
 }
 
 interface Restaurant {

@@ -4,9 +4,13 @@ import { useRouter } from 'expo-router';
 import { icons } from '@/constants/icons';
 const FoodItem = ({ food }: { food: Food }) => {
     const router = useRouter();
-    const onPress = () => {
-        router.push(`/foods/${food.id}`)
-    }
+    const onPress = () => router.push({
+        pathname: '/foods/[id]',
+        params: {
+            id: food.id.toString(),
+            data: JSON.stringify(food),
+        },
+    })
     return (
         <Pressable
             onPress={onPress}
@@ -30,7 +34,7 @@ const FoodItem = ({ food }: { food: Food }) => {
                             className='font-bold mt-[15px] text-[15px]'>{food.name}</Text>
                         <Text
                             numberOfLines={1}
-                            className='mt-[5px] text-[13px]'>{food.restaurantName}</Text>
+                            className='mt-[5px] text-[13px]'>{food.restaurant.name}</Text>
                         {/* button plus */}
 
                         <View className='flex-row items-center justify-between mt-[8px] gap-[10px]'>
