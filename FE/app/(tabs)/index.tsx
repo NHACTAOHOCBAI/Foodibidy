@@ -7,7 +7,7 @@ import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, Text, View }
 import RestaurantItem from '@/components/RestaurantItem'
 import FoodItem from '@/components/FoodItem'
 import { useEffect, useState } from 'react'
-import { getCategoriesPaginated, getMyProfile } from '@/services/mockAPI'
+import { getCategoriesPaginated, getMyProfile, getRestaurantsPaginated } from '@/services/mockAPI'
 const PAGE_SIZE = 4;
 const index = () => {
   return (
@@ -21,8 +21,8 @@ const index = () => {
         }}
       >
         <Categories />
-        {/* <Restaurants/>
-        <Foods /> */}
+        <Restaurants />
+        {/* <Foods />  */}
       </ScrollView>
     </View>
   )
@@ -69,6 +69,7 @@ const Header = () => {
 }
 
 const Categories = () => {
+  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([])
   const fetchCategories = async () => {
     const data = await getCategoriesPaginated({ limit: 7, page: 1 })
@@ -78,10 +79,10 @@ const Categories = () => {
     fetchCategories();
   }, [])
   return (
-    <Pressable>
+    <View>
       <View className='px-[24px] flex-row justify-between items-center '>
         <Text className='text-[#32343E] text-[20px]'>All Categories</Text>
-        <Link href={'/categories'} asChild>
+        <Pressable onPress={() => router.push('/categories')}>
           <View className='flex-row items-center gap-[10px]'>
             <Text className='text-[#333333] text-[16px] '>See All</Text>
             <Image
@@ -91,7 +92,7 @@ const Categories = () => {
               className='w-[10px] h-[10px]'
             />
           </View>
-        </Link>
+        </Pressable>
       </View>
 
       <FlatList className='py-[20px] '
@@ -110,11 +111,19 @@ const Categories = () => {
           />
         )}
       />
-    </Pressable>
+    </View>
   )
 }
 
-const Restaurants = ({ restaurants }: { restaurants: Restaurant[] }) => {
+const Restaurants = () => {
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([])
+  const fetchRestaurants = async () => {
+    const data = await getRestaurantsPaginated({ limit: 3, page: 1 })
+    setRestaurants(data)
+  }
+  useEffect(() => {
+    fetchRestaurants();
+  }, [])
   const router = useRouter();
   return (
     <Pressable
@@ -122,17 +131,16 @@ const Restaurants = ({ restaurants }: { restaurants: Restaurant[] }) => {
       onPress={() => router.push('/restaurants')}>
       <View className='flex-row justify-between items-center '>
         <Text className='text-[#32343E] text-[20px]'>Open Restaurants</Text>
-        <Link href={'/restaurants'} asChild>
-          {/* {restaurantData.map((value) => <Text>value.id</Text>)} */}
-          <View className='flex-row items-center gap-[10px]'>
-            <Text className='text-[#333333] text-[16px] '>See All</Text>
-            <Image
-              tintColor={"#A0A5BA"}
-              source={icons.arrow}
-              resizeMode='contain'
-              className='w-[10px] h-[10px]' />
-          </View>
-        </Link>
+
+        <View className='flex-row items-center gap-[10px]'>
+          <Text className='text-[#333333] text-[16px] '>See All</Text>
+          <Image
+            tintColor={"#A0A5BA"}
+            source={icons.arrow}
+            resizeMode='contain'
+            className='w-[10px] h-[10px]' />
+        </View>
+
       </View>
 
       <FlatList className='py-[20px]'

@@ -50,7 +50,7 @@ const RestaurantItem = ({ restaurant }: Props) => {
                                 source={icons.star}
                                 className='size-6'
                             />
-                            <Text className='font-bold text-[16px]'>{restaurant.rate}</Text>
+                            <Text className='font-bold text-[16px]'>{restaurant.rating}</Text>
                         </View>
                         <View className='flex-row items-center gap-[9px]'>
                             <Image
