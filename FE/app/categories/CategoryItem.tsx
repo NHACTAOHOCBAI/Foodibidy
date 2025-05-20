@@ -8,20 +8,16 @@ const CategoryItem = ({ category }: { category: Category }) => {
         <Pressable onPress={() => router.push({
             pathname: '/categories/detail_category',
             params: {
-                id: category.id,
-                name: category.name,
-                description: category.description,
-                image: category.image,
-                createdAt: category.createdAt
+                data: JSON.stringify(category),
             },
         })}>
             {({ pressed }) => (
                 <MotiView
-                    className='relative w-[160px]'
+                    className='relative w-[160px] shadow-md bg-white rounded-[10px]'
                     animate={{ scale: pressed ? 0.95 : 1 }}
                     transition={{ type: 'timing', duration: 100 }}
                 >
-                    <View className="w-full p-[8px] rounded-[12px] bg-white h-[200px] drop-shadow-sm">
+                    <View className="w-full p-[8px] rounded-[12px] h-[200px] ">
                         <Image
                             source={category.image ? { uri: category.image } : undefined}
                             className='w-full h-[84px] rounded-[12px] bg-accent'
