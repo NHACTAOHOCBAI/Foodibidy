@@ -6,7 +6,7 @@ import RestaurantItem from '@/components/RestaurantItem'
 import FoodItem from '@/components/FoodItem'
 import { useEffect, useState } from 'react'
 import { getCategoriesPaginated, getMyProfile, getRestaurantsPaginated } from '@/services/mockAPI'
-import CategoryItem from '@/app/(tabs)/home/CategoryItem'
+import CategoryItem from '@/components/CategoryItem'
 const PAGE_SIZE = 4;
 const index = () => {
   return (
