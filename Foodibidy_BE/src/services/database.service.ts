@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import admin from 'firebase-admin';
+import admin from 'firebase-admin'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { getFirestore, Firestore, CollectionReference } from 'firebase-admin/firestore'
 import { AddressType } from '~/models/schemas/address.schema'
@@ -14,6 +14,8 @@ import { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { ReviewType } from '~/models/schemas/review.schema'
 import { UserType } from '~/models/schemas/user.schema'
 import { getAuth } from 'firebase-admin/auth'
+import { Restaurant_CategoryType } from '~/models/schemas/restaurant_category.schema'
+import { User_DishType } from '~/models/schemas/user_dish.schema'
 
 dotenv.config()
 
@@ -43,6 +45,7 @@ initializeApp({
 
 // Getter cho Firebase Auth
 export const auth = getAuth()
+
 class DatabaseService {
   private db: Firestore
 
@@ -77,8 +80,16 @@ class DatabaseService {
     return this.db.collection('Categories') as CollectionReference<CategoryType>
   }
 
+  get restaurant_category(): CollectionReference<Restaurant_CategoryType> {
+    return this.db.collection('Restaurant_Categories') as CollectionReference<Restaurant_CategoryType>
+  }
+
   get dishes(): CollectionReference<DishType> {
     return this.db.collection('Dishes') as CollectionReference<DishType>
+  }
+
+  get user_dish(): CollectionReference<User_DishType> {
+    return this.db.collection('User_Dish') as CollectionReference<User_DishType>
   }
 
   get carts(): CollectionReference<CartType> {
@@ -108,4 +119,4 @@ class DatabaseService {
 //#endregion
 const databaseService = new DatabaseService()
 export default databaseService
-export { admin };
+export { admin }

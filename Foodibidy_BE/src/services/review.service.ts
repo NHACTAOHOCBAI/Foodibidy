@@ -29,9 +29,9 @@ class ReviewService {
     if (doc.exists) {
       console.log(`Get review success with ID ${doc.id}`)
       const data = doc.data() as ReviewType
-      let updated_at = handleFormatDate(data.updated_at as Date)
-      let created_at = handleFormatDate(data.created_at as Date)
-      return { id: doc.id, ...doc.data(), updated_at, created_at }
+      let updatedAt = handleFormatDate(data.updatedAt as Date)
+      let createdAt = handleFormatDate(data.createdAt as Date)
+      return { id: doc.id, ...doc.data(), updatedAt, createdAt }
     }
     throw new ErrorWithStatus({ message: REVIEW_MESSAGES.REVIEW_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
   }
@@ -45,7 +45,7 @@ class ReviewService {
 
     const updatedReview = {
       ...data,
-      updated_at: new Date()
+      updatedAt: new Date()
     }
 
     try {
@@ -74,9 +74,9 @@ class ReviewService {
       snapshot.forEach((doc) => {
         const data = doc.data()
         console.log(doc.id)
-        let updated_at = handleFormatDate(data.updated_at as Date)
-        let created_at = handleFormatDate(data.created_at as Date)
-        reviews.push({ ...doc.data(), id: doc.id, created_at, updated_at } as ReviewType)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        reviews.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as ReviewType)
       })
       console.log('All reviews:', reviews)
       return reviews

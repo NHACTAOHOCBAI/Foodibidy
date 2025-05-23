@@ -4,7 +4,10 @@ import { CreateDishReqBody, UpdateDishReqBody } from '~/models/requests/dish.req
 import Dish, { DishType } from '~/models/schemas/dish.schema'
 import { DISH_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { handleFormatDate } from '~/utils/utils'
+import { chunkArray, handleFormatDate } from '~/utils/utils'
+import { GetDishRes } from '~/models/responses/dish.response'
+import user_dishService from './user_dish.service'
+import { FieldPath } from 'firebase-admin/firestore'
 
 class DishService {
   private dishCollection = databaseService.dishes
@@ -29,9 +32,9 @@ class DishService {
     if (doc.exists) {
       console.log(`Get dish success with ID ${doc.id}`)
       const data = doc.data() as DishType
-      let updated_at = handleFormatDate(data.updated_at as Date)
-      let created_at = handleFormatDate(data.created_at as Date)
-      return { id: doc.id, ...doc.data(), created_at, updated_at } as DishType
+      let updatedAt = handleFormatDate(data.updatedAt as Date)
+      let createdAt = handleFormatDate(data.createdAt as Date)
+      return { ...doc.data(), id: doc.id, createdAt, updatedAt } as DishType
     } else {
       console.error(`Error getting dish with ID ${id}`)
     }
@@ -47,7 +50,7 @@ class DishService {
 
     const updatedDish = {
       ...data,
-      updated_at: new Date()
+      updatedAt: new Date()
     }
 
     try {
@@ -69,16 +72,67 @@ class DishService {
     }
   }
 
-  async getAllDishes(): Promise<DishType[]> {
+  async getAllDishes(pageSize: number, page: number): Promise<GetDishRes[]> {
     try {
-      const snapshot = await this.dishCollection.get()
+      let query = this.dishCollection.orderBy('updatedAt', 'desc')
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
+      const snapshot = await query.get()
+      const dishes: GetDishRes[] = []
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+        console.log(doc.id)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        dishes.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as GetDishRes)
+      })
+      console.log('All dishes:', dishes)
+      return dishes
+    } catch (error) {
+      console.error('Error getting all dishes:', error)
+      throw new Error(`Failed to get all dishes: ${error}`)
+    }
+  }
+
+  async getDishesByCategoryId(pageSize: number, page: number, categoryId: string): Promise<DishType[]> {
+    try {
+      let query = this.dishCollection.where('category.id', '==', categoryId)
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
+      const snapshot = await query.get()
+
       const dishes: DishType[] = []
       snapshot.forEach((doc) => {
         const data = doc.data()
         console.log(doc.id)
-        let updated_at = handleFormatDate(data.updated_at as Date)
-        let created_at = handleFormatDate(data.created_at as Date)
-        dishes.push({ ...doc.data(), id: doc.id, created_at, updated_at } as DishType)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        dishes.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as DishType)
+      })
+      console.log('All dishes:', dishes)
+      return dishes
+    } catch (error) {
+      console.error('Error getting all dishes:', error)
+      throw new Error(`Failed to get all dishes: ${error}`)
+    }
+  }
+  async getDishesByRestaurantId(pageSize: number, page: number, restaurantId: string): Promise<DishType[]> {
+    try {
+      let query = this.dishCollection.where('restaurant.id', '==', restaurantId)
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
+      const snapshot = await query.get()
+
+      const dishes: DishType[] = []
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+        console.log(doc.id)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        dishes.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as DishType)
       })
       console.log('All dishes:', dishes)
       return dishes

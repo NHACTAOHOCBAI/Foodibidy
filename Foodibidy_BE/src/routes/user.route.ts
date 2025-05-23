@@ -7,7 +7,7 @@ const usersRouter = Router()
  * Description. Create a user
  * Path: /users
  * Method: POST
- * Body : { email: string, password: string , confirm_password:string, date_of_birth:string }
+ * Body : { email: string, password: string , confirmPassword:string, dateOfBirth:string }
  */
 usersRouter.post('/', wrapRequestHandler(createUser))
 
@@ -29,7 +29,7 @@ usersRouter.get('/', wrapRequestHandler(getAllUsers))
  * Description. Update a user
  * Path: /users/:userId
  * Method: PUT
- * Body : {role_id?: UserRole email?: string, name?: string, phone_number?: string, date_of_birth?: string, avatar_url?: string }
+ * Body : {roleId?: UserRole email?: string, name?: string, phoneNumber?: string, dateOfBirth?: string, avatar?: string }
  */
 usersRouter.put('/:userId', wrapRequestHandler(updateUser))
 

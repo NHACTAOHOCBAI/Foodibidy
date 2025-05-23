@@ -1,8 +1,11 @@
 import { ParamsDictionary, Query } from 'express-serve-static-core'
 import { OrderStatus } from '~/constants/enums'
+import { DishType } from '../schemas/dish.schema'
+import { RestaurantType } from '../schemas/restaurant.schema'
+import { UserType } from '../schemas/user.schema'
 
 export interface OrderParams extends ParamsDictionary {
-  order_id: string
+  orderId: string
 }
 
 export interface PaginationQuery {
@@ -11,19 +14,27 @@ export interface PaginationQuery {
 }
 
 export interface CreateOrderReqBody {
-  account_id: string
-  restaurant_id: string
-  total_amount: number
+  user: Pick<UserType, 'id' | 'fullName'>
+  restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
+  totalPrice: number
   status: OrderStatus
-  order_time: Date
-  delivery_phone: string
+  orderTime: Date
+  deliveryPhone: string
+  items: {
+    dish: Pick<DishType, 'id' | 'dishName' | 'price'>
+    quantity: number
+  }[]
 }
 
 export interface UpdateOrderReqBody {
-  account_id?: string
-  restaurant_id?: string
-  total_amount?: number
+  userId?: string
+  restaurantId?: string
+  totalPrice?: number
   status?: OrderStatus
-  order_time?: Date
-  delivery_phone?: string
+  orderTime?: Date
+  deliveryPhone?: string
+  items?: {
+    dish: Pick<DishType, 'id' | 'dishName' | 'price'>
+    quantity: number
+  }[]
 }

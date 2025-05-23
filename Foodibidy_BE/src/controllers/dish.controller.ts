@@ -14,7 +14,21 @@ export const getDish = async (req: Request<DishParams>, res: Response, next: Nex
 }
 
 export const getAllDishes = async (req: Request, res: Response, next: NextFunction) => {
-  const result = await dishService.getAllDishes()
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await dishService.getAllDishes(limit, page)
+  return res.json({ message: DISH_MESSAGES.GET_ALL_SUCCESS, data: result })
+}
+export const getDishesByCategoryId = async (req: Request<DishParams>, res: Response, next: NextFunction) => {
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await dishService.getDishesByCategoryId(limit, page, req.params.categoryId)
+  return res.json({ message: DISH_MESSAGES.GET_ALL_SUCCESS, data: result })
+}
+export const getDishesByRestaurantId = async (req: Request<DishParams>, res: Response, next: NextFunction) => {
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await dishService.getDishesByRestaurantId(limit, page, req.params.restaurantId)
   return res.json({ message: DISH_MESSAGES.GET_ALL_SUCCESS, data: result })
 }
 

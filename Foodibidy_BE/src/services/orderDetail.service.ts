@@ -29,9 +29,9 @@ class OrderDetailService {
     if (doc.exists) {
       console.log(`Get OrderDetail success with ID ${doc.id}`)
       const data = doc.data() as OrderDetailType
-      let updated_at = handleFormatDate(data.updated_at as Date)
-      let created_at = handleFormatDate(data.created_at as Date)
-      return { id: doc.id, ...doc.data(), updated_at, created_at }
+      let updatedAt = handleFormatDate(data.updatedAt as Date)
+      let createdAt = handleFormatDate(data.createdAt as Date)
+      return { id: doc.id, ...doc.data(), updatedAt, createdAt }
     } else {
       console.error(`Error getting OrderDetail with ID ${id}`)
     }
@@ -42,7 +42,7 @@ class OrderDetailService {
     const doc = await this.OrderDetailCollection.doc(id).get()
     const updatedOrderDetail = {
       ...data,
-      updated_at: new Date()
+      updatedAt: new Date()
     }
 
     try {
@@ -70,9 +70,9 @@ class OrderDetailService {
       snapshot.forEach((doc) => {
         const data = doc.data()
         console.log(doc.id)
-        let updated_at = handleFormatDate(data.updated_at as Date)
-        let created_at = handleFormatDate(data.created_at as Date)
-        OrderDetails.push({ ...doc.data(), id: doc.id, created_at, updated_at } as OrderDetailType)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        OrderDetails.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as OrderDetailType)
       })
       console.log('All OrderDetails:', OrderDetails)
       return OrderDetails

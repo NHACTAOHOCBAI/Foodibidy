@@ -1,8 +1,6 @@
 import { z } from 'zod'
 import { validate } from '~/utils/validator'
 import validator from 'validator'
-import usersService from '~/services/user.service'
-import databaseService from '~/services/database.service'
 
 export const RegisterValidator = validate(
   z
@@ -24,12 +22,12 @@ export const RegisterValidator = validate(
           message:
             'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.'
         }),
-      confirm_password: z.string().nonempty({ message: 'Confirm Password cant be empty' }),
+      confirmPassword: z.string().nonempty({ message: 'Confirm Password cant be empty' }),
 
-      date_of_birth: z.date() // You might want to use z.date() if parsing to Date
+      dateOfBirth: z.date() // You might want to use z.date() if parsing to Date
     })
-    .refine((data) => data.password === data.confirm_password, {
+    .refine((data) => data.password === data.confirmPassword, {
       message: 'Passwords do not match',
-      path: ['confirm_password']
+      path: ['confirmPassword']
     })
 )

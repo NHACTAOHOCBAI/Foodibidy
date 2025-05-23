@@ -1,41 +1,41 @@
 export interface ReviewType {
   id?: string
-  account_id: string
-  dish_id: string
+  userId: string
+  dishId: string
   rating: number
   comment: string
-  created_at?: Date | string
-  updated_at?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export default class Review {
   id?: string
-  account_id: string
-  dish_id: string
+  userId: string
+  dishId: string
   rating: number
   comment: string
-  created_at?: Date | string
-  updated_at?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 
   constructor(review: ReviewType) {
     this.id = review.id || ''
-    this.account_id = review.account_id
-    this.dish_id = review.dish_id
+    this.userId = review.userId
+    this.dishId = review.dishId
     this.rating = review.rating
     this.comment = review.comment
-    this.created_at = review.created_at
-    this.updated_at = review.updated_at
+    this.createdAt = review.createdAt
+    this.updatedAt = review.updatedAt
   }
 
   toObject(): ReviewType {
     return {
       id: this.id,
-      account_id: this.account_id,
-      dish_id: this.dish_id,
+      userId: this.userId,
+      dishId: this.dishId,
       rating: this.rating,
       comment: this.comment,
-      created_at: this.created_at,
-      updated_at: this.updated_at
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
     }
   }
 }

@@ -13,6 +13,7 @@ import ordersRouter from './routes/order.route'
 import dishesRouter from './routes/dish.route'
 import reviewsRouter from './routes/review.route'
 import notificationsRouter from './routes/notification.route'
+import user_dishRouter from './routes/user_dish.route'
 const app = express()
 
 const port = 3000
@@ -26,10 +27,11 @@ app.use(express.json())
 //routes
 app.use('/users', usersRouter)
 app.use('/categories', categoriesRouter)
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes)
 app.use('/restaurants', restaurantsRouter)
+app.use('/userDish', user_dishRouter)
 // app.use('/addresses', addressesRouter)
-// app.use('/carts', cartsRouter)
+app.use('/carts', cartsRouter)
 // app.use('/orders', ordersRouter)
 app.use('/dishes', dishesRouter)
 // app.use('/reviews', reviewsRouter)

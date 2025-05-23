@@ -1,9 +1,9 @@
-export interface GetAllCategoryResBody {
+export interface GetCategoryRes {
   id: string
   image: string
   name: string
   description: string
   purchase: number
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }

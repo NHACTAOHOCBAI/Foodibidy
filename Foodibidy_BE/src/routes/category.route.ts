@@ -5,7 +5,8 @@ import {
   getAllCategories,
   getCategory,
   updateCategory,
-  deleteCategory
+  deleteCategory,
+  getAllCategoriesByRestaurantId
 } from '~/controllers/category.controller'
 import { CreateCategoryValidator } from '~/middlewares/category.middlewares'
 
@@ -24,6 +25,13 @@ categoriesRouter.post('/', CreateCategoryValidator, wrapRequestHandler(createCat
  * Method: GET
  */
 categoriesRouter.get('/', wrapRequestHandler(getAllCategories))
+
+/**
+ * Description. Get categories by restaurant
+ * Path: /categories/restaurantId/:restaurantId
+ * Method: GET
+ */
+categoriesRouter.get('/restaurantId/:restaurantId', wrapRequestHandler(getAllCategoriesByRestaurantId))
 
 /**
  * Description. Get a category by ID

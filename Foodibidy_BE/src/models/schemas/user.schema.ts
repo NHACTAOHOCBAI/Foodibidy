@@ -1,57 +1,64 @@
 import { UserRole } from '~/constants/enums'
+import { AddressType } from './address.schema'
 export interface UserType {
   id?: string
-  role_id?: UserRole
-  name: string
+  roleId?: UserRole
+  fullName: string
   email: string
-  password_hash: string
-  date_of_birth?: Date
-  phone_number?: string | ''
-  avatar_url?: string | ''
-  created_at?: Date | string
-  updated_at?: Date | string
+  passwordHash: string
+  dateOfBirth?: Date | string
+  phoneNumber?: string | ''
+  avatar?: string | ''
+  address?: Omit<AddressType, 'userId'>[] | []
+  cartId?: string | ''
+
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export default class User {
   id: string
-  role_id: UserRole
-  name: string
+  roleId: UserRole
+  fullName: string
   email: string
-  password_hash: string
-  date_of_birth?: Date
-  phone_number?: string | ''
-  avatar_url?: string | ''
-  created_at?: Date | string
-  updated_at?: Date | string
+  passwordHash: string
+  dateOfBirth?: Date | string
+  phoneNumber?: string | ''
+  avatar?: string | ''
+  address?: Omit<AddressType, 'userId'>[] | []
+  cartId?: string | ''
+  createdAt?: Date | string
+  updatedAt?: Date | string
 
   constructor(user: UserType) {
     this.id = user.id || ''
-    this.role_id = user.role_id || 1
-    this.name = user.name || ''
+    this.roleId = user.roleId || UserRole.USER
+    this.fullName = user.fullName || ''
     this.email = user.email || ''
-    this.password_hash = user.password_hash || ''
-    this.date_of_birth = user.date_of_birth || new Date()
-    this.phone_number = user.phone_number || ''
-    this.avatar_url = user.avatar_url || ''
-    this.created_at = user.created_at || new Date()
-    this.updated_at = user.updated_at || new Date()
+    this.passwordHash = user.passwordHash || ''
+    this.dateOfBirth = user.dateOfBirth || new Date()
+    this.phoneNumber = user.phoneNumber || ''
+    this.avatar = user.avatar || ''
+    this.address = user.address || []
+    this.cartId = user.cartId || ''
+    this.createdAt = user.createdAt || new Date()
+    this.updatedAt = user.updatedAt || new Date()
   }
 
   toObject(): UserType {
-    const createdAt = this.created_at ? this.created_at : Date.now()
-    const updatedAt = this.updated_at ? this.updated_at : Date.now()
-
     return {
       id: this.id,
-      role_id: this.role_id,
-      name: this.name,
+      roleId: this.roleId,
+      fullName: this.fullName,
       email: this.email,
-      password_hash: this.password_hash,
-      date_of_birth: this.date_of_birth,
-      phone_number: this.phone_number,
-      avatar_url: this.avatar_url,
-      created_at: createdAt as Date,
-      updated_at: updatedAt as Date
+      passwordHash: this.passwordHash,
+      dateOfBirth: this.dateOfBirth,
+      phoneNumber: this.phoneNumber,
+      avatar: this.avatar,
+      address: this.address,
+      cartId: this.cartId,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
     }
   }
 }

@@ -1,37 +1,37 @@
 export interface NotificationType {
   id?: string
-  account_id: string
+  userId: string
   content: string
-  is_read?: boolean
-  created_at?: Date | string
-  updated_at?: Date | string
+  read?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export default class Notification {
   id?: string
-  account_id: string
+  userId: string
   content: string
-  is_read?: boolean
-  created_at?: Date | string
-  updated_at?: Date | string
+  read?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
 
   constructor(notification: NotificationType) {
     this.id = notification.id || ''
-    this.account_id = notification.account_id
+    this.userId = notification.userId
     this.content = notification.content
-    this.is_read = notification.is_read
-    this.created_at = notification.created_at || new Date()
-    this.updated_at = notification.updated_at || new Date()
+    this.read = notification.read
+    this.createdAt = notification.createdAt || new Date()
+    this.updatedAt = notification.updatedAt || new Date()
   }
 
   toObject(): NotificationType {
     return {
       id: this.id,
-      account_id: this.account_id,
+      userId: this.userId,
       content: this.content,
-      is_read: this.is_read,
-      created_at: this.created_at,
-      updated_at: this.updated_at
+      read: this.read,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
     }
   }
 }

@@ -29,9 +29,9 @@ class NotificationService {
     if (doc.exists) {
       console.log(`Get notification success with ID ${doc.id}`)
       const data = doc.data() as NotificationType
-      let updated_at = handleFormatDate(data.updated_at as Date)
-      let created_at = handleFormatDate(data.created_at as Date)
-      return { id: doc.id, ...doc.data(), updated_at, created_at }
+      let updatedAt = handleFormatDate(data.updatedAt as Date)
+      let createdAt = handleFormatDate(data.createdAt as Date)
+      return { id: doc.id, ...doc.data(), updatedAt, createdAt }
     } else {
       console.error(`Error getting notification with ID ${id}`)
     }
@@ -42,7 +42,7 @@ class NotificationService {
     const doc = await this.notificationCollection.doc(id).get()
     const updatedNotification = {
       ...data,
-      updated_at: new Date()
+      updatedAt: new Date()
     }
 
     try {
@@ -76,9 +76,9 @@ class NotificationService {
       snapshot.forEach((doc) => {
         const data = doc.data()
         console.log(doc.id)
-        let updated_at = handleFormatDate(data.updated_at as Date)
-        let created_at = handleFormatDate(data.created_at as Date)
-        notifications.push({ ...doc.data(), id: doc.id, created_at, updated_at } as NotificationType)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        notifications.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as NotificationType)
       })
       console.log('All notifications:', notifications)
       return notifications

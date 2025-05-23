@@ -1,9 +1,10 @@
 import { ErrorWithStatus } from '~/models/errors'
 import databaseService from './database.service'
 import Cart from '~/models/schemas/cart.schema'
-import { ADDRESS_MESSAGES } from '~/constants/messages'
+import { ADDRESS_MESSAGES, CART_MESSAGES, DISH_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { CreateCartReqBody } from '~/models/requests/cart.request'
+import { AddDishToCart, CreateCartReqBody } from '~/models/requests/cart.request'
+import dishService from './dish.service'
 
 class CartService {
   private cartCollection = databaseService.carts
@@ -22,35 +23,45 @@ class CartService {
       throw new Error(`Failed to create cart: ${error}`)
     }
   }
+  async addDishToCart(id: string, Dish: AddDishToCart) {
+    const doc = await this.cartCollection.doc(id).get()
+
+    if (!doc.exists) {
+      throw new ErrorWithStatus({ message: CART_MESSAGES.CART_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    }
+    const dish = await dishService.getDish(Dish.dishId)
+    if (!dish) {
+      throw new ErrorWithStatus({ message: DISH_MESSAGES.DISH_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    }
+
+    try {
+      const cartDish = doc.data()?.dishes || []
+      const dishIndex = cartDish.findIndex((d) => d.dish.id === Dish.dishId)
+      console.log(dishIndex)
+      if (dishIndex !== -1) {
+        cartDish[dishIndex].quantity += Dish.quantity
+      } else cartDish.push({ dish, quantity: Dish.quantity })
+
+      const updatedCart = {
+        dishes: cartDish,
+        updatedAt: new Date()
+      }
+
+      await this.cartCollection.doc(id).update(updatedCart)
+      console.log(`Update cart success with ID ${doc.id}`)
+    } catch (error) {
+      console.error('Error updating cart:', error)
+      throw new ErrorWithStatus({ message: CART_MESSAGES.SERVER_FAIL, status: HTTP_STATUS.NOT_FOUND })
+    }
+  }
 
   async getCart(id: string) {
     const doc = await this.cartCollection.doc(id).get()
     if (doc.exists) {
       console.log(`Get cart success with ID ${doc.id}`)
-      return { id: doc.id, ...doc.data() } as Cart
+      return { ...doc.data(), id: doc.id } as Cart
     }
     throw new ErrorWithStatus({ message: ADDRESS_MESSAGES.ADDRESS_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
-  }
-
-  async updateCart(id: string, data: CreateCartReqBody) {
-    const doc = await this.cartCollection.doc(id).get()
-
-    if (!doc.exists) {
-      throw new ErrorWithStatus({ message: ADDRESS_MESSAGES.ADDRESS_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
-    }
-
-    const updatedCart = {
-      ...data,
-      updated_at: new Date()
-    }
-
-    try {
-      await this.cartCollection.doc(id).update(updatedCart)
-      console.log(`Update cart success with ID ${doc.id}`)
-    } catch (error) {
-      console.error('Error updating cart:', error)
-      throw new ErrorWithStatus({ message: ADDRESS_MESSAGES.ADDRESS_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
-    }
   }
 
   async deleteCart(id: string) {

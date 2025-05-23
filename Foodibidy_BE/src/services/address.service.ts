@@ -28,10 +28,9 @@ class AddressService {
     const doc = await this.addressCollection.doc(id).get()
     if (doc.exists) {
       const data = doc.data() as AddressType
-      let updated_at = handleFormatDate(data.updated_at as Date)
-      let created_at = handleFormatDate(data.created_at as Date)
+
       console.log(`Get address success with ID ${doc.id}`)
-      return { ...doc.data(), id: doc.id, created_at, updated_at }
+      return { ...doc.data(), id: doc.id }
     }
     throw new ErrorWithStatus({ message: ADDRESS_MESSAGES.ADDRESS_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
   }
@@ -45,7 +44,7 @@ class AddressService {
 
     const updatedAddress = {
       ...data,
-      updated_at: new Date()
+      updatedAt: new Date()
     }
 
     try {
@@ -74,9 +73,8 @@ class AddressService {
       snapshot.forEach((doc) => {
         const data = doc.data()
         console.log(doc.id)
-        let updated_at = handleFormatDate(data.updated_at as Date)
-        let created_at = handleFormatDate(data.created_at as Date)
-        addresses.push({ id: doc.id, ...doc.data(), created_at, updated_at } as AddressType)
+
+        addresses.push({ ...doc.data(), id: doc.id } as AddressType)
       })
       console.log('All addresses:', addresses)
       return addresses

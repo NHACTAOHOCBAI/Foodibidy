@@ -6,19 +6,27 @@ import { RESTAURANT_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { handleFormatDate } from '~/utils/utils'
 
-import { DocumentData, QuerySnapshot } from 'firebase-admin/firestore'
-
 class RestaurantService {
   private restaurantCollection = databaseService.restaurants
+  private restaurant_categoryCollection = databaseService.restaurant_category
 
   async createRestaurant(data: CreateRestaurantReqBody) {
     try {
       const newRestaurant = new Restaurant({
         ...data,
-        created_at: new Date()
+        createdAt: new Date()
       }).toObject()
 
       const docRef = await this.restaurantCollection.add(newRestaurant)
+      for (const cate of data.category) {
+        await this.restaurant_categoryCollection.add({
+          restaurantId: docRef.id,
+          restaurantName: data.restaurantName,
+          categoryId: cate.categoryId,
+          categoryName: cate.categoryName
+        })
+      }
+
       console.log('Restaurant created with ID:', docRef.id)
       return docRef.id
     } catch (error) {
@@ -33,36 +41,30 @@ class RestaurantService {
       console.log(`Get restaurant success with ID ${doc.id}`)
 
       const data = doc.data() as RestaurantType
-      let updated_at = handleFormatDate(data.updated_at as Date)
-      let created_at = handleFormatDate(data.created_at as Date)
-      return { id: doc.id, ...doc.data(), updated_at, created_at }
+      let updatedAt = handleFormatDate(data.updatedAt as Date)
+      let createdAt = handleFormatDate(data.createdAt as Date)
+      return { id: doc.id, ...doc.data(), updatedAt, createdAt }
     } else {
       console.error(`Error getting restaurant with ID ${id}`)
     }
     throw new ErrorWithStatus({ message: RESTAURANT_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
   }
 
-  async getAllRestaurants(pageSize: number, lastDocId?: string): Promise<RestaurantType[]> {
+  async getAllRestaurants(pageSize: number, page: number): Promise<RestaurantType[]> {
     try {
-      let query = this.restaurantCollection.orderBy('accountId', 'desc').limit(pageSize)
+      let query = this.restaurantCollection.orderBy('purchase', 'desc')
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
 
-      // If lastDocId is provided, start after that document
-      if (lastDocId) {
-        const lastDoc = await this.restaurantCollection.doc(lastDocId).get()
-        if (!lastDoc.exists) {
-          throw new ErrorWithStatus({ message: RESTAURANT_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
-        }
-        query = query.startAfter(lastDoc)
-      }
-
-      const snapshot: QuerySnapshot<DocumentData> = await query.get()
+      const snapshot = await query.get()
       const restaurants: RestaurantType[] = []
       snapshot.forEach((doc) => {
         const data = doc.data()
         console.log(doc.id)
-        let updated_at = handleFormatDate(data.updated_at as Date)
-        let created_at = handleFormatDate(data.created_at as Date)
-        restaurants.push({ ...doc.data(), id: doc.id, created_at, updated_at } as RestaurantType)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        restaurants.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as RestaurantType)
       })
       console.log('All restaurants:', restaurants)
       return restaurants
@@ -75,7 +77,7 @@ class RestaurantService {
     const doc = await this.restaurantCollection.doc(id).get()
     const updatedRestaurant = {
       ...data,
-      updated_at: new Date()
+      updatedAt: new Date()
     }
 
     try {

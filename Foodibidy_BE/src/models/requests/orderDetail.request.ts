@@ -1,7 +1,7 @@
 import { ParamsDictionary, Query } from 'express-serve-static-core'
 
 export interface OrderDetailParams extends ParamsDictionary {
-  OrderDetail_id: string
+  OrderDetailId: string
 }
 
 export interface PaginationQuery {
@@ -11,14 +11,14 @@ export interface PaginationQuery {
 
 export interface CreateOrderDetailReqBody {
   id: string
-  dish_id: string
+  dishId: string
   quantity: number
-  unit_price: number
+  unitPrice: number
 }
 
 export interface UpdateOrderDetailReqBody {
   // id: string
-  dish_id: string
+  dishId: string
   quantity: number
-  unit_price: number
+  unitPrice: number
 }

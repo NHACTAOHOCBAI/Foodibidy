@@ -1,7 +1,7 @@
 import { ParamsDictionary, Query } from 'express-serve-static-core'
 
 export interface NotificationParams extends ParamsDictionary {
-  notification_id: string
+  notificationId: string
 }
 
 export interface PaginationQuery {
@@ -10,12 +10,12 @@ export interface PaginationQuery {
 }
 
 export interface CreateNotificationReqBody {
-  account_id: string
+  userId: string
   content: string
 }
 
 export interface UpdateNotificationReqBody {
-  account_id?: string
+  userId?: string
   content?: string
-  is_read?: boolean
+  read?: boolean
 }

@@ -1,65 +1,68 @@
+import { CategoryType } from './category.schema'
+import { RestaurantType } from './restaurant.schema'
+
 export interface DishType {
   id?: string
-  restaurant_id: string
-  category_id: string
-  dish_name: string
+  restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
+  category: Pick<CategoryType, 'id' | 'name'>
+  dishName: string
   description: string
   price: string
-  dish_image?: string
-  purchase_count?: number
+  dishImage?: string
+  soldQuantity?: number
   available?: boolean
-  remaining_quantity?: number
+  remainingQuantity?: number
   rating?: string
-  created_at?: Date | string
-  updated_at?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export default class Dish {
   id: string
-  restaurant_id: string
-  category_id: string
-  dish_name: string
+  restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
+  category: Pick<CategoryType, 'id' | 'name'>
+  dishName: string
   description: string
   price: string
-  dish_image?: string
-  purchase_count?: number
+  dishImage?: string
+  soldQuantity?: number
   available?: boolean
-  remaining_quantity?: number
+  remainingQuantity?: number
   rating?: string
-  created_at?: Date | string
-  updated_at?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 
   constructor(dish: DishType) {
     this.id = dish.id || ''
-    this.restaurant_id = dish.restaurant_id || ''
-    this.category_id = dish.category_id
-    this.dish_name = dish.dish_name
+    this.restaurant = dish.restaurant || {}
+    this.category = dish.category || {}
+    this.dishName = dish.dishName
     this.description = dish.description
     this.price = dish.price
-    this.dish_image = dish.dish_image
-    this.purchase_count = dish.purchase_count || 0
+    this.dishImage = dish.dishImage
+    this.soldQuantity = dish.soldQuantity || 0
     this.available = dish.available || false
-    this.remaining_quantity = dish.remaining_quantity || 0
+    this.remainingQuantity = dish.remainingQuantity || 0
     this.rating = dish.rating || ''
-    this.created_at = dish.created_at || new Date()
-    this.updated_at = dish.updated_at || new Date()
+    this.createdAt = dish.createdAt || new Date()
+    this.updatedAt = dish.updatedAt || new Date()
   }
 
   toObject(): DishType {
     return {
       id: this.id,
-      restaurant_id: this.restaurant_id,
-      category_id: this.category_id,
-      dish_name: this.dish_name,
+      restaurant: this.restaurant,
+      category: this.category,
+      dishName: this.dishName,
       description: this.description,
       price: this.price,
-      dish_image: this.dish_image,
-      purchase_count: this.purchase_count,
+      dishImage: this.dishImage,
+      soldQuantity: this.soldQuantity,
       available: this.available,
-      remaining_quantity: this.remaining_quantity,
+      remainingQuantity: this.remainingQuantity,
       rating: this.rating,
-      created_at: this.created_at,
-      updated_at: this.updated_at
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
     }
   }
 }
