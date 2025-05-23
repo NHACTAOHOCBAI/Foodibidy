@@ -12,7 +12,7 @@ export interface GetDishRes {
   soldQuantity?: number
   available?: boolean
   remainingQuantity?: number
-  rating?: string
+  rating?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }

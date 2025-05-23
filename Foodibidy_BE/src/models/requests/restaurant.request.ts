@@ -25,6 +25,6 @@ export interface UpdateRestaurantReqBody {
   status?: RestaurantStatus
   restaurantImage?: string
   phoneString?: string
-  rating?: string
+  rating?: number
   createdAt?: Date
 }

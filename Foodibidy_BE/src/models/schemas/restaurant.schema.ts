@@ -9,7 +9,7 @@ export interface RestaurantType {
   status?: RestaurantStatus
   restaurantImage?: string
   phoneString?: string
-  rating?: string
+  rating?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -23,7 +23,7 @@ export default class Restaurant {
   status: RestaurantStatus
   restaurantImage: string
   phoneString: string
-  rating: string
+  rating: number
   createdAt: Date | string
   updatedAt: Date | string
 
@@ -36,7 +36,7 @@ export default class Restaurant {
     this.status = restaurant.status || RestaurantStatus.ACTIVE
     this.restaurantImage = restaurant.restaurantImage || ''
     this.phoneString = restaurant.phoneString || ''
-    this.rating = restaurant.rating || ''
+    this.rating = restaurant.rating || 0
     this.createdAt = restaurant.createdAt || new Date()
     this.updatedAt = restaurant.updatedAt || new Date()
   }
