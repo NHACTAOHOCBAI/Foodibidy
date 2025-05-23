@@ -22,8 +22,8 @@ class RestaurantService {
         await this.restaurant_categoryCollection.add({
           restaurantId: docRef.id,
           restaurantName: data.restaurantName,
-          categoryId: cate.categoryId,
-          categoryName: cate.categoryName
+          categoryId: cate.id as string,
+          categoryName: cate.name
         })
       }
 

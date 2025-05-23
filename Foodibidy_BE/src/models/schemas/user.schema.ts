@@ -2,7 +2,7 @@ import { UserRole } from '~/constants/enums'
 import { AddressType } from './address.schema'
 export interface UserType {
   id?: string
-  roleId?: UserRole
+  role?: UserRole
   fullName: string
   email: string
   passwordHash: string
@@ -18,7 +18,7 @@ export interface UserType {
 
 export default class User {
   id: string
-  roleId: UserRole
+  role: UserRole
   fullName: string
   email: string
   passwordHash: string
@@ -32,7 +32,7 @@ export default class User {
 
   constructor(user: UserType) {
     this.id = user.id || ''
-    this.roleId = user.roleId || UserRole.USER
+    this.role = user.role || UserRole.CUSTOMER
     this.fullName = user.fullName || ''
     this.email = user.email || ''
     this.passwordHash = user.passwordHash || ''
@@ -48,7 +48,7 @@ export default class User {
   toObject(): UserType {
     return {
       id: this.id,
-      roleId: this.roleId,
+      role: this.role,
       fullName: this.fullName,
       email: this.email,
       passwordHash: this.passwordHash,

@@ -12,7 +12,7 @@ export interface CreateUserReqBody {
 }
 
 export interface UpdateUserReqBody {
-  roleId?: UserRole
+  role?: UserRole
   fullName?: string
   email?: string
   dateOfBirth?: Date

@@ -4,7 +4,7 @@ import { DishType } from '../schemas/dish.schema'
 
 export interface GetUserRes {
   id?: string
-  roleId?: UserRole
+  role?: UserRole
   fullName: string
   email: string
   passwordHash: string
