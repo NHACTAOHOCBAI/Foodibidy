@@ -1,19 +1,24 @@
 export enum UserRole {
-  ADMIN = 0,
-  USER = 1,
-  RESTAURANT = 2,
-  SHIPPER = 3
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+  RESTAURANT = 'RESTAURANT',
+  SHIPPER = 'SHIPPER'
 }
 
 export enum RestaurantStatus {
-  PENDING = 'pending',
-  ACTIVE = 'active',
-  CLOSED = 'closed'
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  CLOSED = 'CLOSED'
 }
 
 export enum OrderStatus {
-  PENDING = 'pending',
-  PROCESSING = 'processing',
-  DELIVERED = 'delivered',
-  CANCELLED = 'cancelled'
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED'
+}
+
+export enum AddressTypeName {
+  HOME = 'HOME',
+  WORK = 'WORK'
 }

@@ -19,8 +19,8 @@ export const getRestaurant = async (req: Request<RestaurantParams>, res: Respons
 }
 
 export const getAllRestaurants = async (req: Request, res: Response, next: NextFunction) => {
-  const limit = parseInt(req.query.limit as string, 10) || 10 // Default to 10
-  const page = req.query.page as string | undefined // Last document ID
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
   const result = await restaurantService.getAllRestaurants(limit, page)
   return res.json({ message: RESTAURANT_MESSAGES.GET_ALL_SUCCESS, data: result })
 }

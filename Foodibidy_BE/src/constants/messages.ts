@@ -18,8 +18,8 @@ export const USERS_MESSAGES = {
   CONFIRM_PASSWORD_MUST_BE_STRONG:
     'Confirm password must be at least 6 characters long, contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 symbol',
   CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD: 'Confirm password must be the same as password',
-  DATE_OF_BIRTH_IS_REQUIRED: 'Date of birth is required',
-  DATE_OF_BIRTH_MUST_BE_ISO8601: 'Date of birth must be in ISO8601 format',
+  dateOfBirth_IS_REQUIRED: 'Date of birth is required',
+  dateOfBirth_MUST_BE_ISO8601: 'Date of birth must be in ISO8601 format',
   LOGIN_SUCCESS: 'Login success',
   REGISTER_SUCCESS: 'Register success',
   ACCESS_TOKEN_IS_REQUIRED: 'Access token is required',
@@ -89,6 +89,7 @@ export const ADDRESS_MESSAGES = {
 
 export const CART_MESSAGES = {
   CREATE_SUCCESS: 'Cart created successfully',
+  ADD_SUCCESS: 'Add dish to cart successfully',
   GET_SUCCESS: 'Get cart successfully',
   GET_ALL_SUCCESS: 'Get all carts successfully',
   UPDATE_SUCCESS: 'Cart updated successfully',
@@ -140,5 +141,15 @@ export const RESTAURANT_MESSAGES = {
   UPDATE_SUCCESS: 'Restaurant updated successfully',
   DELETE_SUCCESS: 'Restaurant deleted successfully',
   NOT_FOUND: 'Restaurant not found',
+  SERVER_FAIL: 'Server get an error'
+}
+
+export const USER_DISH_MESSAGES = {
+  CREATE_SUCCESS: 'User_dish created successfully',
+  GET_SUCCESS: 'Get user_dish successfully',
+  GET_ALL_SUCCESS: 'Get all user_dish successfully',
+  UPDATE_SUCCESS: 'User_dish updated successfully',
+  DELETE_SUCCESS: 'User_dish deleted successfully',
+  NOT_FOUND: 'User_dish not found',
   SERVER_FAIL: 'Server get an error'
 }

@@ -1,7 +1,11 @@
 import { ParamsDictionary, Query } from 'express-serve-static-core'
+import { CategoryType } from '../schemas/category.schema'
+import { RestaurantType } from '../schemas/restaurant.schema'
 
 export interface DishParams extends ParamsDictionary {
-  dish_id: string
+  dishId: string
+  categoryId: string
+  restaurantId: string
 }
 
 export interface PaginationQuery {
@@ -10,25 +14,25 @@ export interface PaginationQuery {
 }
 
 export interface CreateDishReqBody {
-  restaurant_id: string
-  category_id: string
-  dish_name: string
+  restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
+  category: Pick<CategoryType, 'id' | 'name'>
+  dishName: string
   description: string
   price: string
-  dish_image?: string
+  dishImage?: string
 }
 
 export interface UpdateDishReqBody {
-  restaurant_id?: string
-  category_id?: string
-  dish_name?: string
+  restaurantId?: string
+  categoryId?: string
+  dishName?: string
   description?: string
   price?: string
-  dish_image?: string
+  dishImage?: string
   purchase_count?: string
   available?: boolean
   remaining_quantity?: string | null
-  created_at?: Date
-  updated_at?: Date
+  createdAt?: Date
+  updatedAt?: Date
   rating?: string
 }

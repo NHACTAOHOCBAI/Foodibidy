@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { NOTIFICATION_MESSAGES } from '~/constants/messages'
 import { CreateNotificationReqBody, NotificationParams } from '~/models/requests/notification.request'
-import { notificationService } from '~/services/notification.service'
+import notificationService from '~/services/notification.service'
 
 export const createNotification = async (
   req: Request<any, any, CreateNotificationReqBody>,

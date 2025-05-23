@@ -18,7 +18,20 @@ export const getCategory = async (req: Request<CategoryParams>, res: Response, n
 }
 
 export const getAllCategories = async (req: Request, res: Response, next: NextFunction) => {
-  const result = await categoryService.getAllCategories()
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await categoryService.getAllCategories(limit, page)
+  return res.json({ message: CATEGORY_MESSAGES.GET_ALL_SUCCESS, data: result })
+}
+
+export const getAllCategoriesByRestaurantId = async (
+  req: Request<CategoryParams>,
+  res: Response,
+  next: NextFunction
+) => {
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await categoryService.getAllCategoriesByRestaurantId(limit, page, req.params.restaurantId)
   return res.json({ message: CATEGORY_MESSAGES.GET_ALL_SUCCESS, data: result })
 }
 

@@ -4,6 +4,8 @@ import { CreateOrderReqBody, UpdateOrderReqBody } from '~/models/requests/order.
 import Order, { OrderType } from '~/models/schemas/order.schema'
 import { ORDER_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { handleFormatDate } from '~/utils/utils'
+import { OrderStatus } from '~/constants/enums'
 
 class OrderService {
   private orderCollection = databaseService.orders
@@ -27,7 +29,10 @@ class OrderService {
     const doc = await this.orderCollection.doc(id).get()
     if (doc.exists) {
       console.log(`Get order success with ID ${doc.id}`)
-      return { ...doc.data() } as Order
+      const data = doc.data() as OrderType
+      let updatedAt = handleFormatDate(data.updatedAt as Date)
+      let createdAt = handleFormatDate(data.createdAt as Date)
+      return { id: doc.id, ...doc.data(), updatedAt, createdAt }
     } else {
       console.error(`Error getting order with ID ${id}`)
     }
@@ -38,7 +43,7 @@ class OrderService {
     const doc = await this.orderCollection.doc(id).get()
     const updatedOrder = {
       ...data,
-      updated_at: new Date()
+      updatedAt: new Date()
     }
 
     try {
@@ -64,7 +69,34 @@ class OrderService {
       const snapshot = await this.orderCollection.get()
       const orders: OrderType[] = []
       snapshot.forEach((doc) => {
-        orders.push({ ...doc.data(), id: doc.id } as OrderType)
+        const data = doc.data()
+        console.log(doc.id)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as OrderType)
+      })
+      console.log('All orders:', orders)
+      return orders
+    } catch (error) {
+      console.error('Error getting all orders:', error)
+      throw new Error(`Failed to get all orders: ${error}`)
+    }
+  }
+  async getMyHistoryOrders(pageSize: number, page: number): Promise<OrderType[]> {
+    try {
+      let query = this.orderCollection.where('status', '==', OrderStatus.DELIVERED)
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
+
+      const snapshot = await query.get()
+      const orders: OrderType[] = []
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+        console.log(doc.id)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as OrderType)
       })
       console.log('All orders:', orders)
       return orders

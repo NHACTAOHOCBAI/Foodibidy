@@ -1,37 +1,41 @@
 export interface CategoryType {
+  id?: string
   name: string
   description?: string
   purchase?: number
   image?: string
-  created_at?: Date
-  updated_at?: Date
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export default class Category {
+  id?: string
   name: string
   description: string
   purchase: number
   image: string
-  created_at: Date
-  updated_at: Date
+  createdAt: Date
+  updatedAt: Date
 
   constructor(category: CategoryType) {
+    this.id = category.id || ''
     this.name = category.name || ''
     this.description = category.description || ''
     this.purchase = category.purchase || 0
     this.image = category.image || ''
-    this.created_at = category.created_at || new Date()
-    this.updated_at = category.updated_at || new Date()
+    this.createdAt = category.createdAt || new Date()
+    this.updatedAt = category.updatedAt || new Date()
   }
 
   toObject(): CategoryType {
     return {
+      id: this.id,
       name: this.name,
       description: this.description,
       purchase: this.purchase,
       image: this.image,
-      created_at: this.created_at,
-      updated_at: this.updated_at
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
     }
   }
 }

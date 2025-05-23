@@ -1,5 +1,13 @@
 import { Router } from 'express'
-import { createDish, deleteDish, getAllDishes, getDish, updateDish } from '~/controllers/dish.controller'
+import {
+  createDish,
+  deleteDish,
+  getAllDishes,
+  getDish,
+  getDishesByCategoryId,
+  getDishesByRestaurantId,
+  updateDish
+} from '~/controllers/dish.controller'
 import { wrapRequestHandler } from '~/utils/handler'
 const dishesRouter = Router()
 
@@ -7,9 +15,23 @@ const dishesRouter = Router()
  * Description. Create a dishe
  * Path: /dishes
  * Method: POST
- * Body : { email: string, password: string , confirm_password:string, date_of_birth:string }
+ * Body : { email: string, password: string , confirmPassword:string, dateOfBirth:string }
  */
 dishesRouter.post('/', wrapRequestHandler(createDish))
+
+/**
+ * Description. Get all dishes have categoryId
+ * Path: /dishes/category/:categoryId
+ * Method: GET
+ */
+dishesRouter.get('/category/:categoryId', wrapRequestHandler(getDishesByCategoryId))
+
+/**
+ * Description. Get all dishes have restaurantId
+ * Path: /dishes/restaurant/:restaurantId
+ * Method: GET
+ */
+dishesRouter.get('/restaurant/:restaurantId', wrapRequestHandler(getDishesByRestaurantId))
 
 /**
  * Description. Get a dish
@@ -29,7 +51,7 @@ dishesRouter.get('/', wrapRequestHandler(getAllDishes))
  * Description. Update a dish
  * Path: /dishs/:dishId
  * Method: PUT
- * Body : {role_id?: dishRole email?: string, name?: string, phone_number?: string, date_of_birth?: string, avatar_url?: string }
+ * Body : {roleId?: dishRole email?: string, name?: string, phoneNumber?: string, dateOfBirth?: string, avatar?: string }
  */
 dishesRouter.put('/:dishId', wrapRequestHandler(updateDish))
 

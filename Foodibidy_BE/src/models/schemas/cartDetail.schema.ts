@@ -1,24 +1,24 @@
 export interface CartDetailsType {
   id: string
-  dish_id: string
+  dishId: string
   quantity: number
 }
 
 export default class CartDetails {
   id: string
-  dish_id: string
+  dishId: string
   quantity: number
 
   constructor(cartDetails: CartDetailsType) {
-    this.id = cartDetails.id
-    this.dish_id = cartDetails.dish_id
+    this.id = cartDetails.id || ''
+    this.dishId = cartDetails.dishId
     this.quantity = cartDetails.quantity
   }
 
   toObject(): CartDetailsType {
     return {
       id: this.id,
-      dish_id: this.dish_id,
+      dishId: this.dishId,
       quantity: this.quantity
     }
   }

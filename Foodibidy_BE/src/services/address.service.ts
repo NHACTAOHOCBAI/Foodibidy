@@ -1,9 +1,10 @@
 import { ErrorWithStatus } from '~/models/errors'
 import databaseService from './database.service'
 import { CreateAddressReqBody, UpdateAddressReqBody } from '~/models/requests/address.request'
-import Address from '~/models/schemas/address.schema'
+import Address, { AddressType } from '~/models/schemas/address.schema'
 import { ADDRESS_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { handleFormatDate } from '~/utils/utils'
 
 class AddressService {
   private addressCollection = databaseService.addresses
@@ -26,8 +27,10 @@ class AddressService {
   async getAddress(id: string) {
     const doc = await this.addressCollection.doc(id).get()
     if (doc.exists) {
+      const data = doc.data() as AddressType
+
       console.log(`Get address success with ID ${doc.id}`)
-      return { id: doc.id, ...doc.data() } as Address
+      return { ...doc.data(), id: doc.id }
     }
     throw new ErrorWithStatus({ message: ADDRESS_MESSAGES.ADDRESS_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
   }
@@ -41,7 +44,7 @@ class AddressService {
 
     const updatedAddress = {
       ...data,
-      updated_at: new Date()
+      updatedAt: new Date()
     }
 
     try {
@@ -63,12 +66,15 @@ class AddressService {
     }
   }
 
-  async getAllAddresses(): Promise<Address[]> {
+  async getAllAddresses(): Promise<AddressType[]> {
     try {
       const snapshot = await this.addressCollection.get()
-      const addresses: Address[] = []
+      const addresses: AddressType[] = []
       snapshot.forEach((doc) => {
-        addresses.push({ id: doc.id, ...doc.data() } as Address)
+        const data = doc.data()
+        console.log(doc.id)
+
+        addresses.push({ ...doc.data(), id: doc.id } as AddressType)
       })
       console.log('All addresses:', addresses)
       return addresses

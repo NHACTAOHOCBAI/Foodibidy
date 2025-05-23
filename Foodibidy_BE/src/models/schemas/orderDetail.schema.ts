@@ -1,29 +1,37 @@
-export interface OrderDetailsType {
+export interface OrderDetailType {
   id: string
-  dish_id: string
+  dishId: string
   quantity: number
-  unit_price: number
+  unitPrice: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
-export default class OrderDetails {
+export default class OrderDetail {
   id: string
-  dish_id: string
+  dishId: string
   quantity: number
-  unit_price: number
+  unitPrice: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
 
-  constructor(orderDetails: OrderDetailsType) {
-    this.id = orderDetails.id
-    this.dish_id = orderDetails.dish_id
-    this.quantity = orderDetails.quantity
-    this.unit_price = orderDetails.unit_price
+  constructor(orderDetail: OrderDetailType) {
+    this.id = orderDetail.id || ''
+    this.dishId = orderDetail.dishId
+    this.quantity = orderDetail.quantity
+    this.unitPrice = orderDetail.unitPrice
+    this.createdAt = orderDetail.createdAt || new Date()
+    this.updatedAt = orderDetail.updatedAt || new Date()
   }
 
-  toObject(): OrderDetailsType {
+  toObject(): OrderDetailType {
     return {
       id: this.id,
-      dish_id: this.dish_id,
+      dishId: this.dishId,
       quantity: this.quantity,
-      unit_price: this.unit_price
+      unitPrice: this.unitPrice,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
     }
   }
 }

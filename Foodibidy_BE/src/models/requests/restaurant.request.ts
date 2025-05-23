@@ -5,29 +5,26 @@ export interface RestaurantParams extends ParamsDictionary {
   RestaurantId: string
 }
 
-export interface RestaurantQuery extends PaginationQuery, Query {
-  tweet_type: string
-}
-
 export interface PaginationQuery {
   page: string
   limit: string
 }
 
 export interface CreateRestaurantReqBody {
-  accountId: string
-  restaurant_name: string
+  userId: string
+  restaurantName: string
   address: string
-  phone_string: string
+  phoneString: string
+  category: { categoryId: string; categoryName: string }[]
 }
 
 export interface UpdateRestaurantReqBody {
-  accountId?: string
-  restaurant_name?: string
+  userId?: string
+  restaurantName?: string
   address?: string
   status?: RestaurantStatus
-  restaurant_image?: string
-  phone_string?: string
+  restaurantImage?: string
+  phoneString?: string
   rating?: string
-  created_at?: Date
+  createdAt?: Date
 }

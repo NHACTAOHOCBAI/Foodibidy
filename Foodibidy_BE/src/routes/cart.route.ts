@@ -1,22 +1,8 @@
 import { Router } from 'express'
-import { getCart, deleteCart } from '~/controllers/cart.controller'
+import { getCart, deleteCart, addDishToCart } from '~/controllers/cart.controller'
 import { wrapRequestHandler } from '~/utils/handler'
 
 const cartsRouter = Router()
-
-/**
- * Create a new cart
- * Path: /carts
- * Method: POST
- */
-cartsRouter.post('/', wrapRequestHandler(createCart))
-
-/**
- * Get all carts
- * Path: /carts
- * Method: GET
- */
-cartsRouter.get('/', wrapRequestHandler(getAllCarts))
 
 /**
  * Get a cart by ID
@@ -26,11 +12,11 @@ cartsRouter.get('/', wrapRequestHandler(getAllCarts))
 cartsRouter.get('/:cartId', wrapRequestHandler(getCart))
 
 /**
- * Update a cart by ID
+ * Add dish/ update dish to cart
  * Path: /carts/:cartId
  * Method: PUT
  */
-cartsRouter.put('/:cartId', wrapRequestHandler(updateCart))
+cartsRouter.put('/:cartId', wrapRequestHandler(addDishToCart))
 
 /**
  * Delete a cart by ID

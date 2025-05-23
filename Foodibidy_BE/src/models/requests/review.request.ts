@@ -1,7 +1,7 @@
 import { ParamsDictionary, Query } from 'express-serve-static-core'
 
 export interface ReviewParams extends ParamsDictionary {
-  review_id: string
+  reviewId: string
 }
 
 export interface PaginationQuery {
@@ -10,15 +10,15 @@ export interface PaginationQuery {
 }
 
 export interface CreateReviewReqBody {
-  account_id: string
-  dish_id: string
+  userId: string
+  dishId: string
   rating: number
   comment: string
 }
 
 export interface UpdateReviewReqBody {
-  account_id?: string
-  dish_id?: string
+  userId?: string
+  dishId?: string
   rating?: number
   comment?: string
 }

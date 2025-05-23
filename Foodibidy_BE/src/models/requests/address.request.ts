@@ -1,7 +1,8 @@
 import { ParamsDictionary, Query } from 'express-serve-static-core'
+import { AddressTypeName } from '~/constants/enums'
 
 export interface AddressParams extends ParamsDictionary {
-  address_id: string
+  addressId: string
 }
 
 export interface PaginationQuery {
@@ -10,11 +11,12 @@ export interface PaginationQuery {
 }
 
 export interface CreateAddressReqBody {
-  address_name: string
-  account_id: string
+  addressName: string
+  userId: string
+  typeName: AddressTypeName
 }
 
 export interface UpdateAddressReqBody {
-  account_id?: string
-  address_name: string
+  userId?: string
+  addressName: string
 }

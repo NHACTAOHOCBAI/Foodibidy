@@ -4,10 +4,11 @@ import { CreateCategoryReqBody } from '~/models/requests/category.request'
 import { ErrorWithStatus } from '~/models/errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { CATEGORY_MESSAGES } from '~/constants/messages'
-import { GetAllCategoryResBody } from '~/models/responses/category.response'
-import { format } from 'date-fns'
-import { Timestamp } from 'firebase-admin/firestore'
-import { handleFormatDate } from '~/utils/utils'
+import { GetCategoryRes } from '~/models/responses/category.response'
+import { chunkArray, handleFormatDate } from '~/utils/utils'
+import { DocumentData, FieldPath, QuerySnapshot } from 'firebase-admin/firestore'
+import restaurant_categoryService from './restaurant_category.service'
+import { chunk, result } from 'lodash'
 
 class CategoryService {
   private categoryCollection = databaseService.categories
@@ -15,7 +16,7 @@ class CategoryService {
   async createCategory(categoryData: CreateCategoryReqBody) {
     const newCategory = new Category({
       ...categoryData,
-      created_at: new Date()
+      createdAt: new Date()
     }).toObject()
 
     const docRef = await this.categoryCollection.add(newCategory)
@@ -29,29 +30,68 @@ class CategoryService {
       throw new ErrorWithStatus({ message: CATEGORY_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
     } else {
       const data = doc.data() as CategoryType
-      let updated_at = handleFormatDate(data.updated_at)
-      let created_at = handleFormatDate(data.created_at)
-      return { id: doc.id, ...doc.data(), updated_at, created_at }
+      let updatedAt = handleFormatDate(data.updatedAt)
+      let createdAt = handleFormatDate(data.createdAt)
+      return { ...doc.data(), id: doc.id, updatedAt, createdAt }
     }
   }
 
-  async getAllCategories(): Promise<GetAllCategoryResBody[]> {
-    const snapshot = await this.categoryCollection.orderBy('purchase', 'desc').get()
-    const result: GetAllCategoryResBody[] = []
+  async getAllCategories(pageSize: number, page: number): Promise<GetCategoryRes[]> {
+    let query = this.categoryCollection.orderBy('purchase', 'desc')
+    const offset = (page - 1) * pageSize
+    if (offset > 0) query = query.offset(offset)
+    if (pageSize > 0) query = query.limit(pageSize)
+    const snapshot = await query.get()
+    const result: GetCategoryRes[] = []
 
     snapshot.forEach((doc) => {
       const data = doc.data()
 
-      let updated_at = handleFormatDate(data.updated_at)
-      let created_at = handleFormatDate(data.created_at)
+      let updatedAt = handleFormatDate(data.updatedAt as Date)
+      let createdAt = handleFormatDate(data.createdAt)
       result.push({
-        id: doc.id,
         ...doc.data(),
-        created_at,
-        updated_at
-      } as GetAllCategoryResBody)
+        id: doc.id,
+        createdAt,
+        updatedAt
+      } as GetCategoryRes)
     })
     return result
+  }
+  async getAllCategoriesByRestaurantId(
+    pageSize: number,
+    page: number,
+    restaurantId: string
+  ): Promise<GetCategoryRes[]> {
+    const categories = await restaurant_categoryService.getCategoriesByRestaurantId(restaurantId)
+    const allResults: GetCategoryRes[] = []
+    const chunks = chunkArray(categories, 10) // chia nhỏ array
+    for (const chunk of chunks) {
+      let query = this.categoryCollection.where(FieldPath.documentId(), 'in', chunk)
+
+      const snapshot = await query.get()
+
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt)
+        allResults.push({
+          ...doc.data(),
+          id: doc.id,
+          createdAt,
+          updatedAt
+        } as GetCategoryRes)
+      })
+    }
+
+    // Nếu cần sắp xếp + cắt theo offset/limit sau khi gộp:
+    let offset = 0
+    if (pageSize > 0) offset = (page - 1) * pageSize
+
+    allResults.sort((a, b) => (b.purchase as number) - (a.purchase as number))
+    //.slice(offset, pageSize + offset)
+    return allResults.slice(offset, pageSize + offset)
   }
 
   async updateCategory(categoryId: string, updateData: Partial<CategoryType>) {
@@ -62,7 +102,7 @@ class CategoryService {
 
     await this.categoryCollection.doc(categoryId).update({
       ...updateData,
-      updated_at: new Date()
+      updatedAt: new Date()
     })
   }
 

@@ -5,9 +5,10 @@ import {
   getAllCategories,
   getCategory,
   updateCategory,
-  deleteCategory
+  deleteCategory,
+  getAllCategoriesByRestaurantId
 } from '~/controllers/category.controller'
-import { CreateCategorySchema } from '~/middlewares/category.middlewares'
+import { CreateCategoryValidator } from '~/middlewares/category.middlewares'
 
 const categoriesRouter = Router()
 
@@ -16,7 +17,7 @@ const categoriesRouter = Router()
  * Path: /categories
  * Method: POST
  */
-categoriesRouter.post('/', CreateCategorySchema, wrapRequestHandler(createCategory))
+categoriesRouter.post('/', CreateCategoryValidator, wrapRequestHandler(createCategory))
 
 /**
  * Description. Get all categories
@@ -24,6 +25,13 @@ categoriesRouter.post('/', CreateCategorySchema, wrapRequestHandler(createCatego
  * Method: GET
  */
 categoriesRouter.get('/', wrapRequestHandler(getAllCategories))
+
+/**
+ * Description. Get categories by restaurant
+ * Path: /categories/restaurantId/:restaurantId
+ * Method: GET
+ */
+categoriesRouter.get('/restaurantId/:restaurantId', wrapRequestHandler(getAllCategoriesByRestaurantId))
 
 /**
  * Description. Get a category by ID

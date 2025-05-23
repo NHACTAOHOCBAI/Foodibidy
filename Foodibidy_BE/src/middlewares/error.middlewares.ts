@@ -5,6 +5,7 @@ import { ErrorWithStatus } from '~/models/errors'
 
 export const defaultErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ErrorWithStatus) {
+    console.log(err)
     return res.status(err.status).json(omit(err, ['status']))
   }
   // lưu ý: không được dùng Object.keys(err) vì nó sẽ không lấy được các key không enumerable
@@ -12,6 +13,7 @@ export const defaultErrorHandler = (err: any, req: Request, res: Response, next:
   Object.getOwnPropertyNames(err).forEach((key) => {
     Object.defineProperty(err, key, { enumerable: true })
   })
+  console.log(err)
   res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     message: err.message,
     errorInfo: omit(err, ['stack'])
