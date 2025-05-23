@@ -26,15 +26,15 @@ const FoodItem = ({ food }: { food: Food }) => {
                     }}>
                     <View className="w-full p-[8px] bg-transparent">
                         <Image
-                            source={food.image ? { uri: food.image } : undefined}
+                            source={food.dishImage ? { uri: food.dishImage } : undefined}
                             className='w-full h-[84px] rounded-[12px] bg-accent'
                         />
                         <Text
                             numberOfLines={1}
-                            className='font-bold mt-[15px] text-[15px]'>{food.name}</Text>
+                            className='font-bold mt-[15px] text-[15px]'>{food.dishName}</Text>
                         <Text
                             numberOfLines={1}
-                            className='mt-[5px] text-[13px]'>{food.restaurant.name}</Text>
+                            className='mt-[5px] text-[13px]'>{food.restaurant.restaurantName}</Text>
                         {/* button plus */}
 
                         <View className='flex-row items-center justify-between mt-[8px] gap-[10px]'>

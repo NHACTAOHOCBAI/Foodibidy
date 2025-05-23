@@ -114,7 +114,7 @@ interface Restaurant {
     id: number;
     account: Pick<Account, 'id' | 'fullName' | 'phoneNumber'>;
     categories: Pick<Account, 'id' | 'name'>[];
-    name: string;
+    restaurantName: string;
     address: string;
     status: 'pending' | 'active' | 'closed';
     image: string;
@@ -125,7 +125,7 @@ interface Restaurant {
 }
 
 interface Category {
-    id: number;
+    id: string;
     name: string;
     description: string;
     image: string;
@@ -133,13 +133,13 @@ interface Category {
 }
 
 interface Food {
-    id: number;
-    restaurant: Pick<Restaurant, 'id' | 'name'>;
+    id: string;
+    restaurant: Pick<Restaurant, 'id' | 'restaurantName'>;
     category: Pick<Category, 'id' | 'name'>;
-    name: string;
+    dishName: string;
     description: string;
     price: number;
-    image: string;
+    dishImage: string;
     soldQuantity: number;
     available: boolean;
     remainingQuantity: number | null;

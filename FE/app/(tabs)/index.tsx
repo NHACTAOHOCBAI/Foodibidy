@@ -7,6 +7,7 @@ import FoodItem from '@/components/FoodItem'
 import { useEffect, useState } from 'react'
 import { getCategoriesPaginated, getMyProfile, getRestaurantsPaginated } from '@/services/mockAPI'
 import CategoryItem from '@/components/CategoryItem'
+import { useGetCatgory } from '@/hooks/useCategory'
 const PAGE_SIZE = 4;
 const index = () => {
   return (
@@ -69,14 +70,7 @@ const Header = () => {
 
 const Categories = () => {
   const router = useRouter();
-  const [categories, setCategories] = useState<Category[]>([])
-  const fetchCategories = async () => {
-    const data = await getCategoriesPaginated({ limit: 7, page: 1 })
-    setCategories(data)
-  }
-  useEffect(() => {
-    fetchCategories();
-  }, [])
+  const { data: categories } = useGetCatgory();
   return (
     <View>
       <View className='px-[24px] flex-row justify-between items-center '>

@@ -1,22 +1,17 @@
 import FoodItem from '@/components/FoodItem';
 import LazyFlatList from '@/components/LazyFlatList';
-import { getFoodsByCategoryPaginated } from '@/services/mockAPI';
+import { getDishByCategory } from '@/services/dish';
 import { useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 const PAGE_SIZE = 6;
 
 const Category = () => {
     const { data } = useLocalSearchParams();
     const category = JSON.parse(data as string) as Category;
-
+    console.log('category', category)
     const fetchFoods = async (page: number) => {
-        return await getFoodsByCategoryPaginated({
-            idCategory: category.id,
-            page,
-            limit: PAGE_SIZE,
-        });
+        return await getDishByCategory(category.id, page, PAGE_SIZE);
     };
 
     const renderHeader = () => (
@@ -32,11 +27,11 @@ const Category = () => {
     );
 
     return (
-        <LazyFlatList
+        <LazyFlatList<Food>
             fetchData={fetchFoods}
             pageSize={PAGE_SIZE}
             renderItem={({ item }) => <FoodItem food={item} />}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.id}
             ListHeaderComponent={renderHeader()}
         />
     );
