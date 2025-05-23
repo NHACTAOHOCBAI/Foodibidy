@@ -9,7 +9,6 @@ const PAGE_SIZE = 6;
 const Category = () => {
     const { data } = useLocalSearchParams();
     const category = JSON.parse(data as string) as Category;
-    console.log('category', category)
     const fetchFoods = async (page: number) => {
         return await getDishByCategory(category.id, page, PAGE_SIZE);
     };

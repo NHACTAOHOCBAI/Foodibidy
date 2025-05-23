@@ -4,6 +4,7 @@ import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { icons } from "@/constants/icons";
 import Filter from "@/components/Filter";
 import { FilterProvider, useFilter } from "@/context/FilterContext";
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 const CustomHeader = ({ title, color = "", isTransperant = false }: any) => {
   const router = useRouter();
@@ -135,9 +136,12 @@ const InnerLayout = () => {
 }
 
 export default function RootLayout() {
+  const queryClient = new QueryClient()
   return (
-    <FilterProvider>
-      <InnerLayout />
-    </FilterProvider>
+    <QueryClientProvider client={queryClient}>
+      <FilterProvider>
+        <InnerLayout />
+      </FilterProvider>
+    </QueryClientProvider>
   )
 }

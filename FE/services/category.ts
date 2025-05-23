@@ -2,8 +2,6 @@ import axiosInstance from "@/configs/axiosConfig"
 
 const getCategory = async (page?: number, limit?: number) => {
     const res = await axiosInstance.get(`/categories?limit=${limit}&page=${page}`)
-    console.log(res)
-    console.log(res)
     return res.data
 }
 
