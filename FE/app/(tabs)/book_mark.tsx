@@ -1,13 +1,11 @@
 
 import FoodItem from '@/components/FoodItem';
-import { useData } from '@/context/DataContext';
 import { useState } from 'react';
 
 import { ActivityIndicator, FlatList, ScrollView, Text, View } from 'react-native'
 
 const PAGE_SIZE = 6;
 const BookMark = () => {
-    const { foods } = useData();
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [loadingMore, setLoadingMore] = useState(false);
 

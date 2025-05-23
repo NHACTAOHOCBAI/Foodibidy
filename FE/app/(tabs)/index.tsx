@@ -1,5 +1,3 @@
-
-import CategoryItem from '@/components/CategoryItem'
 import SearchInput from '@/components/SearchInput'
 import { icons } from '@/constants/icons'
 import { Link, useRouter } from 'expo-router'
@@ -7,13 +5,13 @@ import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, Text, View }
 import RestaurantItem from '@/components/RestaurantItem'
 import FoodItem from '@/components/FoodItem'
 import { useEffect, useState } from 'react'
-import { useData } from '@/context/DataContext'
+import { getCategoriesPaginated, getMyProfile, getRestaurantsPaginated } from '@/services/mockAPI'
+import CategoryItem from '@/components/CategoryItem'
 const PAGE_SIZE = 4;
 const index = () => {
-  const { categories, foods, restaurants, account } = useData();
   return (
     <View className='flex-1 bg-white  '>
-      <Header myProfile={account} />
+      <Header />
       <ScrollView
         className='flex-1 pt-[250px]'
         showsVerticalScrollIndicator={false}
@@ -21,15 +19,16 @@ const index = () => {
           paddingBottom: 400
         }}
       >
-        <Categories categories={categories} />
-        <Restaurants restaurants={restaurants} />
-        <Foods foods={foods} />
+        <Categories />
+        <Restaurants />
+        {/* <Foods />  */}
       </ScrollView>
     </View>
   )
 }
 
-const Header = ({ myProfile }: { myProfile: Account }) => {
+const Header = () => {
+  const myProfile = getMyProfile();
   const router = useRouter();
   return (
     <View className='px-[24px] absolute z-[1]  pb-[10px] bg-white w-full '>
@@ -68,15 +67,21 @@ const Header = ({ myProfile }: { myProfile: Account }) => {
   )
 }
 
-const Categories = ({ categories }: { categories: Category[] }) => {
+const Categories = () => {
   const router = useRouter();
+  const [categories, setCategories] = useState<Category[]>([])
+  const fetchCategories = async () => {
+    const data = await getCategoriesPaginated({ limit: 7, page: 1 })
+    setCategories(data)
+  }
+  useEffect(() => {
+    fetchCategories();
+  }, [])
   return (
-    <Pressable
-      onPress={() => router.push('/categories')}>
-
+    <View>
       <View className='px-[24px] flex-row justify-between items-center '>
         <Text className='text-[#32343E] text-[20px]'>All Categories</Text>
-        <Link href={'/categories'} asChild>
+        <Pressable onPress={() => router.push('/categories')}>
           <View className='flex-row items-center gap-[10px]'>
             <Text className='text-[#333333] text-[16px] '>See All</Text>
             <Image
@@ -86,7 +91,7 @@ const Categories = ({ categories }: { categories: Category[] }) => {
               className='w-[10px] h-[10px]'
             />
           </View>
-        </Link>
+        </Pressable>
       </View>
 
       <FlatList className='py-[20px] '
@@ -105,11 +110,19 @@ const Categories = ({ categories }: { categories: Category[] }) => {
           />
         )}
       />
-    </Pressable>
+    </View>
   )
 }
 
-const Restaurants = ({ restaurants }: { restaurants: Restaurant[] }) => {
+const Restaurants = () => {
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([])
+  const fetchRestaurants = async () => {
+    const data = await getRestaurantsPaginated({ limit: 3, page: 1 })
+    setRestaurants(data)
+  }
+  useEffect(() => {
+    fetchRestaurants();
+  }, [])
   const router = useRouter();
   return (
     <Pressable
@@ -117,17 +130,16 @@ const Restaurants = ({ restaurants }: { restaurants: Restaurant[] }) => {
       onPress={() => router.push('/restaurants')}>
       <View className='flex-row justify-between items-center '>
         <Text className='text-[#32343E] text-[20px]'>Open Restaurants</Text>
-        <Link href={'/restaurants'} asChild>
-          {/* {restaurantData.map((value) => <Text>value.id</Text>)} */}
-          <View className='flex-row items-center gap-[10px]'>
-            <Text className='text-[#333333] text-[16px] '>See All</Text>
-            <Image
-              tintColor={"#A0A5BA"}
-              source={icons.arrow}
-              resizeMode='contain'
-              className='w-[10px] h-[10px]' />
-          </View>
-        </Link>
+
+        <View className='flex-row items-center gap-[10px]'>
+          <Text className='text-[#333333] text-[16px] '>See All</Text>
+          <Image
+            tintColor={"#A0A5BA"}
+            source={icons.arrow}
+            resizeMode='contain'
+            className='w-[10px] h-[10px]' />
+        </View>
+
       </View>
 
       <FlatList className='py-[20px]'

@@ -5,7 +5,6 @@ import { FlatList, ScrollView, Text, View, Image, ActivityIndicator } from 'reac
 import { useState } from 'react'
 import FoodItem from '@/components/FoodItem'
 import { Link } from 'expo-router'
-import { useData } from '@/context/DataContext'
 const PAGE_SIZE = 4;
 const SearchScreen = () => {
     const { restaurants, foods } = useData();

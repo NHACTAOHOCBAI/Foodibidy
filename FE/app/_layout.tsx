@@ -4,13 +4,15 @@ import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { icons } from "@/constants/icons";
 import Filter from "@/components/Filter";
 import { FilterProvider, useFilter } from "@/context/FilterContext";
-import { DataProvider } from "@/context/DataContext";
 
-const CustomHeader = ({ title, isShowDots, isShowHeart, color = "" }: any) => {
+const CustomHeader = ({ title, color = "", isTransperant = false }: any) => {
   const router = useRouter();
-  const { openFilter } = useFilter();
+  // const { openFilter } = useFilter();
   return (
-    <View className="absolute z-20  pt-[50px] pb-[10px] flex-row px-[24px] items-center w-full">
+    <View className="absolute z-20  pt-[50px] pb-[10px] flex-row px-[24px] items-center w-full "
+      style={{
+        backgroundColor: !isTransperant ? "white" : ""
+      }}>
       <TouchableOpacity
         onPress={() => router.back()}
         className='w-[45px] h-[45px] rounded-full items-center justify-center bg-[#ECF0F4]'>
@@ -27,7 +29,7 @@ const CustomHeader = ({ title, isShowDots, isShowHeart, color = "" }: any) => {
         {title}
       </Text>
 
-      {isShowDots &&
+      {/* {isShowDots &&
         <TouchableOpacity
           onPress={() => openFilter()}
           className='ml-auto w-[45px] h-[45px] rounded-full items-center justify-center bg-[#ECF0F4]'>
@@ -35,16 +37,8 @@ const CustomHeader = ({ title, isShowDots, isShowHeart, color = "" }: any) => {
             tintColor="#181C2E"
             source={icons.dots} resizeMode='contain' className='w-[12px] h-[12px] rotate-180'
           />
-        </TouchableOpacity>}
+        </TouchableOpacity>} */}
 
-      {isShowHeart &&
-        <TouchableOpacity
-          className='ml-auto w-[45px] h-[45px] rounded-full items-center justify-center bg-[#ECF0F4]'>
-          <Image
-            tintColor="#181C2E"
-            source={icons.heart} resizeMode='contain' className='w-[14px] h-[14px] rotate'
-          />
-        </TouchableOpacity>}
     </View>
   );
 };
@@ -76,7 +70,6 @@ const InnerLayout = () => {
           name="restaurants/[id]"
           options={{
             header: () => <CustomHeader
-              isShowDots={true}
             />
           }}
         />
@@ -84,7 +77,7 @@ const InnerLayout = () => {
           name="foods/[id]"
           options={{
             header: () => <CustomHeader
-              isShowHeart={true}
+              isTransperant={true}
             />
           }}
         />
@@ -113,10 +106,10 @@ const InnerLayout = () => {
           }}
         />
         <Stack.Screen
-          name="categories/[id]"
+          name="categories/detail_category"
           options={{
             header: () => <CustomHeader
-              title='Id of Category'
+              title='Detail Category'
             />
           }}
         />
@@ -129,6 +122,13 @@ const InnerLayout = () => {
             />
           }}
         />
+        <Stack.Screen
+          name="completed/placeOrder"
+          options={{
+            headerShown: false, // Ẩn header
+          }}
+
+        />
       </Stack>
     </View>
   )
@@ -136,10 +136,8 @@ const InnerLayout = () => {
 
 export default function RootLayout() {
   return (
-    <DataProvider>
-      <FilterProvider>
-        <InnerLayout />
-      </FilterProvider>
-    </DataProvider>
+    <FilterProvider>
+      <InnerLayout />
+    </FilterProvider>
   )
 }

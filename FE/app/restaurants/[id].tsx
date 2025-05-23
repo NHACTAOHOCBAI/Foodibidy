@@ -3,7 +3,7 @@ import { icons } from '@/constants/icons';
 import SuggestedItem from '@/components/SuggestedItem';
 import { useState } from 'react';
 import FoodItem from '@/components/FoodItem';
-import { useData } from '@/context/DataContext';
+
 const PAGE_SIZE = 4;
 const RestaurantDetail = () => {
     const { foods } = useData();
