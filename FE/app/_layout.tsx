@@ -5,6 +5,7 @@ import { icons } from "@/constants/icons";
 import Filter from "@/components/Filter";
 import { FilterProvider, useFilter } from "@/context/FilterContext";
 import { QueryClient, QueryClientProvider } from 'react-query'
+import Toast from 'react-native-toast-message';
 
 const CustomHeader = ({ title, color = "", isTransperant = false }: any) => {
   const router = useRouter();
@@ -142,6 +143,7 @@ export default function RootLayout() {
       <FilterProvider>
         <InnerLayout />
       </FilterProvider>
+      <Toast />
     </QueryClientProvider>
   )
 }

@@ -5,6 +5,7 @@ import QuantitySelector from '@/components/QuantitySelector'
 import { useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { useAddDishToCart } from '@/hooks/useCart'
+import { showErrorToast, showSuccessToast } from '@/components/Toast'
 
 const FoodDetail = () => {
     const { data } = useLocalSearchParams();
@@ -12,9 +13,20 @@ const FoodDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const { mutate: addToCart, isLoading, isSuccess } = useAddDishToCart();
     const onAddToCart = () => {
-        addToCart({ idAccount: "tZTMHacNdF1SovL49Aln", idDish: food.id, quantity: quantity })
-    };
+        addToCart(
+            { idAccount: "tZTMHacNdF1SovL49Aln", idDish: food.id, quantity: quantity },
+            {
+                onSuccess: () => {
+                    showSuccessToast(`You just have added ${food.dishName} successfully`)
+                    setQuantity(1)
+                },
+                onError: () => {
+                    showErrorToast("Cannot add food to cart. Please do again");
+                },
+            },
 
+        )
+    };
     return (
         <View className='flex-1 relative'>
             {isLoading && (
