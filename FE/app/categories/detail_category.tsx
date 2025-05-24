@@ -26,13 +26,15 @@ const Category = () => {
     );
 
     return (
-        <LazyFlatList<Food>
-            fetchData={fetchFoods}
-            pageSize={PAGE_SIZE}
-            renderItem={({ item }) => <FoodItem food={item} />}
-            keyExtractor={(item) => item.id}
-            ListHeaderComponent={renderHeader()}
-        />
+        <View className='flex-1 bg-white'>
+            <LazyFlatList<Food>
+                fetchData={fetchFoods}
+                pageSize={PAGE_SIZE}
+                renderItem={({ item }) => <FoodItem food={item} />}
+                keyExtractor={(item) => item.id}
+                ListHeaderComponent={renderHeader()}
+            />
+        </View>
     );
 };
 

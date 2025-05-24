@@ -6,12 +6,14 @@ import { useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { useAddDishToCart } from '@/hooks/useCart'
 import { showErrorToast, showSuccessToast } from '@/components/Toast'
+import { useAddMyFavourite } from '@/hooks/useFavourite'
 
 const FoodDetail = () => {
     const { data } = useLocalSearchParams();
     const food = JSON.parse(data as string) as Food;
     const [quantity, setQuantity] = useState(1);
-    const { mutate: addToCart, isLoading, isSuccess } = useAddDishToCart();
+    const { mutate: addToCart, isLoading: isLoadingAddDishToCart } = useAddDishToCart();
+    const { mutate: addMyFavourite, isLoading: isLoadingAddMyFavourite } = useAddMyFavourite()
     const onAddToCart = () => {
         addToCart(
             { idCart: "ENzhNl05Rc45pBp3ZhHb", idDish: food.id, quantity: quantity },
@@ -27,14 +29,29 @@ const FoodDetail = () => {
 
         )
     };
+    const addMyFavouriteFood = () => {
+        addMyFavourite(
+            { userId: "FV6KteJ9KjODzkKHA998", dishId: food.id },
+            {
+                onSuccess: () => {
+                    showSuccessToast(`You loved ${food.dishName}`)
+                    setQuantity(1)
+                },
+                onError: () => {
+                    showErrorToast("Cannot add food to My favourite foods. Please do again");
+                },
+            },
+        )
+    }
     return (
         <View className='flex-1 relative'>
-            {isLoading && (
+            {(isLoadingAddDishToCart || isLoadingAddMyFavourite) && (
                 <View className="absolute z-50 inset-0 opacity-35 bg-gray-300 items-center justify-center">
                     <ActivityIndicator size="large" color="gray" />
                 </View>
             )}
             <TouchableOpacity
+                onPress={addMyFavouriteFood}
                 className='ml-auto w-[45px]  h-[45px] rounded-full items-center justify-center bg-[#ECF0F4] absolute z-[10] top-[50px] right-[24px]'>
                 <Image
                     tintColor="#181C2E"
@@ -45,7 +62,7 @@ const FoodDetail = () => {
             <ScrollView
                 className="bg-white"
                 contentContainerStyle={{ paddingBottom: 400 }}
-                scrollEnabled={!isLoading}
+                scrollEnabled={!(isLoadingAddDishToCart || isLoadingAddMyFavourite)}
             >
                 <Image
                     source={{ uri: food.dishImage !== "" ? food.dishName : undefined }}
@@ -80,7 +97,7 @@ const FoodDetail = () => {
                 <Button
                     onPress={onAddToCart}
                     size='large'
-                    title={isLoading ? "Adding..." : "Add to cart"}
+                    title={isLoadingAddDishToCart ? "Adding..." : "Add to cart"}
                 />
             </View>
         </View>
