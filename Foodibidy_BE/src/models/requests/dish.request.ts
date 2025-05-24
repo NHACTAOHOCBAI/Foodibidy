@@ -18,7 +18,7 @@ export interface CreateDishReqBody {
   category: Pick<CategoryType, 'id' | 'name'>
   dishName: string
   description: string
-  price: string
+  price: number
   dishImage?: string
 }
 

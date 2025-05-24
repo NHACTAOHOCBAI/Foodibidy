@@ -1,15 +1,23 @@
 import { Router } from 'express'
-import { createUser_Dish, deleteUser_Dish, getDishesByUserId } from '~/controllers/user_dish.controller'
+import { checkLikeDish, createUser_Dish, deleteUser_Dish, getDishesByUserId } from '~/controllers/user_dish.controller'
 import { wrapRequestHandler } from '~/utils/handler'
 const user_dishRouter = Router()
 
 /**
- * Description. Like a food
+ * Description. add or delete favorite food
  * Path: /userDish
  * Method: POST
- * Body : { email: string, password: string , confirmPassword:string, dateOfBirth:string }
+ * Body : {userId: string,dishId: string  }
  */
 user_dishRouter.post('/', wrapRequestHandler(createUser_Dish))
+
+/**
+ * Description.check a dish is in favorite list or not
+ * Path: /userDish/checkDish
+ * Method: POST
+ * Body : {userId: string,dishId: string  }
+ */
+user_dishRouter.post('/checkDish', wrapRequestHandler(checkLikeDish))
 
 /**
  * Description. Get all dishes have userId
@@ -19,7 +27,7 @@ user_dishRouter.post('/', wrapRequestHandler(createUser_Dish))
 user_dishRouter.get('/:userId', wrapRequestHandler(getDishesByUserId))
 
 /**
- * Description. Delete a user
+ * Description. Delete a favorite dish
  * Path: /userDish/:userId
  * Method: Delete
  */

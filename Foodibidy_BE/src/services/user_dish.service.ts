@@ -1,23 +1,43 @@
 import databaseService from './database.service'
 import { ErrorWithStatus } from '~/models/errors'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { CATEGORY_MESSAGES } from '~/constants/messages'
+import { CATEGORY_MESSAGES, USER_DISH_MESSAGES } from '~/constants/messages'
 import { chunkArray, handleFormatDate } from '~/utils/utils'
 import User_Dish, { User_DishType } from '~/models/schemas/user_dish.schema'
 import { FieldPath } from 'firebase-admin/firestore'
 import { DishType } from '~/models/schemas/dish.schema'
+import { exists } from 'fs'
 
 class User_DishService {
   private user_dishCollection = databaseService.user_dish
   private dishCollection = databaseService.dishes
 
-  async createUser_Dish(user_dishData: User_Dish) {
+  async createUser_Dish(user_dishData: User_DishType) {
     const newUser_Dish = new User_Dish({
       ...user_dishData
     }).toObject()
 
-    const docRef = await this.user_dishCollection.add(newUser_Dish)
-    return docRef.id
+    const exists = await this.checkLikeDish(user_dishData)
+    console.log(exists)
+    if (exists === '') {
+      const docRef = await this.user_dishCollection.add(newUser_Dish)
+      return docRef.id
+    } else {
+      this.deleteUser_Dish(exists)
+      throw new ErrorWithStatus({ message: USER_DISH_MESSAGES.DELETE_SUCCESS, status: HTTP_STATUS.ACCEPTED })
+    }
+  }
+
+  async checkLikeDish(data: User_DishType): Promise<string> {
+    const snapshot = await this.user_dishCollection
+      .where('userId', '==', data.userId)
+      .where('dishId', '==', data.dishId)
+      .limit(1)
+      .get()
+
+    if (!snapshot.empty) {
+      return snapshot.docs[0].id
+    } else return ''
   }
 
   async getDishesByUserId(pageSize: number, page: number, userId: string): Promise<DishType[]> {

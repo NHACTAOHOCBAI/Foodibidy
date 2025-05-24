@@ -7,7 +7,7 @@ export interface DishType {
   category: Pick<CategoryType, 'id' | 'name'>
   dishName: string
   description: string
-  price: string
+  price: number
   dishImage?: string
   soldQuantity?: number
   available?: boolean
@@ -23,7 +23,7 @@ export default class Dish {
   category: Pick<CategoryType, 'id' | 'name'>
   dishName: string
   description: string
-  price: string
+  price: number
   dishImage?: string
   soldQuantity?: number
   available?: boolean

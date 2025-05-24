@@ -151,5 +151,6 @@ export const USER_DISH_MESSAGES = {
   UPDATE_SUCCESS: 'User_dish updated successfully',
   DELETE_SUCCESS: 'User_dish deleted successfully',
   NOT_FOUND: 'User_dish not found',
-  SERVER_FAIL: 'Server get an error'
+  SERVER_FAIL: 'Server get an error',
+  DISH_EXIST: 'Dish exists'
 }

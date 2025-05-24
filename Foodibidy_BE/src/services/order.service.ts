@@ -15,7 +15,7 @@ class OrderService {
     try {
       const newOrder = new Order({
         ...data,
-        orderTime: new Date(data.orderTime)
+        totalPrice: data.items.reduce((sum, item) => sum + item.dish.price * item.quantity, 0)
       }).toObject()
 
       const docRef = await this.orderCollection.add(newOrder)
@@ -29,7 +29,9 @@ class OrderService {
 
   async getMyOngoingOrders(pageSize: number, page: number, userId: String): Promise<OrderType[]> {
     try {
-      let query = this.orderCollection.where('user.id', '==', userId).where('status', '==', OrderStatus.PROCESSING)
+      let query = this.orderCollection
+        .where('user.id', '==', userId)
+        .where('status', 'in', [OrderStatus.PROCESSING, OrderStatus.PENDING])
       const offset = (page - 1) * pageSize
       if (offset > 0) query = query.offset(offset)
       if (pageSize > 0) query = query.limit(pageSize)

@@ -13,6 +13,12 @@ export const createUser_Dish = async (
   const result = await user_dishService.createUser_Dish(req.body)
   return res.json({ message: USER_DISH_MESSAGES.CREATE_SUCCESS, data: result })
 }
+
+export const checkLikeDish = async (req: Request<User_Dish>, res: Response, next: NextFunction) => {
+  const result = await user_dishService.checkLikeDish(req.body)
+  if (result === '') return res.json({ message: USER_DISH_MESSAGES.NOT_FOUND, data: result })
+  return res.json({ message: USER_DISH_MESSAGES.DISH_EXIST, data: result })
+}
 export const getDishesByUserId = async (req: Request<DishParams>, res: Response, next: NextFunction) => {
   const limit = parseInt(req.query.limit as string, 10) || 0
   const page = parseInt(req.query.page as string, 10) || 0
