@@ -32,7 +32,7 @@ class UsersService {
         }
         const cart = await cartService.createCart({ userId: docRef.id })
         console.log(cart)
-        await this.userCollection.doc(docRef.id).update({ cart: cart })
+        await this.userCollection.doc(docRef.id).update({ cartId: cart })
         console.log('User created with ID:', docRef.id)
         return docRef.id
       } else throw new Error(`Email already exist`)

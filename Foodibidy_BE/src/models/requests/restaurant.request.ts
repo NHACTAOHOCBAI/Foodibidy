@@ -1,5 +1,7 @@
 import { ParamsDictionary, Query } from 'express-serve-static-core'
 import { RestaurantStatus } from '~/constants/enums'
+import { GetUserRes } from '../responses/user.response'
+import { CategoryType } from '../schemas/category.schema'
 
 export interface RestaurantParams extends ParamsDictionary {
   RestaurantId: string
@@ -11,11 +13,12 @@ export interface PaginationQuery {
 }
 
 export interface CreateRestaurantReqBody {
-  userId: string
+  user: Pick<GetUserRes, 'id' | 'fullName' | 'phoneNumber'>
   restaurantName: string
   address: string
-  phoneString: string
-  category: { categoryId: string; categoryName: string }[]
+  phoneNumber: string
+  category: Pick<CategoryType, 'id' | 'name'>[]
+  bio: string
 }
 
 export interface UpdateRestaurantReqBody {
@@ -24,7 +27,8 @@ export interface UpdateRestaurantReqBody {
   address?: string
   status?: RestaurantStatus
   restaurantImage?: string
-  phoneString?: string
-  rating?: string
+  phoneNumber?: string
+  rating?: number
+  bio?: string
   createdAt?: Date
 }

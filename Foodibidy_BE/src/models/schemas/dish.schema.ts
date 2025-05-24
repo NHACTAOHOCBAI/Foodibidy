@@ -12,7 +12,7 @@ export interface DishType {
   soldQuantity?: number
   available?: boolean
   remainingQuantity?: number
-  rating?: string
+  rating?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -28,7 +28,7 @@ export default class Dish {
   soldQuantity?: number
   available?: boolean
   remainingQuantity?: number
-  rating?: string
+  rating?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 
@@ -43,7 +43,7 @@ export default class Dish {
     this.soldQuantity = dish.soldQuantity || 0
     this.available = dish.available || false
     this.remainingQuantity = dish.remainingQuantity || 0
-    this.rating = dish.rating || ''
+    this.rating = dish.rating || 0
     this.createdAt = dish.createdAt || new Date()
     this.updatedAt = dish.updatedAt || new Date()
   }
