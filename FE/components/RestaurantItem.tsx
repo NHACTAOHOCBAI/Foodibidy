@@ -7,9 +7,13 @@ interface Props {
 }
 const RestaurantItem = ({ restaurant }: Props) => {
     const router = useRouter();
-    const onPress = () => {
-        router.push('/restaurants/[id]')
-    }
+    const onPress = () => router.push({
+        pathname: '/restaurants/[id]',
+        params: {
+            id: restaurant.id,
+            data: JSON.stringify(restaurant),
+        },
+    })
     return (
         <Pressable
             onPress={onPress}

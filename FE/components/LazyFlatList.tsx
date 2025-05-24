@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
 import { useEffect, useState } from 'react';
 
 interface LazyFlatListProps<T> {
@@ -7,6 +7,7 @@ interface LazyFlatListProps<T> {
     renderItem: ({ item }: { item: T }) => JSX.Element;
     keyExtractor: (item: T) => string;
     ListHeaderComponent?: JSX.Element;
+    numColumns?: number
 }
 
 function LazyFlatList<T>({
@@ -15,6 +16,7 @@ function LazyFlatList<T>({
     renderItem,
     keyExtractor,
     ListHeaderComponent,
+    numColumns = 2
 }: LazyFlatListProps<T>) {
     const [data, setData] = useState<T[]>([]);
     const [page, setPage] = useState(1);
@@ -39,10 +41,14 @@ function LazyFlatList<T>({
         <FlatList
             data={data}
             keyExtractor={keyExtractor}
-            numColumns={2}
-            columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 24 }}
+            numColumns={numColumns}
+            columnWrapperStyle={numColumns > 1 ? { justifyContent: 'space-between' } : undefined}
             contentContainerStyle={{ paddingBottom: 400, gap: 20, backgroundColor: 'white' }}
-            renderItem={renderItem}
+            renderItem={({ item }) => (
+                <View style={{ paddingHorizontal: 24, marginBottom: 20 }}>
+                    {renderItem({ item })}
+                </View>
+            )}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             ListHeaderComponent={ListHeaderComponent}

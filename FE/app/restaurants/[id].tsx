@@ -3,26 +3,33 @@ import { icons } from '@/constants/icons';
 import SuggestedItem from '@/components/SuggestedItem';
 import { useState } from 'react';
 import FoodItem from '@/components/FoodItem';
+import { useLocalSearchParams } from 'expo-router';
+import { useGetCatgoryByRestaurant } from '@/hooks/useCategory';
+import { getDishByRestaurant } from '@/services/dish';
+import LazyFlatList from '@/components/LazyFlatList';
 
 const PAGE_SIZE = 4;
 const RestaurantDetail = () => {
-    const { foods } = useData();
-    return (
-        <ScrollView
+    const { data } = useLocalSearchParams();
+    const restaurant = JSON.parse(data as string) as Restaurant;
+    const { data: categories } = useGetCatgoryByRestaurant(restaurant.id)
+    const fetchFoodsByRestaurant = async (page: number) => {
+        return await getDishByRestaurant(restaurant.id, page, PAGE_SIZE);
+    };
+
+    const renderHeader = () => (
+        <View
             className="bg-white"
-            contentContainerStyle={{
-                paddingBottom: 400
-            }}
         >
             <Image
-                source={{ uri: restaurantData.image !== "" ? restaurantData.image : undefined }}
-                className='bg-accent w-full h-[400px] rounded-[20px]'
+                source={{ uri: restaurant.restaurantImage !== "" ? restaurant.restaurantImage : undefined }}
+                className='bg-accent w- h-[400px] rounded-[20px]'
                 resizeMode="cover" />
             <View className='p-[24px]'>
                 <Text
                     numberOfLines={1}
                     className='font-bold text-[20px] w-full'>
-                    {restaurantData.name}
+                    {restaurant.restaurantName}
                 </Text>
 
                 <Text
@@ -31,7 +38,7 @@ const RestaurantDetail = () => {
                         marginTop: 15,
                         marginBottom: 35,
                     }}
-                    className=' text-[14px] text-[#A0A5BA]' >{restaurantData.description}</Text>
+                    className=' text-[14px] text-[#A0A5BA]' >{restaurant.bio}</Text>
 
                 <View className='flex-row items-center gap-[24px]'>
                     <View className='flex-row items-center gap-[4px]'>
@@ -40,7 +47,7 @@ const RestaurantDetail = () => {
                             source={icons.star}
                             className='size-6'
                         />
-                        <Text className='font-bold text-[16px]'>{restaurantData.rate}</Text>
+                        <Text className='font-bold text-[16px]'>{restaurant.rating}</Text>
                     </View>
                     <View className='flex-row items-center gap-[9px]'>
                         <Image
@@ -54,7 +61,7 @@ const RestaurantDetail = () => {
             </View>
 
             <FlatList className='py-[24px] '
-                data={restaurantData.categories}
+                data={categories}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{
@@ -70,61 +77,20 @@ const RestaurantDetail = () => {
                     />
                 )}
             />
-
-            {/* data */}
-            <Foods foods={foods} />
-        </ScrollView>
-    )
-}
-
-const Foods = ({ foods }: { foods: Food[] }) => {
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    const [loadingMore, setLoadingMore] = useState(false);
-    // Hàm load thêm dữ liệu
-    const handleLoadMore = () => {
-        if (visibleCount >= foods.length || loadingMore) return;
-
-        setLoadingMore(true);
-
-        // Mô phỏng delay tải dữ liệu (API call)
-        setTimeout(() => {
-            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, foods.length));
-            setLoadingMore(false);
-        }, 2000);
-    };
-
-    return (
-        <View className="mt-[12px] px-[24px]">
-            <Text className="text-[#32343E] text-[20px]">Popular Foods</Text>
-
-            <FlatList
-                className="py-[20px]"
-                data={foods.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
-                scrollEnabled={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ gap: 28 }}
-                columnWrapperStyle={{ justifyContent: 'space-between' }}
-                numColumns={2}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <FoodItem food={item} />}
-
-                // Lazy loading props
-                onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
-                onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
-                initialNumToRender={PAGE_SIZE} // Render ban đầu
-                maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
-
-                ListFooterComponent={loadingMore ? (
-                    <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
-                ) : null} // Hiển thị loader khi đang tải thêm
-            />
+            <Text className="text-[#32343E] text-[20px] px-[24px]">Popular Foods</Text>
         </View>
     );
-};
+
+    return (
+        <LazyFlatList<Food>
+            fetchData={fetchFoodsByRestaurant}
+            pageSize={PAGE_SIZE}
+            renderItem={({ item }) => <FoodItem food={item} />}
+            keyExtractor={(item) => item.id}
+            ListHeaderComponent={renderHeader()}
+        />
+    );
+}
+
 
 export default RestaurantDetail
-
-const restaurantData: Restaurant = {
-    id: 1, name: "Pho 24", address: "Hanoi", image: "pho24.jpg", rate: 4.5,
-    categories: [{ id: 2, name: "Vietnamese" }], description: "Authentic pho and noodles", reviews: 120, status: "hoat_dong"
-}

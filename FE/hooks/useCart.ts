@@ -4,7 +4,7 @@ import { addDishToCart } from '@/services/cart';
 
 export const useAddDishToCart = () => {
     return useMutation({
-        mutationFn: ({ idAccount, idDish, quantity }: { idAccount: string; idDish: string; quantity: number }) =>
-            addDishToCart(idAccount, idDish, quantity),
+        mutationFn: ({ idCart, idDish, quantity }: { idCart: string; idDish: string; quantity: number }) =>
+            addDishToCart(idCart, idDish, quantity),
     });
 };

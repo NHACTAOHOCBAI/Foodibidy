@@ -72,6 +72,7 @@ const InnerLayout = () => {
           name="restaurants/[id]"
           options={{
             header: () => <CustomHeader
+              isTransperant={true}
             />
           }}
         />

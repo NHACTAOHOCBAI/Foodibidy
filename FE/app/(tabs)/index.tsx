@@ -111,7 +111,7 @@ const Categories = () => {
 
 const Restaurants = () => {
   const router = useRouter();
-  const { data: restaurants } = useGetRestaurant();
+  const { data: restaurants } = useGetRestaurant(1, 3);
   return (
     <Pressable
       className='mt-[12px] px-[24px]'
