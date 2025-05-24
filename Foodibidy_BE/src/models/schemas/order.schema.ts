@@ -40,7 +40,7 @@ export default class Order {
     this.restaurant = order.restaurant
     this.totalPrice = order.totalPrice
     this.status = order.status
-    this.orderTime = order.orderTime
+    this.orderTime = order.orderTime || new Date()
     this.deliveryPhone = order.deliveryPhone
     this.items = order.items || []
     this.createdAt = order.createdAt || new Date()

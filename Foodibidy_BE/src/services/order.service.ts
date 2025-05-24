@@ -6,6 +6,7 @@ import { ORDER_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { handleFormatDate } from '~/utils/utils'
 import { OrderStatus } from '~/constants/enums'
+import { FieldPath } from 'firebase-admin/firestore'
 
 class OrderService {
   private orderCollection = databaseService.orders
@@ -13,7 +14,8 @@ class OrderService {
   async createOrder(data: CreateOrderReqBody) {
     try {
       const newOrder = new Order({
-        ...data
+        ...data,
+        orderTime: new Date(data.orderTime)
       }).toObject()
 
       const docRef = await this.orderCollection.add(newOrder)
@@ -25,18 +27,29 @@ class OrderService {
     }
   }
 
-  async getOrder(id: string) {
-    const doc = await this.orderCollection.doc(id).get()
-    if (doc.exists) {
-      console.log(`Get order success with ID ${doc.id}`)
-      const data = doc.data() as OrderType
-      let updatedAt = handleFormatDate(data.updatedAt as Date)
-      let createdAt = handleFormatDate(data.createdAt as Date)
-      return { id: doc.id, ...doc.data(), updatedAt, createdAt }
-    } else {
-      console.error(`Error getting order with ID ${id}`)
+  async getMyOngoingOrders(pageSize: number, page: number, userId: String): Promise<OrderType[]> {
+    try {
+      let query = this.orderCollection.where('user.id', '==', userId).where('status', '==', OrderStatus.PROCESSING)
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
+
+      const snapshot = await query.get()
+      const orders: OrderType[] = []
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+        console.log(doc.id)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        let orderTime = handleFormatDate(data.orderTime as Date)
+        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt, orderTime } as OrderType)
+      })
+      console.log('All orders:', orders)
+      return orders
+    } catch (error) {
+      console.error('Error getting all orders:', error)
+      throw new Error(`Failed to get all orders: ${error}`)
     }
-    throw new ErrorWithStatus({ message: ORDER_MESSAGES.ORDER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
   }
 
   async updateOrder(id: string, data: UpdateOrderReqBody) {
@@ -64,16 +77,21 @@ class OrderService {
     }
   }
 
-  async getAllOrders(): Promise<OrderType[]> {
+  async getAllOrders(pageSize: number, page: number): Promise<OrderType[]> {
     try {
-      const snapshot = await this.orderCollection.get()
+      let query = this.orderCollection.orderBy('updatedAt', 'desc')
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
+      const snapshot = await query.get()
       const orders: OrderType[] = []
       snapshot.forEach((doc) => {
         const data = doc.data()
         console.log(doc.id)
         let updatedAt = handleFormatDate(data.updatedAt as Date)
         let createdAt = handleFormatDate(data.createdAt as Date)
-        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as OrderType)
+        let orderTime = handleFormatDate(data.orderTime as Date)
+        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt, orderTime } as OrderType)
       })
       console.log('All orders:', orders)
       return orders
@@ -82,9 +100,9 @@ class OrderService {
       throw new Error(`Failed to get all orders: ${error}`)
     }
   }
-  async getMyHistoryOrders(pageSize: number, page: number): Promise<OrderType[]> {
+  async getMyHistoryOrders(pageSize: number, page: number, userId: String): Promise<OrderType[]> {
     try {
-      let query = this.orderCollection.where('status', '==', OrderStatus.DELIVERED)
+      let query = this.orderCollection.where('user.id', '==', userId).where('status', '==', OrderStatus.DELIVERED)
       const offset = (page - 1) * pageSize
       if (offset > 0) query = query.offset(offset)
       if (pageSize > 0) query = query.limit(pageSize)
@@ -96,7 +114,8 @@ class OrderService {
         console.log(doc.id)
         let updatedAt = handleFormatDate(data.updatedAt as Date)
         let createdAt = handleFormatDate(data.createdAt as Date)
-        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as OrderType)
+        let orderTime = handleFormatDate(data.orderTime as Date)
+        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt, orderTime } as OrderType)
       })
       console.log('All orders:', orders)
       return orders

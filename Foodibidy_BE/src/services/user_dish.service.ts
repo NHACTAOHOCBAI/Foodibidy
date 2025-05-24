@@ -42,6 +42,17 @@ class User_DishService {
         })
       }
       console.log('All dishes:', allResults)
+      // Nếu cần sắp xếp + cắt theo offset/limit sau khi gộp:
+      let offset = 0
+      if (pageSize > 0) offset = (page - 1) * pageSize
+
+      // allResults.sort((a, b) => (b.purchase as number) - (a.purchase as number))
+      //.slice(offset, pageSize + offset)
+      if (page > 0) {
+        console.log(allResults, offset, page)
+        if (page <= allResults.length / pageSize) return allResults.slice(offset, pageSize + offset)
+        else return []
+      }
       return allResults
     } catch (error) {
       console.error('Error getting all dishes:', error)

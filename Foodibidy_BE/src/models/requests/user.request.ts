@@ -15,7 +15,7 @@ export interface UpdateUserReqBody {
   role?: UserRole
   fullName?: string
   email?: string
-  dateOfBirth?: Date
+  dateOfBirth?: string
   phoneNumber?: string | ''
   avatar?: string | ''
   address?: AddressType[] | []
