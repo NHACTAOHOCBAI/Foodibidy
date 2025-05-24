@@ -1,8 +1,9 @@
-import { getAllRestaurant } from "@/services/restaurant"
+
+import { getRestaurant } from '@/services/restaurant';
 import { useQuery } from 'react-query';
-export const useGetAllRestaurants = () => {
+export const useGetRestaurant = (page?: number, limit?: number) => {
     return useQuery({
-        queryKey: ["get all restaurants"],
-        queryFn: getAllRestaurant,
+        queryKey: ["get restaurant"],
+        queryFn: () => getRestaurant(page, limit),
     })
 }

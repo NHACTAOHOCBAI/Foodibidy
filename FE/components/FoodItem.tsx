@@ -2,6 +2,8 @@ import { Image, Pressable, Text, View } from 'react-native'
 import { MotiView } from 'moti';
 import { useRouter } from 'expo-router';
 import { icons } from '@/constants/icons';
+import { useAddDishToCart } from '@/hooks/useCart';
+import { showErrorToast, showSuccessToast } from '@/components/Toast';
 const FoodItem = ({ food }: { food: Food }) => {
     const router = useRouter();
     const onPress = () => router.push({
@@ -11,6 +13,21 @@ const FoodItem = ({ food }: { food: Food }) => {
             data: JSON.stringify(food),
         },
     })
+    const { mutate: addToCart, isLoading, isSuccess } = useAddDishToCart();
+    const onAddToCart = () => {
+        addToCart(
+            { idCart: "ENzhNl05Rc45pBp3ZhHb", idDish: food.id, quantity: 1 },
+            {
+                onSuccess: () => {
+                    showSuccessToast(`You just have added ${food.dishName} successfully`)
+                },
+                onError: () => {
+                    showErrorToast("Cannot add food to cart. Please do again");
+                },
+            },
+
+        )
+    };
     return (
         <Pressable
             onPress={onPress}
@@ -26,15 +43,15 @@ const FoodItem = ({ food }: { food: Food }) => {
                     }}>
                     <View className="w-full p-[8px] bg-transparent">
                         <Image
-                            source={food.image ? { uri: food.image } : undefined}
+                            source={food.dishImage ? { uri: food.dishImage } : undefined}
                             className='w-full h-[84px] rounded-[12px] bg-accent'
                         />
                         <Text
                             numberOfLines={1}
-                            className='font-bold mt-[15px] text-[15px]'>{food.name}</Text>
+                            className='font-bold mt-[15px] text-[15px]'>{food.dishName}</Text>
                         <Text
                             numberOfLines={1}
-                            className='mt-[5px] text-[13px]'>{food.restaurant.name}</Text>
+                            className='mt-[5px] text-[13px]'>{food.restaurant.restaurantName}</Text>
                         {/* button plus */}
 
                         <View className='flex-row items-center justify-between mt-[8px] gap-[10px]'>
@@ -42,6 +59,7 @@ const FoodItem = ({ food }: { food: Food }) => {
                                 numberOfLines={1}
                                 className='text-[#32343E] text-[16px] font-bold flex-1'>{`$${food.price}`}</Text>
                             <Pressable
+                                onPress={onAddToCart}
                             >
                                 {({ pressed }) => (
                                     <MotiView

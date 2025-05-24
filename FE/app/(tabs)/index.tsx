@@ -7,25 +7,38 @@ import FoodItem from '@/components/FoodItem'
 import { useEffect, useState } from 'react'
 import { getCategoriesPaginated, getMyProfile, getRestaurantsPaginated } from '@/services/mockAPI'
 import CategoryItem from '@/components/CategoryItem'
+import { useGetCatgory } from '@/hooks/useCategory'
+import { useGetRestaurant } from '@/hooks/useRestaurants'
+import LazyFlatList from '@/components/LazyFlatList'
+import { getDish } from '@/services/dish'
 const PAGE_SIZE = 4;
 const index = () => {
-  return (
-    <View className='flex-1 bg-white  '>
-      <Header />
-      <ScrollView
-        className='flex-1 pt-[250px]'
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 400
-        }}
-      >
-        <Categories />
-        <Restaurants />
-        {/* <Foods />  */}
-      </ScrollView>
+  const fetchFoods = async (page: number) => {
+    return await getDish(page, PAGE_SIZE);
+  };
+
+  const renderHeader = (
+    <View className='mt-[250px]'>
+      <Categories />
+      <Restaurants />
+      <Text className='text-[20px] text-[#32343E] mt-[16px] px-[24px]'>Popular Foods</Text>
     </View>
-  )
-}
+  );
+
+  return (
+    <View className='flex-1 bg-white'>
+      <Header />
+      <LazyFlatList<Food>
+        fetchData={fetchFoods}
+        pageSize={PAGE_SIZE}
+        renderItem={({ item }) => <FoodItem food={item} />}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderHeader}
+      />
+    </View>
+  );
+};
+
 
 const Header = () => {
   const myProfile = getMyProfile();
@@ -69,14 +82,7 @@ const Header = () => {
 
 const Categories = () => {
   const router = useRouter();
-  const [categories, setCategories] = useState<Category[]>([])
-  const fetchCategories = async () => {
-    const data = await getCategoriesPaginated({ limit: 7, page: 1 })
-    setCategories(data)
-  }
-  useEffect(() => {
-    fetchCategories();
-  }, [])
+  const { data: categories } = useGetCatgory();
   return (
     <View>
       <View className='px-[24px] flex-row justify-between items-center '>
@@ -115,41 +121,37 @@ const Categories = () => {
 }
 
 const Restaurants = () => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([])
-  const fetchRestaurants = async () => {
-    const data = await getRestaurantsPaginated({ limit: 3, page: 1 })
-    setRestaurants(data)
-  }
-  useEffect(() => {
-    fetchRestaurants();
-  }, [])
   const router = useRouter();
+  const { data: restaurants } = useGetRestaurant(1, 3);
   return (
     <Pressable
       className='mt-[12px] px-[24px]'
       onPress={() => router.push('/restaurants')}>
       <View className='flex-row justify-between items-center '>
-        <Text className='text-[#32343E] text-[20px]'>Open Restaurants</Text>
+        <Text className='text-[#32343E] text-[20px]'>Famous Restaurants</Text>
 
-        <View className='flex-row items-center gap-[10px]'>
-          <Text className='text-[#333333] text-[16px] '>See All</Text>
-          <Image
-            tintColor={"#A0A5BA"}
-            source={icons.arrow}
-            resizeMode='contain'
-            className='w-[10px] h-[10px]' />
-        </View>
-
+        <Pressable onPress={() => router.push('/restaurants')}>
+          <View className='flex-row items-center gap-[10px]'>
+            <Text className='text-[#333333] text-[16px] '>See All</Text>
+            <Image
+              tintColor={"#A0A5BA"}
+              source={icons.arrow}
+              resizeMode='contain'
+              className='w-[10px] h-[10px]'
+            />
+          </View>
+        </Pressable>
       </View>
 
-      <FlatList className='py-[20px]'
+      <FlatList<Restaurant>
+        className='py-[20px]'
         data={restaurants}
         scrollEnabled={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           gap: 28,
         }}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <RestaurantItem
             restaurant={item}
@@ -160,50 +162,5 @@ const Restaurants = () => {
   )
 }
 
-const Foods = ({ foods }: { foods: Food[] }) => {
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [loadingMore, setLoadingMore] = useState(false);
-
-  // Hàm load thêm dữ liệu
-  const handleLoadMore = () => {
-    if (visibleCount >= foods.length || loadingMore) return;
-
-    setLoadingMore(true);
-
-    // Mô phỏng delay tải dữ liệu (API call)
-    setTimeout(() => {
-      setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, foods.length));
-      setLoadingMore(false);
-    }, 2000);
-  };
-
-  return (
-    <View className="mt-[12px] px-[24px]">
-      <Text className="text-[#32343E] text-[20px]">Popular Foods</Text>
-
-      <FlatList
-        className="py-[20px]"
-        data={foods.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
-        scrollEnabled={false}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 28 }}
-        columnWrapperStyle={{ justifyContent: 'space-between' }}
-        numColumns={2}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <FoodItem food={item} />}
-
-        // Lazy loading props
-        onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
-        onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
-        initialNumToRender={PAGE_SIZE} // Render ban đầu
-        maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
-
-        ListFooterComponent={loadingMore ? (
-          <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
-        ) : null} // Hiển thị loader khi đang tải thêm
-      />
-    </View>
-  );
-};
 
 export default index

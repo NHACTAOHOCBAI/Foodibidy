@@ -1,8 +1,8 @@
 import axios from 'axios';
-const BASE_URL = "http://192.168.166.126:3000";  // Sửa lại IP này
+const BASE_URL = "http://192.168.23.126:3000";  // Sửa lại IP này
 const axiosInstance = axios.create({
     baseURL: BASE_URL,  // URL gốc của API
-    timeout: 3000,
+    timeout: 10000,
     withCredentials: true,                   // Timeout sau 10 giây
     // headers: {
     //     'Content-Type': 'application/json',

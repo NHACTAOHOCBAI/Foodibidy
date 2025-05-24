@@ -3,32 +3,33 @@ import { icons } from '@/constants/icons'
 import Button from '@/components/Button'
 import QuantitySelector from '@/components/QuantitySelector'
 import { useState } from 'react'
-import { useLocalSearchParams, useRouter } from 'expo-router'
-import { addFoodToCart, getMyProfile } from '@/services/mockAPI'
+import { useLocalSearchParams } from 'expo-router'
+import { useAddDishToCart } from '@/hooks/useCart'
+import { showErrorToast, showSuccessToast } from '@/components/Toast'
 
 const FoodDetail = () => {
     const { data } = useLocalSearchParams();
     const food = JSON.parse(data as string) as Food;
     const [quantity, setQuantity] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const router = useRouter();
+    const { mutate: addToCart, isLoading, isSuccess } = useAddDishToCart();
+    const onAddToCart = () => {
+        addToCart(
+            { idCart: "ENzhNl05Rc45pBp3ZhHb", idDish: food.id, quantity: quantity },
+            {
+                onSuccess: () => {
+                    showSuccessToast(`You just have added ${food.dishName} successfully`)
+                    setQuantity(1)
+                },
+                onError: () => {
+                    showErrorToast("Cannot add food to cart. Please do again");
+                },
+            },
 
-    const onAddToCart = async () => {
-        setLoading(true);
-        try {
-            await addFoodToCart({ idFood: food.id, quantity });
-            console.log(getMyProfile());
-            router.push('/completed/placeOrder');
-        } catch (error) {
-            console.error("Failed to add to cart", error);
-        } finally {
-            setLoading(false);
-        }
+        )
     };
-
     return (
         <View className='flex-1 relative'>
-            {loading && (
+            {isLoading && (
                 <View className="absolute z-50 inset-0 opacity-35 bg-gray-300 items-center justify-center">
                     <ActivityIndicator size="large" color="gray" />
                 </View>
@@ -44,15 +45,15 @@ const FoodDetail = () => {
             <ScrollView
                 className="bg-white"
                 contentContainerStyle={{ paddingBottom: 400 }}
-                scrollEnabled={!loading}
+                scrollEnabled={!isLoading}
             >
                 <Image
-                    source={{ uri: food.image !== "" ? food.image : undefined }}
+                    source={{ uri: food.dishImage !== "" ? food.dishName : undefined }}
                     className='bg-accent w-full h-[400px] rounded-[20px]'
                     resizeMode="cover" />
                 <View className='p-[24px] pb-0'>
-                    <Text className='font-bold text-[20px]'>{food.name}</Text>
-                    <Text className='text-[14px] mt-[15px]'>{food.restaurant.name}</Text>
+                    <Text className='font-bold text-[20px]'>{food.dishName}</Text>
+                    <Text className='text-[14px] mt-[15px]'>{food.restaurant.restaurantName}</Text>
 
                     <View className='mt-[15px] flex-row items-center gap-[24px]'>
                         <View className='flex-row items-center gap-[4px]'>
@@ -79,7 +80,7 @@ const FoodDetail = () => {
                 <Button
                     onPress={onAddToCart}
                     size='large'
-                    title={loading ? "Adding..." : "Add to cart"}
+                    title={isLoading ? "Adding..." : "Add to cart"}
                 />
             </View>
         </View>
