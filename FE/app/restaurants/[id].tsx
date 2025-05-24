@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, Text, View } from 'react-native'
 import { icons } from '@/constants/icons';
 import SuggestedItem from '@/components/SuggestedItem';
 import { useState } from 'react';
@@ -7,12 +7,15 @@ import { useLocalSearchParams } from 'expo-router';
 import { useGetCatgoryByRestaurant } from '@/hooks/useCategory';
 import { getDishByRestaurant } from '@/services/dish';
 import LazyFlatList from '@/components/LazyFlatList';
+import { MotiView } from 'moti';
 
 const PAGE_SIZE = 4;
 const RestaurantDetail = () => {
     const { data } = useLocalSearchParams();
     const restaurant = JSON.parse(data as string) as Restaurant;
-    const { data: categories } = useGetCatgoryByRestaurant(restaurant.id)
+    console.log(restaurant.id)
+    const { data: categories } = useGetCatgoryByRestaurant(restaurant.id, 1, 10)
+    console.log(categories)
     const fetchFoodsByRestaurant = async (page: number) => {
         return await getDishByRestaurant(restaurant.id, page, PAGE_SIZE);
     };
@@ -28,17 +31,18 @@ const RestaurantDetail = () => {
             <View className='p-[24px]'>
                 <Text
                     numberOfLines={1}
-                    className='font-bold text-[20px] w-full'>
+                    className='font-bold text-[20px] w-full mb-[15px]'>
                     {restaurant.restaurantName}
                 </Text>
 
-                <Text
-                    style={{
-                        lineHeight: 24,
-                        marginTop: 15,
-                        marginBottom: 35,
-                    }}
-                    className=' text-[14px] text-[#A0A5BA]' >{restaurant.bio}</Text>
+                {restaurant.bio !== ""
+                    ? <Text
+                        style={{
+                            lineHeight: 24,
+                            marginBottom: 35,
+                        }}
+                        className=' text-[14px] text-[#A0A5BA]' >{restaurant.bio}</Text>
+                    : ""}
 
                 <View className='flex-row items-center gap-[24px]'>
                     <View className='flex-row items-center gap-[4px]'>
@@ -60,8 +64,8 @@ const RestaurantDetail = () => {
                 </View>
             </View>
 
-            <FlatList className='py-[24px] '
-                data={categories}
+            <FlatList className='pb-[24px]'
+                data={categories as Category[]}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{
@@ -71,10 +75,7 @@ const RestaurantDetail = () => {
                 }}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
-                    <SuggestedItem
-                        type="categories"
-                        categories={item}
-                    />
+                    categoryItem({ category: item })
                 )}
             />
             <Text className="text-[#32343E] text-[20px] px-[24px]">Popular Foods</Text>
@@ -92,5 +93,34 @@ const RestaurantDetail = () => {
     );
 }
 
+const categoryItem = ({ category }: { category: Category }) => {
+    console.log(category)
+    return (
+        <Pressable
+        // onPress={onPress}
+        >
+            {({ pressed }) => (
+                <MotiView
+                    className="border-[1px] border-gray-200 items-center rounded-full px-[8px] h-[46px] min-w-[70px] justify-center max-w-[130px] shadow-md"
+                    style={{
+                        boxShadow: " 0 1px 4px 0 rgba(0, 0, 0, 0.1)"
+                    }}
+                    animate={{
+                        backgroundColor: pressed ? '#FFA57C' : '#FFFFFF',
+                        scale: pressed ? 0.85 : 1,
+                    }}
+                    transition={{
+                        type: 'timing',
+                        duration: 100,
+                    }}
+                >
+                    <Text numberOfLines={1} className='font-bold'>{category.name}</Text>
+
+                </MotiView>
+            )}
+        </Pressable>
+
+    )
+}
 
 export default RestaurantDetail

@@ -11,6 +11,7 @@ const addDishToCart = async (idCart: string, dishId: string, quantity: number) =
 
 const getMyCart = async (idCart: string, page?: number, limit?: number) => {
     const res = await axiosInstance.get(`/carts/${idCart}?limit=${limit}&page=${page}`)
+    return res.data
 }
 
 export { addDishToCart, getMyCart };
