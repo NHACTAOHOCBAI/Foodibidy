@@ -63,6 +63,12 @@ const InnerLayout = () => {
           headerTransparent: true
         }}>
         <Stack.Screen
+          name="(register)/index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="(login)/index"
           options={{
             headerShown: false,
@@ -71,13 +77,17 @@ const InnerLayout = () => {
         <Stack.Screen
           name="(login)/forgotPassword"
           options={{
-            headerShown: false,
+            header: () => <CustomHeader
+              isTransperant={true}
+            />
           }}
         />
         <Stack.Screen
           name="(login)/verification"
           options={{
-            headerShown: false,
+            header: () => <CustomHeader
+              isTransperant={true}
+            />
           }}
         />
         <Stack.Screen

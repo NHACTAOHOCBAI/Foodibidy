@@ -25,7 +25,7 @@ const Login = () => {
                     size="large"
                     title="Log in"
                 />
-                <Text className="text-[#646982] text-[16px] mt-[42px] w-full text-center mb-[165px]">Don't have an account? <Text className="text-[14px] text-primary">SIGN UP</Text></Text>
+                <Text className="text-[#646982] text-[16px] mt-[42px] w-full text-center mb-[165px]">Don't have an account? <Text onPress={() => { router.navigate('/(register)') }} className="text-[14px] text-primary">SIGN UP</Text></Text>
             </View>
         </View>
     )
