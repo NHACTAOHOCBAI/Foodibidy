@@ -7,7 +7,7 @@ interface LazyFlatListProps<T> {
     renderItem: ({ item }: { item: T }) => JSX.Element;
     keyExtractor: (item: T) => string;
     ListHeaderComponent?: JSX.Element;
-    numColumns?: number
+    numColumns?: number;
 }
 
 function LazyFlatList<T>({
@@ -16,15 +16,25 @@ function LazyFlatList<T>({
     renderItem,
     keyExtractor,
     ListHeaderComponent,
-    numColumns = 2
+    numColumns = 2,
 }: LazyFlatListProps<T>) {
     const [data, setData] = useState<T[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
 
+    const loadInitial = async () => {
+        setLoading(true);
+        const newData = await fetchData(1);
+        setData(newData);
+        setHasMore(newData.length === pageSize);
+        setPage(2);
+        setLoading(false);
+    };
+
     const loadMore = async () => {
-        if (!hasMore || loadingMore) return;
+        if (!hasMore || loadingMore || loading) return;
         setLoadingMore(true);
         const newData = await fetchData(page);
         setData((prev) => [...prev, ...newData]);
@@ -34,8 +44,16 @@ function LazyFlatList<T>({
     };
 
     useEffect(() => {
-        loadMore();
+        loadInitial();
     }, []);
+
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#999" />
+            </View>
+        );
+    }
 
     return (
         <FlatList
@@ -57,6 +75,7 @@ function LazyFlatList<T>({
                     <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
                 ) : null
             }
+            showsVerticalScrollIndicator={false}
         />
     );
 }
