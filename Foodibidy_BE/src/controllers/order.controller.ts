@@ -8,13 +8,24 @@ export const createOrder = async (req: Request<any, any, CreateOrderReqBody>, re
   return res.json({ message: ORDER_MESSAGES.CREATE_SUCCESS, data: result })
 }
 
-export const getOrder = async (req: Request<OrderParams>, res: Response, next: NextFunction) => {
-  const result = await orderService.getOrder(req.params.orderId)
+export const getMyOngoingOrders = async (req: Request<OrderParams>, res: Response, next: NextFunction) => {
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await orderService.getMyOngoingOrders(limit, page, req.params.userId)
   return res.json({ message: ORDER_MESSAGES.GET_SUCCESS, data: result })
 }
 
+export const getMyHistoryOrders = async (req: Request<OrderParams>, res: Response, next: NextFunction) => {
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await orderService.getMyHistoryOrders(limit, page, req.params.userId)
+  return res.json({ message: ORDER_MESSAGES.GET_ALL_SUCCESS, data: result })
+}
+
 export const getAllOrders = async (req: Request, res: Response, next: NextFunction) => {
-  const result = await orderService.getAllOrders()
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await orderService.getAllOrders(limit, page)
   return res.json({ message: ORDER_MESSAGES.GET_ALL_SUCCESS, data: result })
 }
 

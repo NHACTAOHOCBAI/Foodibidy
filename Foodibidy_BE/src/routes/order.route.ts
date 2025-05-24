@@ -1,7 +1,13 @@
 import { Router } from 'express'
 import { wrapRequestHandler } from '~/utils/handler'
-import { createOrder, getAllOrders, getOrder, updateOrder, deleteOrder } from '~/controllers/order.controller'
-import { CreateOrderSchema } from '~/middlewares/order.middlewares'
+import {
+  createOrder,
+  getAllOrders,
+  updateOrder,
+  deleteOrder,
+  getMyHistoryOrders,
+  getMyOngoingOrders
+} from '~/controllers/order.controller'
 
 const ordersRouter = Router()
 
@@ -10,7 +16,7 @@ const ordersRouter = Router()
  * Path: /orders
  * Method: POST
  */
-ordersRouter.post('/', CreateOrderSchema, wrapRequestHandler(createOrder))
+ordersRouter.post('/', wrapRequestHandler(createOrder))
 
 /**
  * Get all orders
@@ -20,11 +26,18 @@ ordersRouter.post('/', CreateOrderSchema, wrapRequestHandler(createOrder))
 ordersRouter.get('/', wrapRequestHandler(getAllOrders))
 
 /**
- * Get an order by ID
- * Path: /orders/:orderId
+ * Get all user history orders
+ * Path: /orders/history/:userId
  * Method: GET
  */
-ordersRouter.get('/:orderId', wrapRequestHandler(getOrder))
+ordersRouter.get('/history/:userId', wrapRequestHandler(getMyHistoryOrders))
+
+/**
+ * Get all user ongoing order
+ * Path: /Ongoing/:userId
+ * Method: GET
+ */
+ordersRouter.get('/Ongoing/:userId', wrapRequestHandler(getMyOngoingOrders))
 
 /**
  * Update an order by ID

@@ -89,9 +89,14 @@ class CategoryService {
     let offset = 0
     if (pageSize > 0) offset = (page - 1) * pageSize
 
-    allResults.sort((a, b) => (b.purchase as number) - (a.purchase as number))
+    // allResults.sort((a, b) => (b.purchase as number) - (a.purchase as number))
     //.slice(offset, pageSize + offset)
-    return allResults.slice(offset, pageSize + offset)
+    if (page > 0) {
+      console.log(allResults, offset, page)
+      if (page <= allResults.length / pageSize) return allResults.slice(offset, pageSize + offset)
+      else return []
+    }
+    return allResults
   }
 
   async updateCategory(categoryId: string, updateData: Partial<CategoryType>) {
