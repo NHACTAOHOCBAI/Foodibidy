@@ -1,27 +1,25 @@
 interface Account {
-    id: number;
+    id: string;
     email: string;
-    role: 'admin' | 'restaurant' | 'customer';
+    roleId: 'admin' | 'restaurant' | 'customer';
     fullName: string;
     createdAt: string;
     updateAt: string,
     phoneNumber: string;
     avatar: string;
-    address: { id: number, typeName: string, value: string }[]
-    cart: {
-        food: Pick<Food, 'id' | 'name' | 'price'>;
-        quantity: number;
-    }[]
+    address: { id: number, typeName: string, addressName: string, value: string }[]
+    cart: string
 }
 
 interface Restaurant {
-    id: number;
-    account: Pick<Account, 'id' | 'fullName' | 'phoneNumber'>;
-    categories: Pick<Account, 'id' | 'name'>[];
+    id: string;
+    user: Pick<Account, 'id' | 'fullName' | 'phoneNumber'>,
+    purchase: number
+    category: Pick<Category, 'id' | 'name'>[];
     restaurantName: string;
     address: string;
     status: 'pending' | 'active' | 'closed';
-    image: string;
+    restaurantImage: string;
     phoneNumber: string;
     rating: number;
     createdAt: string;
@@ -34,6 +32,8 @@ interface Category {
     description: string;
     image: string;
     createdAt: string;
+    purchase: number,
+    updateAt: string
 }
 
 interface Food {
@@ -48,7 +48,8 @@ interface Food {
     available: boolean;
     remainingQuantity: number | null;
     createdAt: string;
-    rating: string;
+    updatedAt: string
+    rating: numbernumber;
 }
 
 interface Order {

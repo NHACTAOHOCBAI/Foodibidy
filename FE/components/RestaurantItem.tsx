@@ -30,13 +30,13 @@ const RestaurantItem = ({ restaurant }: Props) => {
                     }}
                 >
                     <Image
-                        source={restaurant.image ? { uri: restaurant.image } : undefined}
+                        source={restaurant.restaurantImage ? { uri: restaurant.restaurantImage } : undefined}
                         className='bg-accent w-full h-[140px] rounded-xl'
                     />
-                    <Text className='text-[20px] mt-[8px]'>{restaurant.name}</Text>
+                    <Text className='text-[20px] mt-[8px]'>{restaurant.restaurantName}</Text>
                     <Text
                         className='text-[14px] leading-6 text-[#A0A5BA] mt-[5px]'>{
-                            restaurant.categories.map((value, index) => {
+                            restaurant.category.map((value, index) => {
                                 let tmp = "";
                                 index === 0 ? tmp = "" : tmp = "  -  "
                                 return (tmp += value.name)
