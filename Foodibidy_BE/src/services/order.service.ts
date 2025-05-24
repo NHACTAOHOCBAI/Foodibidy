@@ -104,7 +104,9 @@ class OrderService {
   }
   async getMyHistoryOrders(pageSize: number, page: number, userId: String): Promise<OrderType[]> {
     try {
-      let query = this.orderCollection.where('user.id', '==', userId).where('status', '==', OrderStatus.DELIVERED)
+      let query = this.orderCollection
+        .where('user.id', '==', userId)
+        .where('status', 'in', [OrderStatus.DELIVERED, OrderStatus.CANCELLED])
       const offset = (page - 1) * pageSize
       if (offset > 0) query = query.offset(offset)
       if (pageSize > 0) query = query.limit(pageSize)
