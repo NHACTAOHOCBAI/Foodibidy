@@ -11,6 +11,15 @@ interface Account {
     cart: string
 }
 
+interface Cart {
+    idCart: string,
+    userId: string,
+    dishes: {
+        dish: Food
+        quantity: number
+    }[]
+}
+
 interface Restaurant {
     id: string;
     user: Pick<Account, 'id' | 'fullName' | 'phoneNumber'>,
