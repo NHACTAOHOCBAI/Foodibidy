@@ -62,8 +62,6 @@ const Cart = () => {
                 quantity: quantities[id] ?? item?.quantity ?? 1
             }
         })
-
-        console.log(selectedWithQuantity)
     }
 
     const renderHeader = () => (

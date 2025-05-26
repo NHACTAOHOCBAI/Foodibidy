@@ -4,7 +4,6 @@ import { Redirect, useRouter } from "expo-router";
 import { Text, View } from "react-native"
 
 const Login = () => {
-    return <Redirect href="/(tabs)" />
     const router = useRouter();
     return (
         <View className="flex-1 bg-black">

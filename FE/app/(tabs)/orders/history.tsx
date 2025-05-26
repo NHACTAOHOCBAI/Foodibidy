@@ -76,7 +76,7 @@ const History = () => {
 
 const OrderItem = ({ detailItem }: { detailItem: DetailOrder }) => {
     const router = useRouter();
-    const receivedAt = moment(detailItem.receivedAt).format('DD MMM, HH:mm');
+    // const receivedAt = moment(detailItem.receivedAt).format('DD MMM, HH:mm');
 
 
     return (
@@ -103,7 +103,7 @@ const OrderItem = ({ detailItem }: { detailItem: DetailOrder }) => {
                     <View className='flex-row gap-[14px]'>
                         <Text className='text-[14px] font-bold'>{`$${detailItem.price}`}</Text>
                         <View className='w-[1px] h-full bg-gray-100'></View>
-                        <Text className='text-[14px] text-[#6B6E82]'>{receivedAt}</Text>
+                        {/* <Text className='text-[14px] text-[#6B6E82]'>{receivedAt}</Text> */}
                         <View className='w-[1px] h-full bg-gray-100'></View>
                         <Text className='text-[14px] text-[#6B6E82]'>{`${detailItem.quantity} Items`}</Text>
                     </View>

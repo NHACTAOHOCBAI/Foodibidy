@@ -1,7 +1,8 @@
 import axiosInstance from "@/configs/axiosConfig"
 
 const getMyFavouriteFood = async (accountId: string, page?: number, limit?: number) => {
-    const res = await axiosInstance.get(`/userDish/${accountId}?limit=${limit}&page=${page}`)
+    const res = await axiosInstance.get(`/userDish/${accountId}`)
+    console.log(res.data)
     return res.data
 }
 
