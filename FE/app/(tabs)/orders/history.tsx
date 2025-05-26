@@ -1,25 +1,57 @@
 import Button from '@/components/Button';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, ScrollView, FlatList, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import moment from 'moment'
-const PAGE_SIZE = 4;
+import { getHistoryOrders } from '@/services/order';
+interface DetailOrder {
+    id: string;
+    foodName: string;
+    price: number;
+    quantity: number;
+    status: string;
+    receivedAt: string;
+}
+interface Order {
+    id: number;
+    user: Pick<Account, 'id' | 'fullName'>;
+    restaurant: Pick<Restaurant, 'id' | 'restaurantName'>;
+    status: 'pending' | 'preparing' | 'delivered' | 'cancelled';
+    orderTime: string;
+    deliveryPhone?: string;
+    items: {
+        dish: Pick<Food, 'id' | 'dishName' | 'price' | 'dishImage'>;
+        quantity: number;
+    }[]
+    totalPrice: number;
+    createdAt: string
+}
 const History = () => {
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    const [loadingMore, setLoadingMore] = useState(false);
+    const [historyOrders, setHistoryOrders] = useState<Order[]>();
+    const [detailOrders, setDetailOrders] = useState<DetailOrder[]>([]);
+    useEffect(() => {
+        const fetchHistoryOrders = async () => {
+            const res = await getHistoryOrders('FV6KteJ9KjODzkKHA998') as Order[]
+            setHistoryOrders(res);
+        }
+        fetchHistoryOrders();
+    }, []);
+    useEffect(() => {
+        if (!historyOrders) return;
+        const convertedDetails: DetailOrder[] = historyOrders.flatMap(order =>
+            order.items.map(item => ({
+                id: item.dish.id,
+                foodName: item.dish.dishName,
+                price: item.dish.price,
+                quantity: item.quantity,
+                status: order.status,
+                receivedAt: order.createdAt,
+            }))
+        );
 
-    // Hàm load thêm dữ liệu
-    const handleLoadMore = () => {
-        if (visibleCount >= detailOrders.length || loadingMore) return;
+        setDetailOrders(convertedDetails);
+    }, [historyOrders]);
 
-        setLoadingMore(true);
-
-        // Mô phỏng delay tải dữ liệu (API call)
-        setTimeout(() => {
-            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, detailOrders.length));
-            setLoadingMore(false);
-        }, 2000);
-    };
     return (
         <View className='bg-white flex-1'>
             <ScrollView
@@ -30,22 +62,12 @@ const History = () => {
                 }}>
                 <FlatList
                     className="py-[20px]"
-                    data={detailOrders.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
+                    data={detailOrders}
                     scrollEnabled={false}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ gap: 28 }}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => <OrderItem detailItem={item} />}
-
-                    // Lazy loading props
-                    onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
-                    onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
-                    initialNumToRender={PAGE_SIZE} // Render ban đầu
-                    maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
-
-                    ListFooterComponent={loadingMore ? (
-                        <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
-                    ) : null} // Hiển thị loader khi đang tải thêm
                 />
             </ScrollView>
         </View>
@@ -63,9 +85,6 @@ const OrderItem = ({ detailItem }: { detailItem: DetailOrder }) => {
             onPress={() => router.push(`/foods/${detailItem.id}`)}
         >
             <View className='flex-row gap-[28px] pb-[16px] border-b-[1px] border-b-gray-100'>
-                <Text className='text-[14px]'>
-                    {detailItem.category}
-                </Text>
                 <Text className={`text-[14px] font-bold ${detailItem.status === "Canceled" ? "text-[#FF0000]" : "text-[#059C6A]"}`}>
                     {detailItem.status}
                 </Text>

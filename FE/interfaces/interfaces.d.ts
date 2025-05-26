@@ -63,16 +63,17 @@ interface Food {
 
 interface Order {
     id: number;
-    account: Pick<Account, 'id' | 'fullName'>;
-    restaurant: Pick<Restaurant, 'id' | 'name'>;
+    user: Pick<Account, 'id' | 'fullName'>;
+    restaurant: Pick<Restaurant, 'id' | 'restaurantName'>;
     status: 'pending' | 'preparing' | 'delivered' | 'cancelled';
     orderTime: string;
-    deliveryPhone: string;
+    deliveryPhone?: string;
     items: {
-        food: Pick<Food, 'id' | 'name' | 'price'>;
+        dish: Pick<Food, 'id' | 'dishName' | 'price' | 'dishImage'>;
         quantity: number;
     }[]
     totalPrice: number;
+    createdAt: string
 }
 
 interface Review {

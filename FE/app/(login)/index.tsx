@@ -1,9 +1,10 @@
 import Button from "@/components/Button"
 import Input from "@/components/Input"
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { Text, View } from "react-native"
 
 const Login = () => {
+    return <Redirect href="/(tabs)" />
     const router = useRouter();
     return (
         <View className="flex-1 bg-black">

@@ -58,6 +58,7 @@ const InnerLayout = () => {
       }
 
       <Stack
+        initialRouteName="(tabs)"
         screenOptions={{
           animation: 'slide_from_right',
           headerTransparent: true

@@ -1,63 +1,38 @@
 import Button from '@/components/Button';
+import LazyFlatList from '@/components/LazyFlatList';
+import { getOngoingOrders } from '@/services/order';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View, ScrollView, FlatList, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 
 const PAGE_SIZE = 4;
 const ongoing = () => {
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    const [loadingMore, setLoadingMore] = useState(false);
-
-    // Hàm load thêm dữ liệu
-    const handleLoadMore = () => {
-        if (visibleCount >= orders.length || loadingMore) return;
-
-        setLoadingMore(true);
-
-        // Mô phỏng delay tải dữ liệu (API call)
-        setTimeout(() => {
-            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, orders.length));
-            setLoadingMore(false);
-        }, 2000);
+    const fetchOngoingOrders = async (page: number) => {
+        return await getOngoingOrders("FV6KteJ9KjODzkKHA998", page);
     };
+    const renderHeader = () => (
+        <View className='mt-[20px]' />
+    );
     return (
-        <View className='bg-white flex-1'>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                className='z-[1] px-[24px]'
-                contentContainerStyle={{
-                    paddingBottom: 400
-                }}>
-                <FlatList
-                    className="py-[20px]"
-                    data={orders.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
-                    scrollEnabled={false}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 28 }}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => <OrderItem order={item} />}
-
-                    // Lazy loading props
-                    onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
-                    onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
-                    initialNumToRender={PAGE_SIZE} // Render ban đầu
-                    maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
-
-                    ListFooterComponent={loadingMore ? (
-                        <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
-                    ) : null} // Hiển thị loader khi đang tải thêm
-                />
-            </ScrollView>
+        <View className='flex-1 bg-white'>
+            <LazyFlatList<Order>
+                numColumns={1}
+                fetchData={fetchOngoingOrders}
+                pageSize={PAGE_SIZE}
+                renderItem={({ item }) => <OrderItem order={item} />}
+                keyExtractor={(item) => item.restaurant.id}
+                ListHeaderComponent={renderHeader()}
+            />
         </View>
-    )
+    );
 }
 
 const OrderItem = ({ order }: { order: Order }) => {
     const router = useRouter();
-    const orderTitle = order.food.map((value) => (
-        `${value.foodName} (${value.quantity})`
+    const orderTitle = order.items.map((value) => (
+        `${value.dish.dishName} (${value.quantity})`
     )).join(',')
-    const orderQuantity = order.food.reduce((total, value) => (
+    const orderQuantity = order.items.reduce((total, value) => (
         total + value.quantity
     ), 0)
     return (
@@ -67,18 +42,18 @@ const OrderItem = ({ order }: { order: Order }) => {
         >
             <View className='pb-[16px] border-b-[1px] border-b-gray-100'>
                 <Text className='text-[14px]'>
-                    {order.restaurantName}
+                    {order.restaurant.restaurantName}
                 </Text>
             </View>
 
             <View className='mt-[16px] flex-row items-center '>
                 <View>
-                    {order.food.length > 1 && <Image
-                        source={{ uri: order.food[1].image ? order.food[1].image : undefined }}
+                    {order.items.length > 1 && <Image
+                        source={{ uri: order.items[1].dish.dishImage ? order.items[1].dish.dishImage : undefined }}
                         className='bg-blue-200 absolute w-[60px] h-[60px] border-[1px] rounded-[8px] rotate-12'
                     />}
                     <Image
-                        source={{ uri: order.food[0].image ? order.food[0].image : undefined }}
+                        source={{ uri: order.items[0].dish.dishImage ? order.items[0].dish.dishImage : undefined }}
                         className='bg-accent w-[60px] h-[60px] rounded-[8px] border-[1px]'
                     />
                 </View>
@@ -86,10 +61,9 @@ const OrderItem = ({ order }: { order: Order }) => {
                 <View className='ml-[14px] flex-1 gap-[10px]'>
                     <View className='flex-row justify-between' >
                         <Text className='text-[14px] font-medium'>{orderTitle}</Text>
-                        <Text className='text-[#6B6E82] underline'>{`#${order.id}`}</Text>
                     </View>
                     <View className='flex-row gap-[14px]'>
-                        <Text className='text-[14px] font-bold'>{`$${order.price}`}</Text>
+                        <Text className='text-[14px] font-bold'>{`$${order.totalPrice}`}</Text>
                         <View className='w-[1px] h-full bg-gray-100'></View>
                         <Text className='text-[14px] text-[#6B6E82]'>{`${orderQuantity} Items`}</Text>
                     </View>
