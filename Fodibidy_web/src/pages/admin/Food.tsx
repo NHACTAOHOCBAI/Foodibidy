@@ -5,6 +5,7 @@ import { formatDateTime } from '../../utils/formatTime';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { useState } from 'react';
 import NewFood from '../../components/food/NewFood';
+import UpdateFood from '../../components/food/UpdateFood';
 interface Restaurant {
     id: string;
     restaurantName: string;
@@ -31,95 +32,103 @@ interface Food {
     rating: number;
 }
 
-
-const columns: TableProps<Food>['columns'] = [
-    {
-        title: 'Image',
-        dataIndex: 'dishImage',
-        render: (url) => <Image width={60} src={url} alt="Dish" />,
-    },
-    {
-        title: 'Food',
-        dataIndex: 'dishName',
-    },
-    {
-        title: 'Category',
-        dataIndex: ['category', 'name'],
-        filters: [
-            {
-                text: 'London',
-                value: 'London',
-            },
-            {
-                text: 'New York',
-                value: 'New York',
-            },
-        ],
-        onFilter: (value, record) => record.category.name.indexOf(value as string) === 0,
-    },
-    {
-        title: 'Rating',
-        dataIndex: 'rating',
-        defaultSortOrder: 'descend',
-        sorter: (a, b) => a.rating - b.rating,
-    },
-    {
-        title: 'Price',
-        dataIndex: 'price',
-        defaultSortOrder: 'descend',
-        sorter: (a, b) => a.price - b.price,
-        render: (price) => `$${price.toFixed(2)}`,
-    },
-    {
-        title: 'Sold Quantity',
-        dataIndex: 'soldQuantity',
-    },
-    {
-        title: 'Available',
-        dataIndex: 'available',
-        render: (available) => <Tag color={available ? 'green' : 'red'}>{available ? 'Yes' : 'No'}</Tag>,
-    },
-    {
-        title: 'Remaining',
-        dataIndex: 'remainingQuantity',
-    },
-    {
-        title: 'Created At',
-        render: (_: any, record: Food) => <div>{formatDateTime(record.createdAt)}</div>
-    },
-    {
-        title: 'Updated At',
-        render: (_: any, record: Food) => <div>{formatDateTime(record.updatedAt)}</div>
-    },
-    {
-        title: "Action",
-        render: (_, value) => (
-            <div style={{ display: 'flex', gap: 10 }}>
-                <div
-                >
-                    <EditOutlined />
-                </div>
-                <Popconfirm
-                    title="Delete the airline"
-                    description="Are you sure?"
-                    onConfirm={() => { }}
-                    okText="Yes"
-                    cancelText="No"
-                >
-                    <div><DeleteOutlined /></div>
-                </Popconfirm>
-            </div>
-        ),
-    }
-];
-
 const Food = () => {
     const [isNewOpen, setIsNewOpen] = useState(false);
+    const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+    const [updatedFood, setUpdatedFood] = useState<Food>()
+    const columns: TableProps<Food>['columns'] = [
+        {
+            title: 'Image',
+            dataIndex: 'dishImage',
+            render: (url) => <Image width={60} src={url} alt="Dish" />,
+        },
+        {
+            title: 'Food',
+            dataIndex: 'dishName',
+        },
+        {
+            title: 'Category',
+            dataIndex: ['category', 'name'],
+            filters: [
+                {
+                    text: 'London',
+                    value: 'London',
+                },
+                {
+                    text: 'New York',
+                    value: 'New York',
+                },
+            ],
+            onFilter: (value, record) => record.category.name.indexOf(value as string) === 0,
+        },
+        {
+            title: 'Rating',
+            dataIndex: 'rating',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => a.rating - b.rating,
+        },
+        {
+            title: 'Price',
+            dataIndex: 'price',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => a.price - b.price,
+            render: (price) => `$${price.toFixed(2)}`,
+        },
+        {
+            title: 'Sold Quantity',
+            dataIndex: 'soldQuantity',
+        },
+        {
+            title: 'Available',
+            dataIndex: 'available',
+            render: (available) => <Tag color={available ? 'green' : 'red'}>{available ? 'Yes' : 'No'}</Tag>,
+        },
+        {
+            title: 'Remaining',
+            dataIndex: 'remainingQuantity',
+        },
+        {
+            title: 'Created At',
+            render: (_: any, record: Food) => <div>{formatDateTime(record.createdAt)}</div>
+        },
+        {
+            title: 'Updated At',
+            render: (_: any, record: Food) => <div>{formatDateTime(record.updatedAt)}</div>
+        },
+        {
+            title: "Action",
+            render: (_, value) => (
+                <div style={{ display: 'flex', gap: 10 }}>
+                    <div onClick={() => {
+                        setUpdatedFood(value)
+                        setIsUpdateOpen(true)
+                    }}>
+                        <EditOutlined />
+                    </div>
+                    <Popconfirm
+                        title="Delete the food"
+                        description="Are you sure?"
+                        onConfirm={() => { }}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <div><DeleteOutlined /></div>
+                    </Popconfirm>
+                </div>
+            ),
+        }
+    ];
     return (
         <div>
+
             <NewFood
                 isModalOpen={isNewOpen}
                 setIsModalOpen={setIsNewOpen}
+            />
+            <UpdateFood
+                isModalOpen={isUpdateOpen}
+                setIsModalOpen={setIsUpdateOpen}
+                updatedFood={updatedFood}
             />
             <Button onClick={() => setIsNewOpen(true)} type='primary' style={{ marginLeft: 'auto', display: 'block', marginBottom: 10 }}>
                 <PlusOutlined />New Food
