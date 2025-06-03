@@ -66,7 +66,6 @@ interface Order {
     user: Pick<Account, 'id' | 'fullName'>;
     restaurant: Pick<Restaurant, 'id' | 'restaurantName'>;
     status: 'pending' | 'preparing' | 'delivered' | 'cancelled';
-    orderTime: string;
     deliveryPhone?: string;
     items: {
         dish: Pick<Food, 'id' | 'dishName' | 'price' | 'dishImage'>;
