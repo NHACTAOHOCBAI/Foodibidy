@@ -3,7 +3,8 @@ import { Table, Tag, Image, Popconfirm, Button } from 'antd';
 import type { TableProps } from 'antd';
 import { formatDateTime } from '../../utils/formatTime';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
-import { getDishByRestaurant } from '../../services/food';
+import { useState } from 'react';
+import NewFood from '../../components/food/NewFood';
 interface Restaurant {
     id: string;
     restaurantName: string;
@@ -113,14 +114,14 @@ const columns: TableProps<Food>['columns'] = [
 ];
 
 const Food = () => {
-    const test = async () => {
-        const res = await getDishByRestaurant("QQKSRvPBUM5Siko5gEcW")
-        console.log(res)
-    }
-    test()
+    const [isNewOpen, setIsNewOpen] = useState(false);
     return (
         <div>
-            <Button type='primary' style={{ marginLeft: 'auto', display: 'block', marginBottom: 10 }}>
+            <NewFood
+                isModalOpen={isNewOpen}
+                setIsModalOpen={setIsNewOpen}
+            />
+            <Button onClick={() => setIsNewOpen(true)} type='primary' style={{ marginLeft: 'auto', display: 'block', marginBottom: 10 }}>
                 <PlusOutlined />New Food
             </Button>
             <Table<Food> bordered columns={columns} dataSource={data} rowKey="id" />
