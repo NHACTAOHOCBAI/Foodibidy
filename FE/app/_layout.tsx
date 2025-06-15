@@ -1,4 +1,4 @@
-import { Stack, useRouter } from "expo-router";
+import { Stack, usePathname, useRouter, useSegments } from "expo-router";
 import './global.css'
 import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { icons } from "@/constants/icons";
@@ -6,6 +6,7 @@ import Filter from "@/components/Filter";
 import { FilterProvider, useFilter } from "@/context/FilterContext";
 import { QueryClient, QueryClientProvider } from 'react-query'
 import Toast from 'react-native-toast-message';
+import { useEffect } from "react";
 
 const CustomHeader = ({ title, color = "", isTransperant = false }: any) => {
   const router = useRouter();
@@ -46,6 +47,14 @@ const CustomHeader = ({ title, color = "", isTransperant = false }: any) => {
 };
 const InnerLayout = () => {
   const { isFilterOpen } = useFilter();
+  const router = useRouter();
+  const pathname = usePathname(); // ví dụ "/"
+
+  useEffect(() => {
+    if (pathname === "/") {
+      router.replace("/(tabs)");
+    }
+  }, [pathname]);
   return (
     <View className="flex-1">
       <StatusBar hidden />

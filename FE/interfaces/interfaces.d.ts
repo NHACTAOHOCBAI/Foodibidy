@@ -62,6 +62,7 @@ interface Food {
 }
 
 interface Order {
+    address: string;
     id: number;
     user: Pick<Account, 'id' | 'fullName'>;
     restaurant: Pick<Restaurant, 'id' | 'restaurantName'>;

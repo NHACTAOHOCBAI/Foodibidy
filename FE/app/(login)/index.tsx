@@ -7,6 +7,14 @@ import Button from '@/components/Button';
 import { useEffect } from 'react';
 
 const Login = () => {
+    // const navigation = useRouter();
+    // useEffect(() => {
+    //     // Kiểm tra nếu đã đăng nhập thì chuyển hướng đến trang chính
+    //     const isLoggedIn = true; // Thay thế bằng logic kiểm tra đăng nhập thực tế
+    //     if (isLoggedIn) {
+    //         navigation.push('/(tabs)');
+    //     }
+    // }, [navigation]);
     const router = useRouter();
     const loginSchema = Yup.object().shape({
         email: Yup.string().email('Invalid email').required('Required'),
