@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 
-const BASE_URL = "http://192.168.1.242:4000";
+const BASE_URL = "http://localhost:4000";
 console.log('BASE_URL:', BASE_URL);
 let isRefreshing = false;
 let failedQueue: any[] = [];
@@ -20,7 +20,6 @@ const processQueue = (error: any, token: string | null = null) => {
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
     timeout: 10000,
-    withCredentials: true, // QUAN TRỌNG: cho phép gửi cookies
 });
 
 // Gắn accessToken nếu có

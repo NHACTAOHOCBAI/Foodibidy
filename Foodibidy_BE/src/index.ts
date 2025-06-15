@@ -16,7 +16,7 @@ import notificationsRouter from './routes/notification.route'
 import user_dishRouter from './routes/user_dish.route'
 const app = express()
 
-const port = 3000
+const port = 4000
 const corsOptions: CorsOptions = {
   origin: '*'
 }

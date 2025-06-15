@@ -1,37 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Table, Tag, Image, Popconfirm, Button } from 'antd';
 import type { TableProps } from 'antd';
-import { formatDateTime } from '../../utils/formatTime';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import NewFood from '../../components/food/NewFood';
 import UpdateFood from '../../components/food/UpdateFood';
-interface Restaurant {
-    id: string;
-    restaurantName: string;
-}
-
-interface Category {
-    id: string;
-    name: string;
-}
-
-interface Food {
-    id: string;
-    restaurant: Pick<Restaurant, 'id' | 'restaurantName'>;
-    category: Pick<Category, 'id' | 'name'>;
-    dishName: string;
-    description: string;
-    price: number;
-    dishImage: string;
-    soldQuantity: number;
-    available: boolean;
-    remainingQuantity: number | null;
-    createdAt: string;
-    updatedAt: string;
-    rating: number;
-}
-
+import { getDishByRestaurant } from '../../services/food';
+import convertDateFormat from '../../utils/convertDateFormat';
+import formatVND from '../../utils/convertMoney';
 const Food = () => {
     const [isNewOpen, setIsNewOpen] = useState(false);
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
@@ -71,9 +47,12 @@ const Food = () => {
             title: 'Price',
             dataIndex: 'price',
             defaultSortOrder: 'descend',
-            sorter: (a, b) => a.price - b.price,
-            render: (price) => `$${price.toFixed(2)}`,
+            sorter: (a, b) => parseFloat(a.price) - parseFloat(b.price),
+            render: (price) => {
+                return formatVND(price);
+            },
         },
+
         {
             title: 'Sold Quantity',
             dataIndex: 'soldQuantity',
@@ -84,16 +63,12 @@ const Food = () => {
             render: (available) => <Tag color={available ? 'green' : 'red'}>{available ? 'Yes' : 'No'}</Tag>,
         },
         {
-            title: 'Remaining',
-            dataIndex: 'remainingQuantity',
-        },
-        {
             title: 'Created At',
-            render: (_: any, record: Food) => <div>{formatDateTime(record.createdAt)}</div>
+            render: (_: any, record: Food) => <div>{convertDateFormat(record.createdAt)}</div>
         },
         {
             title: 'Updated At',
-            render: (_: any, record: Food) => <div>{formatDateTime(record.updatedAt)}</div>
+            render: (_: any, record: Food) => <div>{convertDateFormat(record.updatedAt)}</div>
         },
         {
             title: "Action",
@@ -118,6 +93,14 @@ const Food = () => {
             ),
         }
     ];
+    const [foods, setFoods] = useState<Food[]>([])
+    useEffect(() => {
+        const fetchFoods = async () => {
+            const res = await getDishByRestaurant("QQKSRvPBUM5Siko5gEcW")
+            setFoods(res.data)
+        }
+        fetchFoods()
+    }, []);
     return (
         <div>
 
@@ -133,40 +116,8 @@ const Food = () => {
             <Button onClick={() => setIsNewOpen(true)} type='primary' style={{ marginLeft: 'auto', display: 'block', marginBottom: 10 }}>
                 <PlusOutlined />New Food
             </Button>
-            <Table<Food> bordered columns={columns} dataSource={data} rowKey="id" />
+            <Table<Food> bordered columns={columns} dataSource={foods} rowKey="id" />
         </div>
     )
 };
-const data: Food[] = [
-    {
-        id: '1',
-        restaurant: { id: 'r1', restaurantName: 'Pizza House' },
-        category: { id: 'c1', name: 'Pizza' },
-        dishName: 'Pepperoni Pizza',
-        description: 'Delicious pepperoni with cheese',
-        price: 12.99,
-        dishImage: 'https://satrafoods.com.vn/uploads/Images/mon-ngon-moi-ngay/bun-bo-hue.jpg',
-        soldQuantity: 150,
-        available: true,
-        remainingQuantity: 20,
-        createdAt: '2025-06-01T12:00:00Z',
-        updatedAt: '2025-06-02T08:30:00Z',
-        rating: 4.5,
-    },
-    {
-        id: '2',
-        restaurant: { id: 'r2', restaurantName: 'Sushi World' },
-        category: { id: 'c2', name: 'Sushi' },
-        dishName: 'Salmon Nigiri',
-        description: 'Fresh salmon on rice',
-        price: 9.99,
-        dishImage: 'https://via.placeholder.com/80',
-        soldQuantity: 200,
-        available: false,
-        remainingQuantity: 0,
-        createdAt: '2025-05-25T10:00:00Z',
-        updatedAt: '2025-06-01T09:45:00Z',
-        rating: 4.8,
-    },
-];
 export default Food;
