@@ -1,32 +1,53 @@
-import SearchInput from '@/components/SearchInput'
-import { icons } from '@/constants/icons'
-import { Link, useRouter } from 'expo-router'
-import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, Text, View } from 'react-native'
-import RestaurantItem from '@/components/RestaurantItem'
-import FoodItem from '@/components/FoodItem'
-import { useEffect, useState } from 'react'
-import { getCategoriesPaginated, getMyProfile, getRestaurantsPaginated } from '@/services/mockAPI'
-import CategoryItem from '@/components/CategoryItem'
-import { useGetCatgory } from '@/hooks/useCategory'
-import { useGetRestaurant } from '@/hooks/useRestaurants'
-import LazyFlatList from '@/components/LazyFlatList'
-import { getDish } from '@/services/dish'
+import SearchInput from '@/components/SearchInput';
+import { icons } from '@/constants/icons';
+import { Link, useRouter, useFocusEffect } from 'expo-router'; // Thêm useFocusEffect
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
+import RestaurantItem from '@/components/RestaurantItem';
+import FoodItem from '@/components/FoodItem';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { getCategoriesPaginated, getMyProfile, getRestaurantsPaginated } from '@/services/mockAPI';
+import CategoryItem from '@/components/CategoryItem';
+import { useGetCatgory } from '@/hooks/useCategory';
+import { useGetRestaurant } from '@/hooks/useRestaurants';
+import { getDish } from '@/services/dish';
+import LazyFlatList from '@/components/LazyFlatList';
+
 const PAGE_SIZE = 4;
-const index = () => {
+
+const Index = () => {
   const fetchFoods = async (page: number) => {
     return await getDish(page, PAGE_SIZE);
   };
 
   const renderHeader = (
-    <View className='mt-[250px]'>
+    <View className="mt-[250px]">
       <Categories />
       <Restaurants />
-      <Text className='text-[20px] text-[#32343E] mt-[16px] px-[24px]'>Popular Foods</Text>
+      <Text className="text-[20px] text-[#32343E] mt-[16px] px-[24px]">Popular Foods</Text>
     </View>
   );
 
+  // Thêm useFocusEffect để refetch khi focus
+  useFocusEffect(
+    useCallback(() => {
+      // Gọi lại loadInitial từ LazyFlatList
+      loadInitialRef.current(); // Sử dụng ref để gọi hàm loadInitial
+    }, [])
+  );
+
+  // Tạo ref để gọi loadInitial từ LazyFlatList
+  const loadInitialRef = useRef(() => { });
+
   return (
-    <View className='flex-1 bg-white'>
+    <View className="flex-1 bg-white">
       <Header />
       <LazyFlatList<Food>
         fetchData={fetchFoods}
@@ -34,6 +55,8 @@ const index = () => {
         renderItem={({ item }) => <FoodItem food={item} />}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={renderHeader}
+        // Truyền ref để gọi loadInitial
+        setLoadInitialRef={(ref) => (loadInitialRef.current = ref)}
       />
     </View>
   );
@@ -163,4 +186,4 @@ const Restaurants = () => {
 }
 
 
-export default index
+export default Index

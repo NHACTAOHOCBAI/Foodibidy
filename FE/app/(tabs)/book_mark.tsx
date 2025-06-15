@@ -35,7 +35,7 @@ const BookMark = () => {
         </Text>
     );
 
-    const renderItem = ({ item }) => <FoodItem food={item} />;
+    const renderItem = ({ item }: { item: any }) => <FoodItem food={item} />;
 
     return (
         <View className='flex-1 bg-white'>

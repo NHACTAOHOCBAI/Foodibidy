@@ -1,5 +1,7 @@
-import { ActivityIndicator, FlatList, View } from 'react-native';
-import { useEffect, useState } from 'react';
+import { FlatList } from 'react-native'; // Sửa import
+import { View } from "moti";
+import { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
 
 interface LazyFlatListProps<T> {
     fetchData: (page: number) => Promise<T[]>;
@@ -8,6 +10,7 @@ interface LazyFlatListProps<T> {
     keyExtractor: (item: T) => string;
     ListHeaderComponent?: JSX.Element;
     numColumns?: number;
+    setLoadInitialRef?: (ref: () => void) => void; // Thêm prop để truyền ref
 }
 
 function LazyFlatList<T>({
@@ -17,6 +20,7 @@ function LazyFlatList<T>({
     keyExtractor,
     ListHeaderComponent,
     numColumns = 2,
+    setLoadInitialRef,
 }: LazyFlatListProps<T>) {
     const [data, setData] = useState<T[]>([]);
     const [page, setPage] = useState(1);
@@ -43,13 +47,20 @@ function LazyFlatList<T>({
         setLoadingMore(false);
     };
 
+    // Truyền ref cho loadInitial
+    useEffect(() => {
+        if (setLoadInitialRef) {
+            setLoadInitialRef(loadInitial);
+        }
+    }, [setLoadInitialRef]);
+
     useEffect(() => {
         loadInitial();
     }, []);
 
     if (loading) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View className="flex-1 justify-center items-center">
                 <ActivityIndicator size="large" color="#999" />
             </View>
         );
@@ -63,7 +74,7 @@ function LazyFlatList<T>({
             columnWrapperStyle={numColumns > 1 ? { justifyContent: 'space-between' } : undefined}
             contentContainerStyle={{ paddingBottom: 400, gap: 20, backgroundColor: 'white' }}
             renderItem={({ item }) => (
-                <View style={{ paddingHorizontal: 24, marginBottom: 20 }}>
+                <View className="px-[24px] mb-[20px]">
                     {renderItem({ item })}
                 </View>
             )}
@@ -72,7 +83,7 @@ function LazyFlatList<T>({
             ListHeaderComponent={ListHeaderComponent}
             ListFooterComponent={
                 loadingMore ? (
-                    <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
+                    <ActivityIndicator size="small" color="#999" className="my-[10px]" />
                 ) : null
             }
             showsVerticalScrollIndicator={false}

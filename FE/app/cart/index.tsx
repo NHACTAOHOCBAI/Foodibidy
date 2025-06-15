@@ -8,6 +8,7 @@ import Button from '@/components/Button'
 import Checkbox from '@/components/CheckBox'
 import { useState } from 'react'
 import { useAddDishToCart } from '@/hooks/useCart'
+import { useRouter } from 'expo-router'
 
 interface CartItemType {
     dish: Food
@@ -17,6 +18,7 @@ interface CartItemType {
 const PAGE_SIZE = 4
 
 const Cart = () => {
+    const router = useRouter();
     const [selectedItems, setSelectedItems] = useState<string[]>([])
     const [quantities, setQuantities] = useState<Record<string, number>>({})
     const [cartItems, setCartItems] = useState<CartItemType[]>([])
@@ -50,11 +52,8 @@ const Cart = () => {
 
         setQuantities(prev => ({ ...prev, [id]: newQuantity }));
     };
-
-
-
-
     const handlePlaceOrder = () => {
+        router.replace("/cart/detailOrder");
         const selectedWithQuantity = selectedItems.map(id => {
             const item = cartItems.find(ci => ci.dish.id === id)
             return {

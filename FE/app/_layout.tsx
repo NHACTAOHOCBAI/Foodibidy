@@ -164,6 +164,15 @@ const InnerLayout = () => {
           }}
         />
         <Stack.Screen
+          name="cart/detailOrder"
+          options={{
+            header: () => <CustomHeader
+              title='detailOrder'
+              color="white"
+            />
+          }}
+        />
+        <Stack.Screen
           name="completed/placeOrder"
           options={{
             headerShown: false, // Ẩn header
