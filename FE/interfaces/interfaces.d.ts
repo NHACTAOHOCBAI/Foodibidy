@@ -58,7 +58,7 @@ interface Food {
     remainingQuantity: number | null;
     createdAt: string;
     updatedAt: string
-    rating: numbernumber;
+    rating: number;
 }
 
 interface Order {

@@ -6,9 +6,9 @@ import LazyFlatList from '@/components/LazyFlatList'
 import Input from '@/components/Input'
 import Button from '@/components/Button'
 import Checkbox from '@/components/CheckBox'
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useAddDishToCart } from '@/hooks/useCart'
-import { useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router'
 
 interface CartItemType {
     dish: Food
@@ -19,24 +19,34 @@ const PAGE_SIZE = 4
 
 const Cart = () => {
     const router = useRouter();
-    const [selectedItems, setSelectedItems] = useState<string[]>([])
-    const [quantities, setQuantities] = useState<Record<string, number>>({})
-    const [cartItems, setCartItems] = useState<CartItemType[]>([])
-    const { mutate: addDishToCartMutate } = useAddDishToCart()
+    const [selectedItems, setSelectedItems] = useState<string[]>([]);
+    const [quantities, setQuantities] = useState<Record<string, number>>({});
+    const [cartItems, setCartItems] = useState<CartItemType[]>([]);
+    const { mutate: addDishToCartMutate } = useAddDishToCart();
 
     const fetchMyCart = async (page: number) => {
         const res = await getMyCart("ENzhNl05Rc45pBp3ZhHb", page, PAGE_SIZE) as Cart;
-
         // Gộp dữ liệu nếu đang load thêm
-        setCartItems(prev => page === 1 ? res.dishes : [...prev, ...res.dishes])
-        return res.dishes
-    }
+        setCartItems(prev => page === 1 ? res.dishes : [...prev, ...res.dishes]);
+        return res.dishes;
+    };
+
+    // Thêm useFocusEffect để refetch khi focus
+    useFocusEffect(
+        useCallback(() => {
+            // Gọi lại loadInitial từ LazyFlatList
+            loadInitialRef.current(); // Sử dụng ref để gọi hàm loadInitial
+        }, [])
+    );
+
+    // Tạo ref để gọi loadInitial từ LazyFlatList
+    const loadInitialRef = useRef(() => { });
 
     const toggleItemSelection = (id: string) => {
         setSelectedItems(prev =>
             prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
-        )
-    }
+        );
+    };
 
     const updateQuantity = (id: string, newQuantity: number, serverQuantity: number) => {
         const localQuantity = quantities[id] ?? serverQuantity;
@@ -47,25 +57,26 @@ const Cart = () => {
         addDishToCartMutate({
             idCart: "ENzhNl05Rc45pBp3ZhHb",
             idDish: id,
-            quantity: delta, // đúng delta thực sự
+            quantity: delta,
         });
 
         setQuantities(prev => ({ ...prev, [id]: newQuantity }));
     };
+
     const handlePlaceOrder = () => {
         router.replace("/cart/detailOrder");
         const selectedWithQuantity = selectedItems.map(id => {
-            const item = cartItems.find(ci => ci.dish.id === id)
+            const item = cartItems.find(ci => ci.dish.id === id);
             return {
                 id,
-                quantity: quantities[id] ?? item?.quantity ?? 1
-            }
-        })
-    }
+                quantity: quantities[id] ?? item?.quantity ?? 1,
+            };
+        });
+    };
 
     const renderHeader = () => (
         <View className='mt-[100px]' />
-    )
+    );
 
     return (
         <View className='flex-1 bg-white'>
@@ -84,9 +95,10 @@ const Cart = () => {
                 )}
                 keyExtractor={(item) => item.dish.id}
                 ListHeaderComponent={renderHeader()}
+                setLoadInitialRef={(ref) => (loadInitialRef.current = ref)} // Truyền ref để gọi loadInitial
             />
 
-            <View className='absolute z-10 bottom-0 bg-white w-full rounded-s-[25px] px-[24px] pt-[20px] pb-[65px] '>
+            <View className='absolute z-10 bottom-0 bg-white w-full rounded-s-[25px] px-[24px] pt-[20px] pb-[65px]'>
                 <View className='flex-row justify-between'>
                     <Text className='uppercase text-[14px] text-[#A0A5BA]'>delivery address</Text>
                     <Text className='uppercase text-[14px] text-primary border-b-[1px] border-primary'>Edit</Text>
@@ -108,8 +120,8 @@ const Cart = () => {
                 />
             </View>
         </View>
-    )
-}
+    );
+};
 
 const CartItem = ({
     foods,
