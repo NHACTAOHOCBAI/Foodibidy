@@ -1,18 +1,31 @@
 import Button from '@/components/Button';
 import LazyFlatList from '@/components/LazyFlatList';
 import { getOngoingOrders } from '@/services/order';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useRef, useState } from 'react';
 import { View, ScrollView, FlatList, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 
 const PAGE_SIZE = 4;
-const ongoing = () => {
+const Ongoing = () => {
     const fetchOngoingOrders = async (page: number) => {
         return await getOngoingOrders("FV6KteJ9KjODzkKHA998", page);
     };
+
     const renderHeader = () => (
         <View className='mt-[20px]' />
     );
+
+    // Thêm useFocusEffect để refetch khi focus
+    useFocusEffect(
+        useCallback(() => {
+            // Gọi lại loadInitial từ LazyFlatList
+            loadInitialRef.current(); // Sử dụng ref để gọi hàm loadInitial
+        }, [])
+    );
+
+    // Tạo ref để gọi loadInitial từ LazyFlatList
+    const loadInitialRef = useRef(() => { });
+
     return (
         <View className='flex-1 bg-white'>
             <LazyFlatList<Order>
@@ -22,10 +35,12 @@ const ongoing = () => {
                 renderItem={({ item }) => <OrderItem order={item} />}
                 keyExtractor={(item) => item.restaurant.id}
                 ListHeaderComponent={renderHeader()}
+                // Truyền ref để gọi loadInitial
+                setLoadInitialRef={(ref) => (loadInitialRef.current = ref)}
             />
         </View>
     );
-}
+};
 
 const OrderItem = ({ order }: { order: Order }) => {
     const router = useRouter();
@@ -86,4 +101,4 @@ const OrderItem = ({ order }: { order: Order }) => {
 }
 
 
-export default ongoing
+export default Ongoing

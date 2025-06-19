@@ -23,9 +23,6 @@ const BookMark = () => {
     useFocusEffect(
         useCallback(() => {
             fetchMyFavourite(1);
-            return () => {
-                console.log('BookMark tab unfocused');
-            };
         }, [])
     );
 
