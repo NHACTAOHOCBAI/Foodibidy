@@ -99,14 +99,14 @@ const Food = () => {
         {
             title: "Action",
             render: (_, value) => (
-                <div style={{ display: 'flex', gap: 10 }}>
-                    <div onClick={() => {
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <div style={{ color: 'blue' }} onClick={() => {
                         setDetailFood(value)
                         setIsDetailOpen(true)
                     }}>
                         < PiEye />
                     </div>
-                    <div onClick={() => {
+                    <div style={{ color: "yellow" }} onClick={() => {
                         setUpdatedFood(value)
                         setIsUpdateOpen(true)
                     }}>
@@ -119,7 +119,7 @@ const Food = () => {
                         okText="Yes"
                         cancelText="No"
                     >
-                        <div><DeleteOutlined /></div>
+                        <div style={{ color: "red" }}><DeleteOutlined /></div>
                     </Popconfirm>
                 </div>
             ),

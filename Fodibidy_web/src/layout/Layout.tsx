@@ -54,6 +54,11 @@ const AppLayout: React.FC = () => {
                             icon: <MdOutlineFoodBank />,
                             label: <Link to="/categories">Category</Link>,
                         },
+                        {
+                            key: 'profile',
+                            icon: <MdOutlineFoodBank />,
+                            label: <Link to="/my-restaurant">Profile</Link>,
+                        },
                     ]}
                 />
             </Sider>

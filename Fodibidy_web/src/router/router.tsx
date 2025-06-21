@@ -5,6 +5,7 @@ import Food from "../pages/admin/Food";
 import Order from "../pages/admin/Order";
 import Restaurant from "../pages/admin/Restaurant";
 import Category from "../pages/admin/Category";
+import Profile from "../pages/admin/Profile";
 
 const router = createBrowserRouter([
     {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
             { path: '/orders', element: <Order /> },
             { path: '/restaurants', element: <Restaurant /> },
             { path: '/categories', element: <Category /> },
+            { path: '/my-restaurant', element: <Profile /> },
         ]
     },
 ]);
