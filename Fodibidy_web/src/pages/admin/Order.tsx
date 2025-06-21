@@ -81,7 +81,16 @@ const Order = () => {
 
     return (
         <>
-            <Table<Order> bordered columns={columns} dataSource={data} rowKey="id" />
+            <Table<Order>
+                bordered columns={columns} dataSource={data} rowKey="id"
+                expandable={{
+                    expandedRowRender: (record) => <div>
+                        <p style={{ margin: 0 }}>Shipper phone : {record.shipperPhone}</p>
+                        <p style={{ margin: 0 }}>Shipper name : {record.shipperPhone}</p>
+                    </div>,
+                    rowExpandable: (record) => record.shipperName !== undefined,
+                }}
+            />
             <UpdateOrder
                 isUpdateOpen={isUpdateOpen}
                 setIsUpdateOpen={setIsUpdateOpen}
