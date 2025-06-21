@@ -1,9 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Table, Tag } from 'antd';
 import type { TableProps } from 'antd';
+import { useState } from 'react';
+import { FaRegEdit } from 'react-icons/fa';
+import UpdateOrder from '../../components/order/UpdateOrder';
 // import convertDateFormat from '../../utils/convertDateFormat';
 
 const Order = () => {
+    const [isUpdateOpen, setIsUpdateOpen] = useState(false)
+    const [updatedOrder, setUpdatedOrder] = useState<Order>()
     const columns: TableProps<Order>['columns'] = [
         {
             title: 'Customer',
@@ -16,11 +21,11 @@ const Order = () => {
         {
             title: 'Items',
             dataIndex: 'items',
-            render: (items) => (
+            render: (items: { dish: { dishName: string; price: number | string }; quantity: number }[]) => (
                 <ul style={{ paddingLeft: 16 }}>
                     {items.map((item, idx) => (
                         <li key={idx}>
-                            {item.dish.dishName} x {item.quantity} (${(item.dish.price * item.quantity).toFixed(2)})
+                            {item.dish.dishName} x {item.quantity} (${(Number(item.dish.price) * item.quantity).toFixed(2)})
                         </li>
                     ))}
                 </ul>
@@ -43,6 +48,7 @@ const Order = () => {
             filters: [
                 { text: 'Pending', value: 'pending' },
                 { text: 'Preparing', value: 'preparing' },
+                { text: 'Ongoing', value: 'ongoing' },
                 { text: 'Delivered', value: 'delivered' },
                 { text: 'Cancelled', value: 'cancelled' },
             ],
@@ -51,6 +57,7 @@ const Order = () => {
                 const colorMap: Record<string, string> = {
                     pending: 'gold',
                     preparing: 'blue',
+                    ongoing: 'orange',
                     delivered: 'green',
                     cancelled: 'red',
                 };
@@ -61,19 +68,26 @@ const Order = () => {
             title: "Actions",
             render: (_, record) => {
                 return (
-                    <div style={{ display: 'flex', gap: 8 }}>
-                        <Button type="dashed">Cancel</Button>
-                        <Button type="primary">Next step</Button>
-                    </div>
+                    <Button
+                        onClick={() => {
+                            setIsUpdateOpen(true)
+                            setUpdatedOrder(record)
+                        }}
+                        icon={<FaRegEdit />}>Update</Button>
                 )
             }
         }
     ];
 
     return (
-        <div>
+        <>
             <Table<Order> bordered columns={columns} dataSource={data} rowKey="id" />
-        </div>
+            <UpdateOrder
+                isUpdateOpen={isUpdateOpen}
+                setIsUpdateOpen={setIsUpdateOpen}
+                updatedOrder={updatedOrder}
+            />
+        </>
     );
 };
 
@@ -113,7 +127,7 @@ const data: Order[] = [
         id: 2,
         user: { id: 'u2', fullName: 'Bob Smith' },
         restaurant: { id: 'r2', restaurantName: 'Sushi World' },
-        status: 'delivered',
+        status: 'ongoing',
         orderTime: '2025-05-28T18:00:00Z',
         deliveryPhone: '555-222-3333',
         address: '456 Elm St, Tokyo',

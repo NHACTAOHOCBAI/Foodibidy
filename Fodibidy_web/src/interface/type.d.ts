@@ -19,7 +19,7 @@ interface Order {
     id: number;
     user: Pick<Account, 'id' | 'fullName'>;
     restaurant: Pick<Restaurant, 'id' | 'restaurantName'>;
-    status: 'pending' | 'preparing' | 'delivered' | 'cancelled';
+    status: 'pending' | 'preparing' | 'delivered' | 'cancelled' | 'ongoing';
     orderTime: string;
     deliveryPhone?: string;
     items: {
@@ -28,4 +28,6 @@ interface Order {
     }[]
     totalPrice: number;
     createdAt: string
+    shipperPhone?: string,
+    shipperName?: string
 }
