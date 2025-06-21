@@ -31,3 +31,13 @@ interface Order {
     shipperPhone?: string,
     shipperName?: string
 }
+
+interface Review {
+    rating: number,
+    comment: string,
+    account: {
+        avatar: string
+        id: string,
+        name: string
+    }
+}

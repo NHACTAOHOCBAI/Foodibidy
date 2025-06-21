@@ -8,10 +8,34 @@ import UpdateFood from '../../components/food/UpdateFood';
 import { getDishByRestaurant } from '../../services/food';
 import convertDateFormat from '../../utils/convertDateFormat';
 import formatVND from '../../utils/convertMoney';
+import { PiEye } from 'react-icons/pi';
+import DetailFood from '../../components/food/DetailFood';
 const Food = () => {
     const [isNewOpen, setIsNewOpen] = useState(false);
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [updatedFood, setUpdatedFood] = useState<Food>()
+    const [isDetailOpen, setIsDetailOpen] = useState(true)
+    const [detailFood, setDetailFood] = useState<Food>({
+        id: "food_123",
+        restaurant: {
+            id: "rest_001",
+            restaurantName: "Delicious Bistro",
+        },
+        category: {
+            id: "cat_001",
+            name: "Italian",
+        },
+        dishName: "Spaghetti Carbonara",
+        description: "Classic Italian pasta with creamy egg sauce, pancetta, and parmesan cheese.",
+        price: "12.99",
+        dishImage: "https://cdn.tgdd.vn/2021/04/CookProduct/1-1200x676-21.jpg",
+        soldQuantity: 150,
+        available: true,
+        remainingQuantity: 50,
+        createdAt: "2025-06-01T10:00:00Z",
+        updatedAt: "2025-06-20T15:30:00Z",
+        rating: 4.5,
+    },)
     const columns: TableProps<Food>['columns'] = [
         {
             title: 'Image',
@@ -75,6 +99,12 @@ const Food = () => {
             render: (_, value) => (
                 <div style={{ display: 'flex', gap: 10 }}>
                     <div onClick={() => {
+                        setDetailFood(value)
+                        setIsDetailOpen(true)
+                    }}>
+                        < PiEye />
+                    </div>
+                    <div onClick={() => {
                         setUpdatedFood(value)
                         setIsUpdateOpen(true)
                     }}>
@@ -102,8 +132,12 @@ const Food = () => {
         fetchFoods()
     }, []);
     return (
-        <div>
-
+        <>
+            <DetailFood
+                detailFood={detailFood}
+                setIsDetailOpen={setIsDetailOpen}
+                isDetailOpen={isDetailOpen}
+            />
             <NewFood
                 isModalOpen={isNewOpen}
                 setIsModalOpen={setIsNewOpen}
@@ -117,7 +151,7 @@ const Food = () => {
                 <PlusOutlined />New Food
             </Button>
             <Table<Food> bordered columns={columns} dataSource={foods} rowKey="id" />
-        </div>
+        </>
     )
 };
 export default Food;
