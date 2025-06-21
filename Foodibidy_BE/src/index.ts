@@ -12,6 +12,7 @@ import reviewsRouter from './routes/review.route'
 import usersRouter from './routes/user.route'
 import user_dishRouter from './routes/user_dish.route'
 import databaseService from './services/database.service'
+import authRouter from '~/routes/auth.route'
 const app = express()
 
 const port = 3000
@@ -34,6 +35,7 @@ app.use('/api/v1/carts', cartsRouter)
 app.use('/api/v1/orders', ordersRouter)
 app.use('/api/v1/dishes', dishesRouter)
 app.use('/api/v1/reviews', reviewsRouter)
+app.use('/api/v1/auth', authRouter)
 
 // app.use('/api/v1/notifications', notificationsRouter)
 

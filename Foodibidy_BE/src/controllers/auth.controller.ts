@@ -3,46 +3,38 @@ import { auth } from '~/services/database.service'
 import databaseService from '~/services/database.service'
 import User, { UserType } from '~/models/schemas/user.schema'
 import { UserRole } from '~/constants/enums'
+import { CreateUserReqBody } from '~/models/requests/user.request'
+import usersService from '~/services/user.service'
 
 // Controller: Đăng ký người dùng
 export const registerUser = async (req: Request, res: Response) => {
-    const { email, password, fullName, dateOfBirth, phoneNumber, avatar } = req.body
-
     try {
-        // Tạo user trên Firebase Authentication
-        const userRecord = await auth.createUser({
-            email,
-            password,
-            displayName: fullName,
-            photoURL: avatar,
-            phoneNumber
-        })
-
-        // Tạo user object lưu vào Firestore
-        const newUser: UserType = {
-            id: userRecord.uid,
-            fullName,
-            email,
-            passwordHash: '', // Firebase đã quản lý password
-            role: UserRole.CUSTOMER,
-            dateOfBirth,
-            phoneNumber,
-            avatar,
-            address: [],
-            cartId: '',
-            createdAt: new Date(),
-            updatedAt: new Date()
+        // Chuyển đổi request body về đúng kiểu dữ liệu CreateUserReqBody
+        const userData: CreateUserReqBody = {
+            email: req.body.email,
+            password: req.body.password,
+            confirmPassword: req.body.confirmPassword, // nếu có validate confirmPassword
+            fullName: req.body.fullName,
+            dateOfBirth: req.body.dateOfBirth,
+            avatar: req.body.avatar,
+            address: req.body.address || []
         }
 
-        await databaseService.users.doc(userRecord.uid).set(newUser)
+        // Gọi service để tạo user
+        const newUserId = await usersService.createUser(userData)
 
-        res.status(201).json({ message: 'User created successfully', userId: userRecord.uid })
+        res.status(201).json({
+            message: 'User created successfully',
+            userId: newUserId
+        })
     } catch (error) {
         console.error('Error creating user:', error)
-        res.status(400).json({ message: 'Error creating user', error })
+        res.status(400).json({
+            message: 'Error creating user',
+            error: error instanceof Error ? error.message : error
+        })
     }
 }
-
 // Controller: Lấy profile người dùng (sau khi xác thực Firebase token)
 export const getProfile = async (req: Request, res: Response) => {
     if (!req.user) {
