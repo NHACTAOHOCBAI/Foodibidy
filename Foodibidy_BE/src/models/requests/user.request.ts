@@ -1,6 +1,8 @@
 import { ParamsDictionary } from 'express-serve-static-core'
-import { UserRole } from '~/constants/enums'
+import { TokenTypes, UserRole, UserVerifyStatus } from '~/constants/enums'
 import { AddressType } from '../schemas/address.schema'
+import { JwtPayload } from 'jsonwebtoken'
+import { UploadedFile } from 'express-fileupload'
 
 export interface CreateUserReqBody {
   fullName: string
@@ -9,6 +11,7 @@ export interface CreateUserReqBody {
   confirmPassword: string
   dateOfBirth: string
   address: Omit<AddressType, 'userId' | 'id'>[] | []
+  avatar?: UploadedFile
 }
 
 export interface UpdateUserReqBody {
@@ -28,4 +31,12 @@ export interface GetProfileRequestParams extends ParamsDictionary {
 export interface PaginationQuery {
   page: string
   limit: string
+}
+
+export interface TokenPayload extends JwtPayload {
+  user_id: string
+  token_type: TokenTypes
+  verify: UserVerifyStatus
+  exp: number
+  iat: number
 }

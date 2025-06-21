@@ -16,6 +16,7 @@ export interface OrderType {
   }[]
   createdAt?: Date | string
   updatedAt?: Date | string
+  receivedAt?: Date | string
 }
 
 export default class Order {
@@ -31,6 +32,7 @@ export default class Order {
   }[]
   createdAt?: Date | string
   updatedAt?: Date | string
+  receivedAt?: Date | string
 
   constructor(order: OrderType) {
     this.id = order.id || ''
@@ -42,6 +44,7 @@ export default class Order {
     this.items = order.items || []
     this.createdAt = order.createdAt || new Date()
     this.updatedAt = order.updatedAt || new Date()
+    this.receivedAt = order.receivedAt || new Date()
   }
 
   toObject(): OrderType {
@@ -54,7 +57,8 @@ export default class Order {
       orderTime: this.orderTime,
       items: this.items,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
+      receivedAt: this.receivedAt
     }
   }
 }

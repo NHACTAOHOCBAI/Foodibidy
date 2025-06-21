@@ -18,6 +18,11 @@ export const getAllReviews = async (req: Request, res: Response, next: NextFunct
   return res.json({ message: REVIEW_MESSAGES.GET_ALL_SUCCESS, data: result })
 }
 
+export const getReviewByFood = async (req: Request<ReviewParams>, res: Response, next: NextFunction) => {
+  const result = await reviewService.getReviewByFood(req.params.foodId)
+  return res.json({ message: REVIEW_MESSAGES.GET_ALL_SUCCESS, data: result })
+}
+
 export const updateReview = async (
   req: Request<ReviewParams, any, Partial<CreateReviewReqBody>>,
   res: Response,

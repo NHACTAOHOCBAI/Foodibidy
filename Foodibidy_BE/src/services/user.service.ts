@@ -1,14 +1,16 @@
+import { firestore } from 'firebase-admin'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/errors'
-import databaseService from './database.service'
 import { CreateUserReqBody, UpdateUserReqBody } from '~/models/requests/user.request'
+import Address from '~/models/schemas/address.schema'
 import User, { UserType } from '~/models/schemas/user.schema'
 import { hashPassword } from '~/utils/hashPassword'
-import { USERS_MESSAGES } from '~/constants/messages'
-import HTTP_STATUS from '~/constants/httpStatus'
 import { handleFormatDate } from '~/utils/utils'
-import Address from '~/models/schemas/address.schema'
 import cartService from './cart.service'
-import { firestore } from 'firebase-admin'
+import databaseService from './database.service'
+import { CloudinaryService } from './file.service'
+
 class UsersService {
   private userCollection = databaseService.users
 
@@ -16,14 +18,19 @@ class UsersService {
     try {
       console.log(this.checkEmailExists(userData.email))
       if ((await this.checkEmailExists(userData.email)) === true) {
-        const { address, ...userDataWithoutAddress } = userData
+        const { address, avatar, ...userDataWithoutAddress } = userData
+
+        let urlImage = ''
+        if (avatar) {
+          urlImage = await CloudinaryService.uploadImage(avatar, 'avatar')
+        }
 
         const newUser = new User({
           ...userDataWithoutAddress,
+          avatar: urlImage,
           passwordHash: hashPassword(userData.password),
           dateOfBirth: new Date(userData.dateOfBirth)
         }).toObject()
-
         const docRef = await this.userCollection.add(newUser)
 
         for (const data of address) {
@@ -38,7 +45,7 @@ class UsersService {
       } else throw new Error(`Email already exist`)
     } catch (error) {
       console.error('Error creating user:', error)
-      throw new Error(`Failed to create user: ${error}`)
+      throw error // Giữ nguyên lỗi gốc để controller xử lý đúng
     }
   }
 

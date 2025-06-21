@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { UploadedFile } from 'express-fileupload'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { CreateUserReqBody, GetProfileRequestParams, UpdateUserReqBody } from '~/models/requests/user.request'
@@ -9,8 +10,22 @@ export const createUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const result = await usersService.createUser(req.body)
-  return res.json({ message: USERS_MESSAGES.REGISTER_SUCCESS, data: result })
+  try {
+    const avatar = req.files?.avatar as UploadedFile
+    console.log(req.body)
+
+    const address = JSON.parse(req.body.address as unknown as string)
+    console.log(address)
+    const result = await usersService.createUser({
+      ...req.body,
+      address,
+      avatar
+    })
+
+    return res.status(201).json({ message: USERS_MESSAGES.REGISTER_SUCCESS, data: result })
+  } catch (error) {
+    next(error)
+  }
 }
 
 export const getUser = async (req: Request<GetProfileRequestParams>, res: Response, next: NextFunction) => {

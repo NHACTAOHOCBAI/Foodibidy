@@ -22,3 +22,15 @@ export enum AddressTypeName {
   HOME = 'home',
   WORK = 'work'
 }
+
+export enum TokenTypes {
+  AccessToken,
+  RefreshToken,
+  ForgotPasswordToken,
+  VerifiedEmailToken
+}
+export enum UserVerifyStatus {
+  Unverified, // chưa xác thực email, mặc định = 0
+  Verified, // đã xác thực email
+  Banned // bị khóa
+}
