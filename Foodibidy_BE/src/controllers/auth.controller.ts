@@ -65,6 +65,18 @@ export const getProfile = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Error getting user profile', error })
     }
 }
-// Trong controllers/auth.controller.ts
 
+// Logout Controller
+export const logoutUser = async (req: Request, res: Response) => {
+    if (!req.user) {
+        return res.status(401).json({ message: 'Unauthorized' })
+    }
 
+    try {
+        await auth.revokeRefreshTokens(req.user.uid)
+        res.status(200).json({ message: 'Logout successful. Tokens revoked.' })
+    } catch (error) {
+        console.error('Error during logout:', error)
+        res.status(500).json({ message: 'Error during logout', error })
+    }
+}

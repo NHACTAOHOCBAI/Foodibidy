@@ -21,10 +21,10 @@ export const authenticateFirebase = async (req: Request, res: Response, next: Ne
     const idToken = authHeader.split(' ')[1]
 
     try {
-        const decodedToken = await auth.verifyIdToken(idToken)
-        req.user = decodedToken  // Gán luôn nguyên object verifyIdToken
+        const decodedToken = await auth.verifyIdToken(idToken, true)  // <-- bật kiểm tra revoked
+        req.user = decodedToken
         next()
     } catch (error) {
-        return res.status(401).json({ message: 'Invalid token', error })
+        return res.status(401).json({ message: 'Invalid or revoked token', error })
     }
 }
