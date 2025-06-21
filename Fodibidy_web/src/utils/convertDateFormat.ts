@@ -1,27 +1,31 @@
-const convertDateFormat = (input: string) => {
-    // Tách thời gian và ngày
-    const [timeStr, dateStr] = input.split(' ');
+const convertDateFormat = (input: string, locale: string = "en-US"): string => {
+    try {
+        // Tách giờ và ngày từ chuỗi đầu vào
+        const [time, date] = input.trim().split(" ");
+        const [hours, minutes, seconds] = time.split(":");
+        const [day, month, year] = date.split("-");
 
-    // Tách thành phần ngày
-    const [day, month, year] = dateStr.split('-');
+        // Tạo chuỗi ISO hợp lệ
+        const isoDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 
-    // Tạo đối tượng Date
-    const date = new Date(`${year}-${month}-${day}T${timeStr}`);
+        const dateTime = new Date(isoDate);
+        if (isNaN(dateTime.getTime())) {
+            throw new Error("Invalid date input");
+        }
 
-    // Mảng tháng viết tắt
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const formatted = dateTime.toLocaleString(locale, {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        });
+        return formatted;
+    } catch (error) {
+        console.error("Error formatting date:", error);
+        return "Invalid date";
+    }
+};
 
-    // Lấy thông tin ngày giờ
-    const dayNum = date.getDate();
-    const monthName = monthNames[date.getMonth()];
-
-    // Lấy giờ và phút, đảm bảo 2 chữ số
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-
-    // Trả về chuỗi định dạng mới
-    return `${dayNum} ${monthName}, ${hours}:${minutes}`;
-}
 export default convertDateFormat;
-// Output: "23 May, 23:07"

@@ -9,6 +9,7 @@ import { RxDashboard } from 'react-icons/rx';
 import { PiBowlFood } from 'react-icons/pi';
 import { BiDish } from 'react-icons/bi';
 import { SiHomeassistantcommunitystore } from 'react-icons/si';
+import { MdOutlineFoodBank } from 'react-icons/md';
 
 const { Header, Sider, Content } = Layout;
 
@@ -47,6 +48,11 @@ const AppLayout: React.FC = () => {
                             key: 'restaurants',
                             icon: <SiHomeassistantcommunitystore />,
                             label: <Link to="/restaurants">Restaurant</Link>,
+                        },
+                        {
+                            key: 'categories',
+                            icon: <MdOutlineFoodBank />,
+                            label: <Link to="/categories">Category</Link>,
                         },
                     ]}
                 />
