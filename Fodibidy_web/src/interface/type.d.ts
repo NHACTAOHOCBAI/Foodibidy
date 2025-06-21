@@ -4,7 +4,7 @@ interface Food {
     category: Pick<Category, 'id' | 'name'>;
     dishName: string;
     description: string;
-    price: string;
+    price: number;
     dishImage: string;
     soldQuantity: number;
     available: boolean;

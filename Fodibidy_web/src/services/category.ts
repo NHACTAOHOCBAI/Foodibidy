@@ -2,7 +2,7 @@ import axiosInstance from "../configs/axiosConfig"
 
 const getAllCategories = async () => {
     const res = await axiosInstance.get('/categories')
-    return res.data
+    return res.data as Category[]
 }
 const deleteCategoryById = async (id: string) => {
     return axiosInstance.delete(`/categories/${id}`)

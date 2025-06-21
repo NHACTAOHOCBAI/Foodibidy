@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Table, Tag, Image, Popconfirm, Button } from 'antd';
+import { Table, Tag, Image, Popconfirm, Button, message } from 'antd';
 import type { TableProps } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react';
 import NewFood from '../../components/food/NewFood';
 import UpdateFood from '../../components/food/UpdateFood';
-import { getDishByRestaurant } from '../../services/food';
+import { deleteDishById, getDishByRestaurant } from '../../services/food';
 import convertDateFormat from '../../utils/convertDateFormat';
 import formatVND from '../../utils/convertMoney';
 import { PiEye } from 'react-icons/pi';
 import DetailFood from '../../components/food/DetailFood';
 const Food = () => {
+    const [messageApi, contextHolder] = message.useMessage();
+    const [isPending, setIsPending] = useState(false)
     const [isNewOpen, setIsNewOpen] = useState(false);
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [updatedFood, setUpdatedFood] = useState<Food>()
@@ -27,7 +29,7 @@ const Food = () => {
         },
         dishName: "Spaghetti Carbonara",
         description: "Classic Italian pasta with creamy egg sauce, pancetta, and parmesan cheese.",
-        price: "12.99",
+        price: 12.99,
         dishImage: "https://cdn.tgdd.vn/2021/04/CookProduct/1-1200x676-21.jpg",
         soldQuantity: 150,
         available: true,
@@ -71,7 +73,7 @@ const Food = () => {
             title: 'Price',
             dataIndex: 'price',
             defaultSortOrder: 'descend',
-            sorter: (a, b) => parseFloat(a.price) - parseFloat(b.price),
+            sorter: (a, b) => a.price - b.price,
             render: (price) => {
                 return formatVND(price);
             },
@@ -113,7 +115,7 @@ const Food = () => {
                     <Popconfirm
                         title="Delete the food"
                         description="Are you sure?"
-                        onConfirm={() => { }}
+                        onConfirm={() => { handleDelete(value.id) }}
                         okText="Yes"
                         cancelText="No"
                     >
@@ -124,21 +126,35 @@ const Food = () => {
         }
     ];
     const [foods, setFoods] = useState<Food[]>([])
-    useEffect(() => {
-        const fetchFoods = async () => {
-            const res = await getDishByRestaurant("QQKSRvPBUM5Siko5gEcW")
-            setFoods(res.data)
+    const refetchData = async () => {
+        setIsPending(true)
+        const res = await getDishByRestaurant("tDF8JPDfjgTbTApXnBiR")
+        setFoods(res.data)
+        setIsPending(false)
+    }
+    const handleDelete = async (id: string) => {
+        try {
+            await deleteDishById(id)
+            await refetchData()
+            messageApi.success('Delete category successfully')
         }
-        fetchFoods()
+        catch (error) {
+            messageApi.error(String(error))
+        }
+    }
+    useEffect(() => {
+        refetchData()
     }, []);
     return (
         <>
+            {contextHolder}
             <DetailFood
                 detailFood={detailFood}
                 setIsDetailOpen={setIsDetailOpen}
                 isDetailOpen={isDetailOpen}
             />
             <NewFood
+                refetchData={refetchData}
                 isModalOpen={isNewOpen}
                 setIsModalOpen={setIsNewOpen}
             />
@@ -150,7 +166,7 @@ const Food = () => {
             <Button onClick={() => setIsNewOpen(true)} type='primary' style={{ marginLeft: 'auto', display: 'block', marginBottom: 10 }}>
                 <PlusOutlined />New Food
             </Button>
-            <Table<Food> bordered columns={columns} dataSource={foods} rowKey="id" />
+            <Table<Food> loading={isPending} bordered columns={columns} dataSource={foods} rowKey="id" />
         </>
     )
 };
