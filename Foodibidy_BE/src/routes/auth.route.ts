@@ -1,11 +1,10 @@
-const express = require('express')
-const authMiddleware = require('../middlewares/auth.middlewares')
-const { registerUser, loginUser, getUser } = require('../controllers/auth.controller')
+import { Router } from 'express'
+import { registerUser, getProfile } from '~/controllers/auth.controller'
+import { authenticateFirebase } from '~/middlewares/auth.middlewares'
 
-const router = express.Router()
+const router = Router()
 
 router.post('/register', registerUser)
-router.post('/login', loginUser)
-router.get('/user', authMiddleware, getUser)
+router.get('/profile', authenticateFirebase, getProfile)
 
-export default router;
+export default router

@@ -1,18 +1,30 @@
-const databaseService = require('../services/database.service')
 import { Request, Response, NextFunction } from 'express'
+import { auth } from '~/services/database.service'
+import { DecodedIdToken } from 'firebase-admin/auth'
 
-const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization?.split(' ')[1]
+// Extend Request để có thêm user
+declare global {
+    namespace Express {
+        interface Request {
+            user?: DecodedIdToken
+        }
+    }
+}
 
-    if (!token) return res.status(401).json({ message: 'Unauthorized' })
+export const authenticateFirebase = async (req: Request, res: Response, next: NextFunction) => {
+    const authHeader = req.headers.authorization
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'No token provided' })
+    }
+
+    const idToken = authHeader.split(' ')[1]
 
     try {
-        const decodedToken = await databaseService.auth().verifyIdToken(token)
-        req.user = decodedToken
+        const decodedToken = await auth.verifyIdToken(idToken)
+        req.user = decodedToken  // Gán luôn nguyên object verifyIdToken
         next()
     } catch (error) {
-        res.status(401).json({ message: 'Invalid token' })
+        return res.status(401).json({ message: 'Invalid token', error })
     }
-};
-
-module.exports = authMiddleware;
+}
