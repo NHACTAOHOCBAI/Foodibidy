@@ -97,7 +97,16 @@ const Category = () => {
                 </div>
                 <Table<Category>
                     loading={isPending}
-                    bordered columns={columns} dataSource={categories} rowKey="id" />
+                    bordered
+                    columns={columns}
+                    dataSource={categories}
+                    rowKey="id"
+                    pagination={{
+                        pageSize: 5, // Số item mỗi trang
+                        showTotal: (total) => `Total ${total} categories`,
+                    }}
+                />
+
             </div>
             <UpdateCategory
                 setUpdatedCategory={setUpdatedCategory}

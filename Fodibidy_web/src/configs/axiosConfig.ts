@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 
-const BASE_URL = "http://localhost:4000";
+const BASE_URL = "http://localhost:3000/api/v1";
 console.log('BASE_URL:', BASE_URL);
 let isRefreshing = false;
 let failedQueue: any[] = [];
