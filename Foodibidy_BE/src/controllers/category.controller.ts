@@ -2,13 +2,16 @@ import { Request, Response, NextFunction } from 'express'
 import categoryService from '~/services/category.service'
 import { CreateCategoryReqBody, CategoryParams } from '~/models/requests/category.request'
 import { CATEGORY_MESSAGES } from '~/constants/messages'
+import { UploadedFile } from 'express-fileupload'
 
 export const createCategory = async (
   req: Request<any, any, CreateCategoryReqBody>,
   res: Response,
   next: NextFunction
 ) => {
-  const result = await categoryService.createCategory(req.body)
+  const cateImage = (req.files?.cateImage as UploadedFile) || ''
+
+  const result = await categoryService.createCategory({ ...req.body, cateImage })
   return res.json({ message: CATEGORY_MESSAGES.CREATE_SUCCESS, data: result })
 }
 

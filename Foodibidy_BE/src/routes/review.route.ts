@@ -1,7 +1,13 @@
 import { Router } from 'express'
 import { wrapRequestHandler } from '~/utils/handler'
-import { createReview, getAllReviews, getReview, updateReview, deleteReview } from '~/controllers/review.controller'
-import { CreateReviewSchema } from '~/middlewares/review.middlewares'
+import {
+  createReview,
+  getAllReviews,
+  getReview,
+  updateReview,
+  deleteReview,
+  getReviewByFood
+} from '~/controllers/review.controller'
 
 const reviewsRouter = Router()
 
@@ -10,7 +16,7 @@ const reviewsRouter = Router()
  * Path: /reviews
  * Method: POST
  */
-reviewsRouter.post('/', CreateReviewSchema, wrapRequestHandler(createReview))
+reviewsRouter.post('/', wrapRequestHandler(createReview))
 
 /**
  * Get all reviews
@@ -25,6 +31,13 @@ reviewsRouter.get('/', wrapRequestHandler(getAllReviews))
  * Method: GET
  */
 reviewsRouter.get('/:reviewId', wrapRequestHandler(getReview))
+
+/**
+ * Get a review by foodId
+ * Path: /reviews/food/:foodId
+ * Method: GET
+ */
+reviewsRouter.get('/:foodId', wrapRequestHandler(getReviewByFood))
 
 /**
  * Update a review by ID

@@ -17,7 +17,7 @@ const categoriesRouter = Router()
  * Path: /categories
  * Method: POST
  */
-categoriesRouter.post('/', CreateCategoryValidator, wrapRequestHandler(createCategory))
+categoriesRouter.post('/', wrapRequestHandler(createCategory))
 
 /**
  * Description. Get all categories

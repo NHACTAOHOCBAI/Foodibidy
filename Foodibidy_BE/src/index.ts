@@ -1,41 +1,43 @@
-import express from 'express'
-import usersRouter from './routes/user.route'
 import cors, { CorsOptions } from 'cors'
-import databaseService from './services/database.service'
-import usersService from './services/user.service'
+import express from 'express'
+import fileUpload from 'express-fileupload'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
-import categoriesRouter from './routes/category.route'
 import authRoutes from './routes/auth.route'
-import restaurantsRouter from './routes/restaurant.route'
-import addressesRouter from './routes/address.route'
 import cartsRouter from './routes/cart.route'
-import ordersRouter from './routes/order.route'
+import categoriesRouter from './routes/category.route'
 import dishesRouter from './routes/dish.route'
+import ordersRouter from './routes/order.route'
+import restaurantsRouter from './routes/restaurant.route'
 import reviewsRouter from './routes/review.route'
-import notificationsRouter from './routes/notification.route'
+import usersRouter from './routes/user.route'
 import user_dishRouter from './routes/user_dish.route'
+import databaseService from './services/database.service'
+import authRouter from '~/routes/auth.route'
 const app = express()
 
-const port = 4000
+const port = 3000
 const corsOptions: CorsOptions = {
   origin: '*'
 }
 
 app.use(cors(corsOptions))
 app.use(express.json())
+app.use(fileUpload())
 
 //routes
-app.use('/users', usersRouter)
-app.use('/categories', categoriesRouter)
-app.use('/api/auth', authRoutes)
-app.use('/restaurants', restaurantsRouter)
-app.use('/userDish', user_dishRouter)
-// app.use('/addresses', addressesRouter)
-app.use('/carts', cartsRouter)
-app.use('/orders', ordersRouter)
-app.use('/dishes', dishesRouter)
-// app.use('/reviews', reviewsRouter)
-// app.use('/notifications', notificationsRouter)
+app.use('/api/v1/users', usersRouter)
+app.use('/api/v1/categories', categoriesRouter)
+app.use('/api/v1/auth', authRoutes)
+app.use('/api/v1/restaurants', restaurantsRouter)
+app.use('/api/v1/userDish', user_dishRouter)
+// app.use('/api/v1/addresses', addressesRouter)
+app.use('/api/v1/carts', cartsRouter)
+app.use('/api/v1/orders', ordersRouter)
+app.use('/api/v1/dishes', dishesRouter)
+app.use('/api/v1/reviews', reviewsRouter)
+app.use('/api/v1/auth', authRouter)
+
+// app.use('/api/v1/notifications', notificationsRouter)
 
 //handle loi
 app.use(defaultErrorHandler)

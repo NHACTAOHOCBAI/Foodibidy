@@ -85,6 +85,25 @@ class ReviewService {
       throw new Error(`Failed to get all reviews: ${error}`)
     }
   }
+
+  async getReviewByFood(foodId: string): Promise<ReviewType[]> {
+    try {
+      const querySnapshot = await this.reviewCollection.where('dishId', '==', foodId).get()
+      const reviews: ReviewType[] = []
+      querySnapshot.forEach((doc) => {
+        const data = doc.data()
+        console.log(doc.id)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        reviews.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as ReviewType)
+      })
+      console.log('All reviews have food Id:', reviews)
+      return reviews
+    } catch (error) {
+      console.error('Error getting all reviews have food Id:', error)
+      throw new Error(`Failed to get all reviews have food Id: ${error}`)
+    }
+  }
 }
 
 const reviewService = new ReviewService()

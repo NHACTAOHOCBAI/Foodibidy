@@ -93,7 +93,8 @@ class OrderService {
         let updatedAt = handleFormatDate(data.updatedAt as Date)
         let createdAt = handleFormatDate(data.createdAt as Date)
         let orderTime = handleFormatDate(data.orderTime as Date)
-        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt, orderTime } as OrderType)
+        let receivedAt = handleFormatDate(data.receivedAt as Date)
+        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt, orderTime, receivedAt } as OrderType)
       })
       console.log('All orders:', orders)
       return orders
