@@ -13,9 +13,7 @@ const PAGE_SIZE = 4;
 const RestaurantDetail = () => {
     const { data } = useLocalSearchParams();
     const restaurant = JSON.parse(data as string) as Restaurant;
-    console.log(restaurant.id)
     const { data: categories } = useGetCatgoryByRestaurant(restaurant.id, 1, 10)
-    console.log(categories)
     const fetchFoodsByRestaurant = async (page: number) => {
         return await getDishByRestaurant(restaurant.id, page, PAGE_SIZE);
     };
@@ -94,7 +92,6 @@ const RestaurantDetail = () => {
 }
 
 const categoryItem = ({ category }: { category: Category }) => {
-    console.log(category)
     return (
         <Pressable
         // onPress={onPress}

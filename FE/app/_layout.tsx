@@ -1,4 +1,4 @@
-import { Stack, useRouter } from "expo-router";
+import { Stack, usePathname, useRouter, useSegments } from "expo-router";
 import './global.css'
 import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { icons } from "@/constants/icons";
@@ -6,6 +6,8 @@ import Filter from "@/components/Filter";
 import { FilterProvider, useFilter } from "@/context/FilterContext";
 import { QueryClient, QueryClientProvider } from 'react-query'
 import Toast from 'react-native-toast-message';
+import { useEffect } from "react";
+import { OrderProvider } from "@/context/OrderContext";
 
 const CustomHeader = ({ title, color = "", isTransperant = false }: any) => {
   const router = useRouter();
@@ -46,6 +48,14 @@ const CustomHeader = ({ title, color = "", isTransperant = false }: any) => {
 };
 const InnerLayout = () => {
   const { isFilterOpen } = useFilter();
+  const router = useRouter();
+  const pathname = usePathname(); // ví dụ "/"
+
+  useEffect(() => {
+    if (pathname === "/") {
+      router.replace("/(tabs)");
+    }
+  }, [pathname]);
   return (
     <View className="flex-1">
       <StatusBar hidden />
@@ -58,10 +68,39 @@ const InnerLayout = () => {
       }
 
       <Stack
+        initialRouteName="(tabs)"
         screenOptions={{
           animation: 'slide_from_right',
           headerTransparent: true
         }}>
+        <Stack.Screen
+          name="(register)/index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="(login)/index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="(login)/forgotPassword"
+          options={{
+            header: () => <CustomHeader
+              isTransperant={true}
+            />
+          }}
+        />
+        <Stack.Screen
+          name="(login)/verification"
+          options={{
+            header: () => <CustomHeader
+              isTransperant={true}
+            />
+          }}
+        />
         <Stack.Screen
           name="(tabs)"
           options={{
@@ -126,6 +165,15 @@ const InnerLayout = () => {
           }}
         />
         <Stack.Screen
+          name="cart/detailOrder"
+          options={{
+            header: () => <CustomHeader
+              title='detailOrder'
+              color="white"
+            />
+          }}
+        />
+        <Stack.Screen
           name="completed/placeOrder"
           options={{
             headerShown: false, // Ẩn header
@@ -142,7 +190,9 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <FilterProvider>
-        <InnerLayout />
+        <OrderProvider>
+          <InnerLayout />
+        </OrderProvider>
       </FilterProvider>
       <Toast />
     </QueryClientProvider>

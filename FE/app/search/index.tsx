@@ -1,13 +1,14 @@
 import SearchInput from '@/components/SearchInput'
 import SuggestedItem from '@/components//SuggestedItem'
 import { icons } from '@/constants/icons'
-import { FlatList, ScrollView, Text, View, Image, ActivityIndicator } from 'react-native'
+import { FlatList, ScrollView, Text, View, Image, ActivityIndicator, Pressable } from 'react-native'
 import { useState } from 'react'
 import FoodItem from '@/components/FoodItem'
-import { Link } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
+import { useGetRestaurant } from '@/hooks/useRestaurants'
 const PAGE_SIZE = 4;
 const SearchScreen = () => {
-    const { restaurants, foods } = useData();
+    const { data: restaurants } = useGetRestaurant()
     const handleSearch = (value: string) => {
         console.log(value)
     }
@@ -25,8 +26,8 @@ const SearchScreen = () => {
                 <RecentKeyword />
                 <SuggestedRestaurant
                     restaurants={restaurants}
-                />
-                <Foods foods={foods} />
+                /> *
+                {/* <Foods foods={foods} />  */}
             </ScrollView>
         </View>
     )
@@ -83,76 +84,86 @@ const SuggestedRestaurant = ({ restaurants }: { restaurants: Restaurant[] }) => 
     </View>
 )
 
-const SuggestedRestaurantItem = ({ item }: { item: Restaurant }) => (
-    <Link href={`/restaurants/${item.id}`}>
-        <View className='flex-row gap-[10px] pb-[14px] w-full border-b-[1px] border-b-[#EBEBEB]'>
-            <Image
-                className='bg-accent w-[60px] h-[50px] rounded-[8px]'
-            />
-            <View className='gap-[6px] flex-1' >
-                <Text
-                    numberOfLines={1}
-                    className='text-[16px]'>
-                    {item.name}
-                </Text>
-                <View className='flex-row gap-[2px] items-center'>
-                    <Image
-                        resizeMode='contain'
-                        source={icons.star}
-                        className='w-7 h-5'
-                    />
-                    <Text className='text-[16px]'>{item.rate}</Text>
+const SuggestedRestaurantItem = ({ item }: { item: Restaurant }) => {
+    const router = useRouter();
+    const onPress = () => router.push({
+        pathname: '/restaurants/[id]',
+        params: {
+            id: item.id,
+            data: JSON.stringify(item),
+        },
+    })
+    return (
+        <Pressable onPress={onPress}>
+            <View className='flex-row gap-[10px] pb-[14px] w-full border-b-[1px] border-b-[#EBEBEB]'>
+                <Image
+                    className='bg-accent w-[60px] h-[50px] rounded-[8px]'
+                />
+                <View className='gap-[6px] flex-1' >
+                    <Text
+                        numberOfLines={1}
+                        className='text-[16px]'>
+                        {item.restaurantName}
+                    </Text>
+                    <View className='flex-row gap-[2px] items-center'>
+                        <Image
+                            resizeMode='contain'
+                            source={icons.star}
+                            className='w-7 h-5'
+                        />
+                        <Text className='text-[16px]'>{item.rating}</Text>
+                    </View>
                 </View>
             </View>
-        </View>
-    </Link>
-)
+        </Pressable>
+    )
+}
 
-const Foods = ({ foods }: { foods: Food[] }) => {
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    const [loadingMore, setLoadingMore] = useState(false);
+// const Foods = ({ foods }: { foods: Food[] }) => {
+//     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+//     const [loadingMore, setLoadingMore] = useState(false);
 
-    // Hàm load thêm dữ liệu
-    const handleLoadMore = () => {
-        if (visibleCount >= foods.length || loadingMore) return;
+//     // Hàm load thêm dữ liệu
+//     const handleLoadMore = () => {
+//         if (visibleCount >= foods.length || loadingMore) return;
 
-        setLoadingMore(true);
+//         setLoadingMore(true);
 
-        // Mô phỏng delay tải dữ liệu (API call)
-        setTimeout(() => {
-            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, foods.length));
-            setLoadingMore(false);
-        }, 2000);
-    };
+//         // Mô phỏng delay tải dữ liệu (API call)
+//         setTimeout(() => {
+//             setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, foods.length));
+//             setLoadingMore(false);
+//         }, 2000);
+//     };
 
-    return (
-        <View className="mt-[12px] px-[24px]">
-            <Text className="text-[#32343E] text-[20px]">Popular Foods</Text>
+//     return (
+//         <View className="mt-[12px] px-[24px]">
+//             <Text className="text-[#32343E] text-[20px]">Popular Foods</Text>
 
-            <FlatList
-                className="py-[20px]"
-                data={foods.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
-                scrollEnabled={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ gap: 28 }}
-                columnWrapperStyle={{ justifyContent: 'space-between' }}
-                numColumns={2}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <FoodItem food={item} />}
+//             <FlatList
+//                 className="py-[20px]"
+//                 data={foods.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
+//                 scrollEnabled={false}
+//                 showsVerticalScrollIndicator={false}
+//                 contentContainerStyle={{ gap: 28 }}
+//                 columnWrapperStyle={{ justifyContent: 'space-between' }}
+//                 numColumns={2}
+//                 keyExtractor={(item) => item.id.toString()}
+//                 renderItem={({ item }) => <FoodItem food={item} />}
 
-                // Lazy loading props
-                onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
-                onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
-                initialNumToRender={PAGE_SIZE} // Render ban đầu
-                maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
+//                 // Lazy loading props
+//                 onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
+//                 onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
+//                 initialNumToRender={PAGE_SIZE} // Render ban đầu
+//                 maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
 
-                ListFooterComponent={loadingMore ? (
-                    <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
-                ) : null} // Hiển thị loader khi đang tải thêm
-            />
-        </View>
-    );
-};
+//                 ListFooterComponent={loadingMore ? (
+//                     <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
+//                 ) : null} // Hiển thị loader khi đang tải thêm
+//             />
+//         </View>
+//     );
+// };
 export default SearchScreen
 // data
 const recentKeywords = [
