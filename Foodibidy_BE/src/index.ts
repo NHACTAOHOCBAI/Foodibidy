@@ -14,7 +14,7 @@ import user_dishRouter from './routes/user_dish.route'
 import databaseService from './services/database.service'
 const app = express()
 
-const port = 4000
+const port = 3000
 const corsOptions: CorsOptions = {
   origin: '*'
 }

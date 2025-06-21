@@ -1,6 +1,6 @@
 import { firestore } from 'firebase-admin'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { USERS_MESSAGES } from '~/constants/messages'
+import { USER_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/errors'
 import { CreateUserReqBody, UpdateUserReqBody } from '~/models/requests/user.request'
 import Address from '~/models/schemas/address.schema'
@@ -13,7 +13,7 @@ import { CloudinaryService } from './file.service'
 
 class UsersService {
   private userCollection = databaseService.users
-
+  private cartCollection = databaseService.carts
   async createUser(userData: CreateUserReqBody) {
     try {
       console.log(this.checkEmailExists(userData.email))
@@ -38,7 +38,7 @@ class UsersService {
           await this.userCollection.doc(docRef.id).collection('addresses').add(newAddress)
         }
         const cart = await cartService.createCart({ userId: docRef.id })
-        console.log(cart)
+
         await this.userCollection.doc(docRef.id).update({ cartId: cart })
         console.log('User created with ID:', docRef.id)
         return docRef.id
@@ -109,7 +109,7 @@ class UsersService {
     } else {
       console.error(`Error getting user with ID ${userId}`)
     }
-    throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    throw new ErrorWithStatus({ message: USER_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
   }
 
   async updateUser(userId: string, updateData: UpdateUserReqBody) {
@@ -148,17 +148,32 @@ class UsersService {
 
       console.log(`Update user success with ID ${doc.id}`)
     } catch {
-      throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+      throw new ErrorWithStatus({ message: USER_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
     }
   }
 
   async deleteUser(userId: string) {
     try {
+      const userDoc = await this.userCollection.doc(userId).get()
+
+      if (!userDoc.exists) {
+        throw new ErrorWithStatus({ message: USER_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+      }
+
+      const userData = userDoc.data()
+
+      // Xóa cart nếu tồn tại
+      if (userData?.cartId) {
+        await this.cartCollection.doc(userData.cartId).delete()
+        console.log(`Cart with ID ${userData.cartId} deleted successfully`)
+      }
+
+      // Xóa user
       await this.userCollection.doc(userId).delete()
       console.log(`User with ID ${userId} deleted successfully`)
     } catch (error) {
       console.error(`Error deleting user with ID ${userId}:`, error)
-      throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+      throw new ErrorWithStatus({ message: USER_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
     }
   }
 
