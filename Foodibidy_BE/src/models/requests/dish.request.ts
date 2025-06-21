@@ -1,6 +1,7 @@
 import { ParamsDictionary, Query } from 'express-serve-static-core'
 import { CategoryType } from '../schemas/category.schema'
 import { RestaurantType } from '../schemas/restaurant.schema'
+import { UploadedFile } from 'express-fileupload'
 
 export interface DishParams extends ParamsDictionary {
   dishId: string
@@ -19,7 +20,7 @@ export interface CreateDishReqBody {
   dishName: string
   description: string
   price: number
-  dishImage?: string
+  dishImage?: UploadedFile
 }
 
 export interface UpdateDishReqBody {

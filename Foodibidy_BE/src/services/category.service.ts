@@ -8,14 +8,22 @@ import { GetCategoryRes } from '~/models/responses/category.response'
 import { chunkArray, handleFormatDate } from '~/utils/utils'
 import { DocumentData, FieldPath, QuerySnapshot } from 'firebase-admin/firestore'
 import restaurant_categoryService from './restaurant_category.service'
-import { chunk, result } from 'lodash'
+
+import { CloudinaryService } from './file.service'
 
 class CategoryService {
   private categoryCollection = databaseService.categories
 
   async createCategory(categoryData: CreateCategoryReqBody) {
+    const { cateImage, ...resDishBody } = categoryData
+    let urlImage = ''
+    if (cateImage) {
+      urlImage = await CloudinaryService.uploadImage(cateImage, 'dish')
+    }
+
     const newCategory = new Category({
-      ...categoryData,
+      ...resDishBody,
+      image: urlImage,
       createdAt: new Date()
     }).toObject()
 
@@ -99,7 +107,7 @@ class CategoryService {
     return allResults
   }
 
-  async updateCategory(categoryId: string, updateData: Partial<CategoryType>) {
+  async updateCategory(categoryId: string, updateData: Partial<CreateCategoryReqBody>) {
     const doc = await this.categoryCollection.doc(categoryId).get()
     if (!doc.exists) {
       throw new ErrorWithStatus({ message: CATEGORY_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })

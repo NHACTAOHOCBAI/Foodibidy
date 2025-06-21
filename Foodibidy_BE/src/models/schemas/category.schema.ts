@@ -13,7 +13,7 @@ export default class Category {
   name: string
   description: string
   purchase: number
-  image: string
+  image?: string
   createdAt: Date
   updatedAt: Date
 

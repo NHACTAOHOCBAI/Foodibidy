@@ -1,3 +1,4 @@
+import { UploadedFile } from 'express-fileupload'
 import { ParamsDictionary } from 'express-serve-static-core'
 
 export interface CategoryParams extends ParamsDictionary {
@@ -14,7 +15,7 @@ export interface CreateCategoryReqBody {
   name: string
   description?: string
   purchase?: number
-  image?: string
+  cateImage?: UploadedFile
 }
 
 export interface UpdateDishReqBody {}

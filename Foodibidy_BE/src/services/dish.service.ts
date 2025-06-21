@@ -1,21 +1,27 @@
-import { ErrorWithStatus } from '~/models/errors'
-import databaseService from './database.service'
-import { CreateDishReqBody, UpdateDishReqBody } from '~/models/requests/dish.request'
-import Dish, { DishType } from '~/models/schemas/dish.schema'
-import { DISH_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { chunkArray, handleFormatDate } from '~/utils/utils'
+import { DISH_MESSAGES } from '~/constants/messages'
+import { ErrorWithStatus } from '~/models/errors'
+import { CreateDishReqBody, UpdateDishReqBody } from '~/models/requests/dish.request'
 import { GetDishRes } from '~/models/responses/dish.response'
-import user_dishService from './user_dish.service'
-import { FieldPath } from 'firebase-admin/firestore'
+import Dish, { DishType } from '~/models/schemas/dish.schema'
+import { handleFormatDate } from '~/utils/utils'
+import databaseService from './database.service'
+import { CloudinaryService } from './file.service'
 
 class DishService {
   private dishCollection = databaseService.dishes
 
   async createDish(data: CreateDishReqBody) {
     try {
+      const { dishImage, ...resDishBody } = data
+      let urlImage = ''
+      if (dishImage) {
+        urlImage = await CloudinaryService.uploadImage(dishImage, 'dish')
+      }
+
       const newDish = new Dish({
-        ...data
+        ...resDishBody,
+        dishImage: urlImage
       }).toObject()
 
       const docRef = await this.dishCollection.add(newDish)
