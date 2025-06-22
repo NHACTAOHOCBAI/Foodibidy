@@ -7,6 +7,8 @@ import {
   updateRestaurant,
   deleteRestaurant
 } from '~/controllers/restaurant.controller'
+import { authenticateFirebase, authorizeRole } from '~/middlewares/auth.middlewares'
+import { UserRole } from '~/constants/enums'
 // import { CreateRestaurantSchema } from '~/middlewares/restaurant.middlewares'
 
 const restaurantsRouter = Router()
@@ -16,34 +18,52 @@ const restaurantsRouter = Router()
  * Path: /restaurants
  * Method: POST
  */
-restaurantsRouter.post('/', wrapRequestHandler(createRestaurant))
+restaurantsRouter.post('/',
+  authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT]),
+  wrapRequestHandler(createRestaurant)
+)
 
 /**
- * Get all restaurants
+ * Get all restaurants (public)
  * Path: /restaurants
  * Method: GET
  */
-restaurantsRouter.get('/', wrapRequestHandler(getAllRestaurants))
+restaurantsRouter.get('/',
+  wrapRequestHandler(getAllRestaurants)
+)
 
 /**
- * Get a restaurant by ID
+ * Get a restaurant by ID (public)
  * Path: /restaurants/:restaurantId
  * Method: GET
  */
-restaurantsRouter.get('/:restaurantId', wrapRequestHandler(getRestaurant))
+restaurantsRouter.get('/:restaurantId',
+  wrapRequestHandler(getRestaurant)
+)
 
 /**
  * Update a restaurant by ID
  * Path: /restaurants/:restaurantId
  * Method: PUT
+ * Roles allowed: ADMIN, RESTAURANT
  */
-restaurantsRouter.put('/:restaurantId', wrapRequestHandler(updateRestaurant))
+restaurantsRouter.put('/:restaurantId',
+  authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT]),
+  wrapRequestHandler(updateRestaurant)
+)
 
 /**
  * Delete a restaurant by ID
  * Path: /restaurants/:restaurantId
  * Method: DELETE
+ * Roles allowed: ADMIN, RESTAURANT
  */
-restaurantsRouter.delete('/:restaurantId', wrapRequestHandler(deleteRestaurant))
+restaurantsRouter.delete('/:restaurantId',
+  authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT]),
+  wrapRequestHandler(deleteRestaurant)
+)
 
 export default restaurantsRouter
