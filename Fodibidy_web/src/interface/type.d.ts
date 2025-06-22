@@ -69,7 +69,7 @@ interface Category {
 interface Account {
     id: string;
     email: string;
-    roleId: 'admin' | 'restaurant' | 'customer';
+    role: 'admin' | 'restaurant' | 'customer';
     fullName: string;
     createdAt: string;
     updateAt: string,

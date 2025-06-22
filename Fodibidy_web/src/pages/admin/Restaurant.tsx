@@ -9,20 +9,6 @@ import { deleteRestaurantById, getAllRestaurants } from '../../services/restaura
 import NewRestaurant from '../../components/restaurant/NewRestaurant';
 import UpdateRestaurant from '../../components/restaurant/UpdateRestaurant';
 import DetailRestaurant from '../../components/restaurant/DetailRestaurant';
-interface Restaurant {
-    id: string;
-    user: Pick<Account, 'id' | 'fullName' | 'phoneNumber'>,
-    purchase: number
-    category: Pick<Category, 'id' | 'name'>[];
-    restaurantName: string;
-    address: string;
-    status: 'pending' | 'active' | 'closed';
-    restaurantImage: string;
-    phoneNumber: string;
-    rating: number;
-    createdAt: string;
-    bio: string
-}
 const Restaurant = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const [isPending, setIsPending] = useState(false);
@@ -144,6 +130,10 @@ const Restaurant = () => {
                 columns={columns}
                 dataSource={restaurants}
                 rowKey="id"
+                pagination={{
+                    pageSize: 5, // Số item mỗi trang
+                    showTotal: (total) => `Total ${total} restaurants`,
+                }}
             />
             <NewRestaurant
                 isModalOpen={isNewOpen}
