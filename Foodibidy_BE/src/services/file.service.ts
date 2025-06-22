@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { ErrorWithStatus } from '~/models/errors'
 import { FILE_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { result } from 'lodash'
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -38,7 +37,7 @@ export class CloudinaryService {
 
   static async uploadImage(file: UploadedFile, folder: string): Promise<string> {
     this.validateFile(file)
-
+    console.log(file)
     try {
       // Since upload_stream is callback-based, wrap with promise:
       return await new Promise((resolve, reject) => {
@@ -50,8 +49,7 @@ export class CloudinaryService {
             transformation: [{ width: 300, height: 300, crop: 'fill', quality: 'auto' }]
           },
           (error, result) => {
-            console.log('Public ID:', result?.public_id)
-            console.log('Secure URL:', result?.secure_url)
+            console.log('Public ID:', result)
             if (error || !result?.secure_url) {
               reject(
                 new ErrorWithStatus({

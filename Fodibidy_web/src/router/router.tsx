@@ -4,6 +4,7 @@ import Dashboard from "../pages/admin/Dashboard";
 import Food from "../pages/admin/Food";
 import Order from "../pages/admin/Order";
 import Restaurant from "../pages/admin/Restaurant";
+import Category from "../pages/admin/Category";
 
 const router = createBrowserRouter([
     {
@@ -13,7 +14,8 @@ const router = createBrowserRouter([
             { path: '/dashboard', element: <Dashboard /> },
             { path: '/foods', element: <Food /> },
             { path: '/orders', element: <Order /> },
-            { path: '/restaurants', element: <Restaurant /> }
+            { path: '/restaurants', element: <Restaurant /> },
+            { path: '/categories', element: <Category /> },
         ]
     },
 ]);
