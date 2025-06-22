@@ -31,7 +31,11 @@ const NewCategory = ({ isModalOpen, setIsModalOpen, refetchData }: { isModalOpen
             handleCancel()
         }
         catch (error) {
-            messageApi.error(String(error))
+            if (error instanceof Error) {
+                messageApi.error(error.message);
+            } else {
+                messageApi.error("An unexpected error occurred");
+            }
         }
         setIsPending(false)
     }

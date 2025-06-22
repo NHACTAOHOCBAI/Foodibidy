@@ -9,7 +9,8 @@ import { RxDashboard } from 'react-icons/rx';
 import { PiBowlFood } from 'react-icons/pi';
 import { BiDish } from 'react-icons/bi';
 import { SiHomeassistantcommunitystore } from 'react-icons/si';
-import { MdOutlineFoodBank } from 'react-icons/md';
+import { MdOutlineAccountCircle, MdOutlineFoodBank } from 'react-icons/md';
+import { ImProfile } from 'react-icons/im';
 
 const { Header, Sider, Content } = Layout;
 
@@ -53,6 +54,16 @@ const AppLayout: React.FC = () => {
                             key: 'categories',
                             icon: <MdOutlineFoodBank />,
                             label: <Link to="/categories">Category</Link>,
+                        },
+                        {
+                            key: 'accounts',
+                            icon: <MdOutlineAccountCircle />,
+                            label: <Link to="/accounts">Account</Link>,
+                        },
+                        {
+                            key: 'profile',
+                            icon: <ImProfile />,
+                            label: <Link to="/my-restaurant">Profile</Link>,
                         },
                     ]}
                 />

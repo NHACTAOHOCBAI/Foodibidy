@@ -1,224 +1,159 @@
-import { Form, Input, Button, Typography, Card, Image, Select, Rate, Upload, message } from "antd";
-import { UploadOutlined, EnvironmentOutlined, PhoneOutlined, TagsOutlined, ShopOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
-import type { UploadFile } from "antd/es/upload/interface";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Table, Tag, Image, Popconfirm, Button, message } from 'antd';
+import type { TableProps } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import convertDateFormat from '../../utils/convertDateFormat';
+import { PiEye } from 'react-icons/pi';
+import { deleteRestaurantById, getAllRestaurants } from '../../services/restaurant';
+import NewRestaurant from '../../components/restaurant/NewRestaurant';
+import UpdateRestaurant from '../../components/restaurant/UpdateRestaurant';
+import DetailRestaurant from '../../components/restaurant/DetailRestaurant';
+const Restaurant = () => {
+    const [messageApi, contextHolder] = message.useMessage();
+    const [isPending, setIsPending] = useState(false);
+    const [isNewOpen, setIsNewOpen] = useState(false);
+    const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+    const [updatedRestaurant, setUpdatedRestaurant] = useState<Restaurant>();
+    const [isDetailOpen, setIsDetailOpen] = useState(true);
+    const [detailRestaurant, setDetailRestaurant] = useState<Restaurant>();
 
-// Fake data ban đầu
-const initialRestaurant: Restaurant = {
-    id: "rest_001",
-    user: {
-        id: "user_001",
-        fullName: "John Doe",
-        phoneNumber: "+1234567890",
-    },
-    purchase: 250,
-    category: [
-        { id: "cat_001", name: "Italian" },
-        { id: "cat_002", name: "Pizza" },
-    ],
-    restaurantName: "Delicious Bistro",
-    address: "123 Food Street, Culinary City",
-    status: "active",
-    restaurantImage: "https://via.placeholder.com/300?text=Restaurant",
-    phoneNumber: "+0987654321",
-    rating: 4.7,
-    createdAt: "2025-01-15T09:00:00Z",
-    bio: "A cozy place offering authentic Italian dishes with a modern twist.",
-};
-
-// Danh sách danh mục giả để chọn
-const availableCategories = [
-    { id: "cat_001", name: "Italian" },
-    { id: "cat_002", name: "Pizza" },
-    { id: "cat_003", name: "Mexican" },
-    { id: "cat_004", name: "Japanese" },
-];
-
-const MyRestaurant = () => {
-    const { Text } = Typography;
-    const [form] = Form.useForm();
-    const [restaurant, setRestaurant] = useState<Restaurant>(initialRestaurant);
-    const [fileList, setFileList] = useState<UploadFile[]>([
+    const columns: TableProps<Restaurant>['columns'] = [
         {
-            uid: "-1",
-            name: "restaurant-image.png",
-            status: "done",
-            url: restaurant.restaurantImage,
+            title: 'Image',
+            dataIndex: 'restaurantImage',
+            render: (url) => <Image width={60} src={url} alt="Restaurant" />,
         },
-    ]);
-
-    // Xử lý submit form
-    const onFinish = (values: any) => {
-        const updatedRestaurant = {
-            ...restaurant,
-            ...values,
-            category: values.category.map((catId: string) =>
-                availableCategories.find((cat) => cat.id === catId)
+        {
+            title: 'Name',
+            dataIndex: 'restaurantName',
+        },
+        {
+            title: 'Rating',
+            dataIndex: 'rating',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => a.rating - b.rating,
+        },
+        {
+            title: 'Purchase',
+            dataIndex: 'purchase',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => a.purchase - b.purchase,
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            render: (status) => {
+                const color = status === 'active' ? 'green' : status === 'pending' ? 'yellow' : 'red';
+                return <Tag color={color}>{status.toUpperCase()}</Tag>;
+            },
+        },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+        },
+        {
+            title: 'Created At',
+            render: (_: any, record: Restaurant) => <div>{convertDateFormat(record.createdAt)}</div>,
+        },
+        {
+            title: 'Action',
+            render: (_, value) => (
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <div style={{ color: 'blue' }} onClick={() => {
+                        setDetailRestaurant(value);
+                        setIsDetailOpen(true);
+                    }}>
+                        <PiEye />
+                    </div>
+                    <div style={{ color: 'yellow' }} onClick={() => {
+                        setUpdatedRestaurant(value);
+                        setIsUpdateOpen(true);
+                    }}>
+                        <EditOutlined />
+                    </div>
+                    <Popconfirm
+                        title="Delete the restaurant"
+                        description="Are you sure?"
+                        onConfirm={() => { handleDelete(value.id); }}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <div style={{ color: 'red' }}><DeleteOutlined /></div>
+                    </Popconfirm>
+                </div>
             ),
-            restaurantImage: fileList[0]?.url || restaurant.restaurantImage,
-        };
-        setRestaurant(updatedRestaurant);
-        message.success("Restaurant updated successfully!");
-        console.log("Updated Restaurant:", updatedRestaurant);
-        // Gửi API cập nhật tại đây, ví dụ: axios.put('/api/restaurant', updatedRestaurant);
+        },
+    ];
+
+    const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+
+    const refetchData = async () => {
+        setIsPending(true);
+        try {
+            const res = await getAllRestaurants();
+            setRestaurants(res);
+        } catch (error) {
+            messageApi.error(String(error));
+        } finally {
+            setIsPending(false);
+        }
     };
 
-    // Xử lý upload ảnh
-    const handleUploadChange = ({ fileList: newFileList }: { fileList: UploadFile[] }) => {
-        setFileList(newFileList);
+    const handleDelete = async (id: string) => {
+        try {
+            await deleteRestaurantById(id);
+            await refetchData();
+            messageApi.success('Restaurant deleted successfully');
+        } catch (error) {
+            messageApi.error(String(error));
+        }
     };
 
     useEffect(() => {
-        // Example: set the restaurantName field to the current restaurant name
-        form.setFieldValue("restaurantName", restaurant.restaurantName);
+        refetchData();
     }, []);
 
     return (
         <>
-            <Form
-                form={form}
-                layout="vertical"
-                initialValues={{
-                    restaurantName: restaurant.restaurantName,
-                    bio: restaurant.bio,
-                    address: restaurant.address,
-                    phoneNumber: restaurant.phoneNumber,
-                    status: restaurant.status,
-                    rating: restaurant.rating,
-                    category: restaurant.category.map((cat) => cat.id),
-                }}
-                onFinish={onFinish}
+            {contextHolder}
+            <Button
+                onClick={() => setIsNewOpen(true)}
+                type='primary'
+                style={{ marginLeft: 'auto', display: 'block', marginBottom: 10 }}
             >
-                {/* Hình ảnh nhà hàng */}
-                <Form.Item label="Restaurant Image">
-                    <Upload
-                        listType="picture"
-                        fileList={fileList}
-                        onChange={handleUploadChange}
-                        beforeUpload={() => false} // Ngăn upload tự động, xử lý thủ công
-                        maxCount={1}
-                    >
-                        <Button icon={<UploadOutlined />}>Upload Image</Button>
-                    </Upload>
-                    <Image
-                        src={fileList[0]?.url || restaurant.restaurantImage}
-                        alt={restaurant.restaurantName}
-                        style={{ width: 200, height: 120, objectFit: "cover", marginTop: 8, borderRadius: 4 }}
-                        fallback="https://via.placeholder.com/200?text=No+Image"
-                    />
-                </Form.Item>
-
-                {/* Tên nhà hàng */}
-                <Form.Item
-                    label="Restaurant Name"
-                    name="restaurantName"
-                    rules={[{ required: true, message: "Please enter restaurant name" }]}
-                >
-                    <Input prefix={<ShopOutlined />} placeholder="Enter restaurant name" />
-                </Form.Item>
-
-                {/* Mô tả */}
-                <Form.Item
-                    label="Bio"
-                    name="bio"
-                    rules={[{ required: true, message: "Please enter restaurant bio" }]}
-                >
-                    <Input.TextArea rows={4} placeholder="Describe your restaurant" />
-                </Form.Item>
-
-                {/* Địa chỉ */}
-                <Form.Item
-                    label="Address"
-                    name="address"
-                    rules={[{ required: true, message: "Please enter address" }]}
-                >
-                    <Input prefix={<EnvironmentOutlined />} placeholder="Enter restaurant address" />
-                </Form.Item>
-
-                {/* Số điện thoại */}
-                <Form.Item
-                    label="Phone Number"
-                    name="phoneNumber"
-                    rules={[
-                        { required: true, message: "Please enter phone number" },
-                        { pattern: /^\+?[1-9]\d{1,14}$/, message: "Invalid phone number" },
-                    ]}
-                >
-                    <Input prefix={<PhoneOutlined />} placeholder="Enter phone number" />
-                </Form.Item>
-
-                {/* Danh mục */}
-                <Form.Item
-                    label="Categories"
-                    name="category"
-                    rules={[{ required: true, message: "Please select at least one category" }]}
-                >
-                    <Select
-                        mode="multiple"
-                        placeholder="Select categories"
-                        suffixIcon={<TagsOutlined />}
-                        options={availableCategories.map((cat) => ({
-                            label: cat.name,
-                            value: cat.id,
-                        }))}
-                    />
-                </Form.Item>
-
-                {/* Trạng thái */}
-                <Form.Item
-                    label="Status"
-                    name="status"
-                    rules={[{ required: true, message: "Please select status" }]}
-                >
-                    <Select placeholder="Select status">
-                        <Select.Option value="pending">Pending</Select.Option>
-                        <Select.Option value="active">Active</Select.Option>
-                        <Select.Option value="closed">Closed</Select.Option>
-                    </Select>
-                </Form.Item>
-
-                {/* Đánh giá (chỉ hiển thị, không chỉnh sửa) */}
-                <Form.Item label="Rating">
-                    <Rate disabled allowHalf value={restaurant.rating} />
-                    <Text type="secondary" style={{ marginLeft: 8 }}>
-                        ({restaurant.rating})
-                    </Text>
-                </Form.Item>
-
-                {/* Thông tin người quản lý (chỉ hiển thị) */}
-                <Form.Item label="Manager Information">
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                        <Text>
-                            <strong>Name:</strong> {restaurant.user.fullName}
-                        </Text>
-                        <Text>
-                            <strong>Phone:</strong> {restaurant.user.phoneNumber}
-                        </Text>
-                    </div>
-                </Form.Item>
-
-                {/* Số đơn hàng và ngày tạo (chỉ hiển thị) */}
-                <Form.Item label="Additional Information">
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                        <Text>
-                            <strong>Purchases:</strong> {restaurant.purchase} orders
-                        </Text>
-                        <Text>
-                            <strong>Created At:</strong>{" "}
-
-                        </Text>
-                    </div>
-                </Form.Item>
-
-                {/* Nút submit */}
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" block>
-                        Update Restaurant
-                    </Button>
-                </Form.Item>
-            </Form>
+                <PlusOutlined /> New Restaurant
+            </Button>
+            <Table<Restaurant>
+                loading={isPending}
+                bordered
+                columns={columns}
+                dataSource={restaurants}
+                rowKey="id"
+                pagination={{
+                    pageSize: 5, // Số item mỗi trang
+                    showTotal: (total) => `Total ${total} restaurants`,
+                }}
+            />
+            <NewRestaurant
+                isModalOpen={isNewOpen}
+                setIsModalOpen={setIsNewOpen}
+                refetchData={refetchData}
+            />
+            <UpdateRestaurant
+                isModalOpen={isUpdateOpen}
+                setIsModalOpen={setIsUpdateOpen}
+                updatedRestaurant={updatedRestaurant}
+                setUpdatedRestaurant={setUpdatedRestaurant}
+                refetchData={refetchData}
+            />
+            <DetailRestaurant
+                isModalOpen={isDetailOpen}
+                setIsModalOpen={setIsDetailOpen}
+                detailRestaurant={detailRestaurant}
+            />
         </>
     );
 };
 
-export default MyRestaurant;
+export default Restaurant;

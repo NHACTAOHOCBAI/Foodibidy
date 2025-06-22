@@ -1,41 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Table, Tag, Image, Popconfirm, Button } from 'antd';
+import { Table, Tag, Image, Popconfirm, Button, message } from 'antd';
 import type { TableProps } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react';
 import NewFood from '../../components/food/NewFood';
 import UpdateFood from '../../components/food/UpdateFood';
-import { getDishByRestaurant } from '../../services/food';
+import { deleteDishById, getDishByRestaurant } from '../../services/food';
 import convertDateFormat from '../../utils/convertDateFormat';
 import formatVND from '../../utils/convertMoney';
 import { PiEye } from 'react-icons/pi';
 import DetailFood from '../../components/food/DetailFood';
+import { getAllCategories } from '../../services/category';
 const Food = () => {
+    const [messageApi, contextHolder] = message.useMessage();
+    const [isPending, setIsPending] = useState(false)
     const [isNewOpen, setIsNewOpen] = useState(false);
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [updatedFood, setUpdatedFood] = useState<Food>()
-    const [isDetailOpen, setIsDetailOpen] = useState(true)
-    const [detailFood, setDetailFood] = useState<Food>({
-        id: "food_123",
-        restaurant: {
-            id: "rest_001",
-            restaurantName: "Delicious Bistro",
-        },
-        category: {
-            id: "cat_001",
-            name: "Italian",
-        },
-        dishName: "Spaghetti Carbonara",
-        description: "Classic Italian pasta with creamy egg sauce, pancetta, and parmesan cheese.",
-        price: "12.99",
-        dishImage: "https://cdn.tgdd.vn/2021/04/CookProduct/1-1200x676-21.jpg",
-        soldQuantity: 150,
-        available: true,
-        remainingQuantity: 50,
-        createdAt: "2025-06-01T10:00:00Z",
-        updatedAt: "2025-06-20T15:30:00Z",
-        rating: 4.5,
-    },)
+    const [isDetailOpen, setIsDetailOpen] = useState(false)
+    const [detailFood, setDetailFood] = useState<Food>()
+    const [categoryOpt, setCategoryOpt] = useState<{ text: string, value: string }[]>([])
     const columns: TableProps<Food>['columns'] = [
         {
             title: 'Image',
@@ -49,16 +33,7 @@ const Food = () => {
         {
             title: 'Category',
             dataIndex: ['category', 'name'],
-            filters: [
-                {
-                    text: 'London',
-                    value: 'London',
-                },
-                {
-                    text: 'New York',
-                    value: 'New York',
-                },
-            ],
+            filters: categoryOpt,
             onFilter: (value, record) => record.category.name.indexOf(value as string) === 0,
         },
         {
@@ -71,7 +46,7 @@ const Food = () => {
             title: 'Price',
             dataIndex: 'price',
             defaultSortOrder: 'descend',
-            sorter: (a, b) => parseFloat(a.price) - parseFloat(b.price),
+            sorter: (a, b) => a.price - b.price,
             render: (price) => {
                 return formatVND(price);
             },
@@ -97,14 +72,14 @@ const Food = () => {
         {
             title: "Action",
             render: (_, value) => (
-                <div style={{ display: 'flex', gap: 10 }}>
-                    <div onClick={() => {
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <div style={{ color: '#3674B5' }} onClick={() => {
                         setDetailFood(value)
                         setIsDetailOpen(true)
                     }}>
                         < PiEye />
                     </div>
-                    <div onClick={() => {
+                    <div style={{ color: "#FADA7A" }} onClick={() => {
                         setUpdatedFood(value)
                         setIsUpdateOpen(true)
                     }}>
@@ -113,36 +88,61 @@ const Food = () => {
                     <Popconfirm
                         title="Delete the food"
                         description="Are you sure?"
-                        onConfirm={() => { }}
+                        onConfirm={() => { handleDelete(value.id) }}
                         okText="Yes"
                         cancelText="No"
                     >
-                        <div><DeleteOutlined /></div>
+                        <div style={{ color: "#ED3500" }}><DeleteOutlined /></div>
                     </Popconfirm>
                 </div>
             ),
         }
     ];
     const [foods, setFoods] = useState<Food[]>([])
-    useEffect(() => {
-        const fetchFoods = async () => {
-            const res = await getDishByRestaurant("QQKSRvPBUM5Siko5gEcW")
-            setFoods(res.data)
+    const refetchData = async () => {
+        setIsPending(true)
+        const res = await getDishByRestaurant("tDF8JPDfjgTbTApXnBiR")
+        console.log(res)
+        const cateRes = await getAllCategories()
+        const options = cateRes.map((record) => {
+            return ({
+                value: record.name,
+                text: record.name,
+            })
+        })
+        setCategoryOpt(options)
+        setFoods(res)
+        setIsPending(false)
+    }
+    const handleDelete = async (id: string) => {
+        try {
+            await deleteDishById(id)
+            await refetchData()
+            messageApi.success('Delete category successfully')
         }
-        fetchFoods()
+        catch (error) {
+            messageApi.error(String(error))
+        }
+    }
+    useEffect(() => {
+        refetchData()
     }, []);
     return (
         <>
+            {contextHolder}
             <DetailFood
                 detailFood={detailFood}
                 setIsDetailOpen={setIsDetailOpen}
                 isDetailOpen={isDetailOpen}
             />
             <NewFood
+                refetchData={refetchData}
                 isModalOpen={isNewOpen}
                 setIsModalOpen={setIsNewOpen}
             />
             <UpdateFood
+                setUpdatedFood={setUpdatedFood}
+                refetchData={refetchData}
                 isModalOpen={isUpdateOpen}
                 setIsModalOpen={setIsUpdateOpen}
                 updatedFood={updatedFood}
@@ -150,7 +150,13 @@ const Food = () => {
             <Button onClick={() => setIsNewOpen(true)} type='primary' style={{ marginLeft: 'auto', display: 'block', marginBottom: 10 }}>
                 <PlusOutlined />New Food
             </Button>
-            <Table<Food> bordered columns={columns} dataSource={foods} rowKey="id" />
+            <Table<Food>
+                loading={isPending} bordered columns={columns} dataSource={foods} rowKey="id"
+                pagination={{
+                    pageSize: 5, // Số item mỗi trang
+                    showTotal: (total) => `Total ${total} Foods`,
+                }}
+            />
         </>
     )
 };

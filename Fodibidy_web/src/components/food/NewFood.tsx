@@ -1,24 +1,54 @@
 import { Col, Form, Input, InputNumber, message, Modal, Row, Select, type UploadFile } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UploadImage from '../UploadImage';
+import { categoryOptions } from '../../utils/selectOptions';
+import { createDish } from '../../services/food';
 
-
-const NewFood = ({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean; setIsModalOpen: (value: boolean) => void }) => {
+const currentRestaurant = {
+    id: "tDF8JPDfjgTbTApXnBiR",
+    restaurantName: "Ẩm Thực Miền Trung"
+}
+const NewFood = ({ isModalOpen, setIsModalOpen, refetchData }: { isModalOpen: boolean; setIsModalOpen: (value: boolean) => void, refetchData: () => Promise<void> }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
     const [isPending, setIsPending] = useState(false);
+    const [categoryOpt, setCategoryOpt] = useState<{ value: string, label: string }[]>([])
+    const [category, setCategory] = useState<{ id: string, name: string }>({ id: "", name: "" })
     const handleCancel = () => {
         setIsModalOpen(false);
     };
 
     const handleNew = async (values: Food) => {
-        console.log(values);
+        try {
+            setIsPending(true)
+            const imageFile = fileList[0]?.originFileObj as File;
+            await createDish(currentRestaurant, category, values.dishName, values.description, values.price, imageFile)
+            await refetchData()
+            messageApi.success("Create Food successfully")
+            handleCancel()
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                messageApi.error(error.message);
+            } else {
+                messageApi.error("An unexpected error occurred");
+            }
+        }
+        setIsPending(false)
     }
+    useEffect(() => {
+        const fetchOpt = async () => {
+            const res = await categoryOptions()
+            setCategoryOpt(res)
+        }
+        fetchOpt()
+    }, [])
     return (
         <>
             {contextHolder}
             <Modal
+                loading={isPending}
                 width={700}
                 title="Create Food"
                 open={isModalOpen}
@@ -44,7 +74,7 @@ const NewFood = ({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean; setIsM
                                 name="dishName"
                                 rules={[{ required: true, message: 'Please enter the food name' }]}
                             >
-                                <Input disabled={isPending} />
+                                <Input />
                             </Form.Item>
                         </Col>
 
@@ -55,7 +85,7 @@ const NewFood = ({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean; setIsM
                                 name="price"
                                 rules={[{ required: true, message: 'Please enter the price' }]}
                             >
-                                <InputNumber disabled={isPending} style={{ width: '100%' }} />
+                                <InputNumber style={{ width: '100%' }} />
                             </Form.Item>
 
                             <Form.Item
@@ -63,7 +93,16 @@ const NewFood = ({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean; setIsM
                                 name="category"
                                 rules={[{ required: true, message: 'Please select a category' }]}
                             >
-                                <Select disabled={isPending} />
+                                <Select
+                                    options={categoryOpt}
+                                    onChange={(value, option) => {
+                                        const opt = option as { value: string; label: string };
+                                        setCategory({
+                                            id: value,
+                                            name: opt.label
+                                        })
+                                    }}
+                                />
                             </Form.Item>
 
                             <Form.Item
@@ -71,7 +110,7 @@ const NewFood = ({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean; setIsM
                                 name="remainingQuantity"
                                 rules={[{ required: true, message: 'Please enter the quantity' }]}
                             >
-                                <InputNumber disabled={isPending} style={{ width: '100%' }} />
+                                <InputNumber min={0} style={{ width: '100%' }} />
                             </Form.Item>
                         </Col>
                     </Row>

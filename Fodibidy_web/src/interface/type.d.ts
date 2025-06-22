@@ -4,7 +4,7 @@ interface Food {
     category: Pick<Category, 'id' | 'name'>;
     dishName: string;
     description: string;
-    price: string;
+    price: number;
     dishImage: string;
     soldQuantity: number;
     available: boolean;
@@ -69,7 +69,7 @@ interface Category {
 interface Account {
     id: string;
     email: string;
-    roleId: 'admin' | 'restaurant' | 'customer';
+    role: 'admin' | 'restaurant' | 'customer';
     fullName: string;
     createdAt: string;
     updateAt: string,
