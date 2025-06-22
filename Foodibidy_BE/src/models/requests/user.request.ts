@@ -4,6 +4,7 @@ import { AddressType } from '../schemas/address.schema'
 import { JwtPayload } from 'jsonwebtoken'
 import { UploadedFile } from 'express-fileupload'
 import { CreateRestaurantReqBody } from './restaurant.request'
+import { CategoryType } from '../schemas/category.schema'
 
 export interface CreateUserReqBody {
   fullName: string
@@ -43,22 +44,35 @@ export interface TokenPayload extends JwtPayload {
   exp: number
   iat: number
 }
+// export  interface CreateRestaurantOwnerReqBody  {
+//   fullName: string
+//   email: string
+//   password: string
+//   confirmPassword: string
+//   restaurantName: string
+//   address: string
+//   phoneNumber: string
+//   category: Pick<CategoryType, 'id' | 'name'>[]
+//   bio: string
+//   avatar?: UploadedFile
+// }
 export interface accountInfo {
+  fullName: string
   email: string
   password: string
-  fullName: string
-  phoneNumber: string
+  confirmPassword: string
 }
 
 export interface restaurantInfo {
   restaurantName: string
   address: string
-  restaurantImage?: File
   phoneNumber: string
+  category: Pick<CategoryType, 'id' | 'name'>[]
   bio: string
 }
 
 export interface CreateRestaurantOwnerReqBody {
   account: accountInfo
   restaurant: restaurantInfo
+  avatar?: UploadedFile
 }
