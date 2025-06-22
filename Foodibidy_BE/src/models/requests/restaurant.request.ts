@@ -21,6 +21,7 @@ export interface CreateRestaurantReqBody {
   bio: string
 }
 
+
 export interface UpdateRestaurantReqBody {
   userId?: string
   restaurantName?: string
@@ -32,3 +33,5 @@ export interface UpdateRestaurantReqBody {
   bio?: string
   createdAt?: Date
 }
+
+
