@@ -3,16 +3,19 @@ import { TokenTypes, UserRole, UserVerifyStatus } from '~/constants/enums'
 import { AddressType } from '../schemas/address.schema'
 import { JwtPayload } from 'jsonwebtoken'
 import { UploadedFile } from 'express-fileupload'
+import { CreateRestaurantReqBody } from './restaurant.request'
 
 export interface CreateUserReqBody {
   fullName: string
   email: string
   password: string
   confirmPassword: string
-  dateOfBirth: string
-  address: Omit<AddressType, 'userId' | 'id'>[] | []
+  // dateOfBirth: string
+  // address: Omit<AddressType, 'userId' | 'id'>[] | []
   avatar?: UploadedFile
 }
+
+
 
 export interface UpdateUserReqBody {
   role?: UserRole
@@ -39,4 +42,23 @@ export interface TokenPayload extends JwtPayload {
   verify: UserVerifyStatus
   exp: number
   iat: number
+}
+export interface accountInfo {
+  email: string
+  password: string
+  fullName: string
+  phoneNumber: string
+}
+
+export interface restaurantInfo {
+  restaurantName: string
+  address: string
+  restaurantImage?: File
+  phoneNumber: string
+  bio: string
+}
+
+export interface CreateRestaurantOwnerReqBody {
+  account: accountInfo
+  restaurant: restaurantInfo
 }
