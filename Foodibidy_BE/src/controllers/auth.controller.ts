@@ -42,12 +42,12 @@ export const registerRestaurantOwner = async (req: Request, res: Response) => {
     try {
         // Chuyển đổi request body về đúng kiểu dữ liệu CreateUserReqBody
         const userData: CreateUserReqBody = {
-            email: req.body.AccountInfo.email,
-            password: req.body.AccountInfo.password,
-            confirmPassword: req.body.AccountInfo.confirmPassword, // nếu có validate confirmPassword
-            fullName: req.body.AccountInfo.fullName,
+            email: req.body.accountInfo.email,
+            password: req.body.accountInfo.password,
+            confirmPassword: req.body.accountInfo.confirmPassword, // nếu có validate confirmPassword
+            fullName: req.body.accountInfo.fullName,
             // dateOfBirth: req.body.dateOfBirth,
-            avatar: req.body.AccountInfo.avatar,
+            avatar: req.body.accountInfo.avatar,
             // address: req.body.address || []
         }
 
@@ -56,12 +56,12 @@ export const registerRestaurantOwner = async (req: Request, res: Response) => {
 
         // tạo restaurantData từ user vừa đồc tạo 
         const restaurantData: CreateRestaurantReqBody = {
-            user: { id: newUserId, fullName: req.body.RestaurantInfo.name, phoneNumber: req.body.RestaurantInfo.phoneNumber },
-            restaurantName: req.body.RestaurantInfo.name,
-            address: req.body.RestaurantInfo.address,
-            phoneNumber: req.body.RestaurantInfo.phoneNumber,
-            category: req.body.RestaurantInfo.category,
-            bio: req.body.RestaurantInfo.bio,
+            user: { id: newUserId, fullName: req.body.restaurantInfo.name, phoneNumber: req.body.restaurantInfo.phoneNumber },
+            restaurantName: req.body.restaurantInfo.name,
+            address: req.body.restaurantInfo.address,
+            phoneNumber: req.body.restaurantInfo.phoneNumber,
+            category: req.body.restaurantInfo.category,
+            bio: req.body.restaurantInfo.bio,
         }
 
         const newRestaurantId = await restaurantService.createRestaurant(restaurantData)

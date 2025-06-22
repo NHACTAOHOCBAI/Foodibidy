@@ -43,14 +43,14 @@ export interface TokenPayload extends JwtPayload {
   exp: number
   iat: number
 }
-export interface AccountInfo {
+export interface accountInfo {
   email: string
   password: string
   fullName: string
   phoneNumber: string
 }
 
-export interface RestaurantInfo {
+export interface restaurantInfo {
   restaurantName: string
   address: string
   restaurantImage?: File
@@ -59,6 +59,6 @@ export interface RestaurantInfo {
 }
 
 export interface CreateRestaurantOwnerReqBody {
-  account: AccountInfo
-  restaurant: RestaurantInfo
+  account: accountInfo
+  restaurant: restaurantInfo
 }
