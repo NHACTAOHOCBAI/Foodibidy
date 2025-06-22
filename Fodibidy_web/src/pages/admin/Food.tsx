@@ -16,28 +16,8 @@ const Food = () => {
     const [isNewOpen, setIsNewOpen] = useState(false);
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [updatedFood, setUpdatedFood] = useState<Food>()
-    const [isDetailOpen, setIsDetailOpen] = useState(true)
-    const [detailFood, setDetailFood] = useState<Food>({
-        id: "food_123",
-        restaurant: {
-            id: "rest_001",
-            restaurantName: "Delicious Bistro",
-        },
-        category: {
-            id: "cat_001",
-            name: "Italian",
-        },
-        dishName: "Spaghetti Carbonara",
-        description: "Classic Italian pasta with creamy egg sauce, pancetta, and parmesan cheese.",
-        price: 12.99,
-        dishImage: "https://cdn.tgdd.vn/2021/04/CookProduct/1-1200x676-21.jpg",
-        soldQuantity: 150,
-        available: true,
-        remainingQuantity: 50,
-        createdAt: "2025-06-01T10:00:00Z",
-        updatedAt: "2025-06-20T15:30:00Z",
-        rating: 4.5,
-    },)
+    const [isDetailOpen, setIsDetailOpen] = useState(false)
+    const [detailFood, setDetailFood] = useState<Food>()
     const columns: TableProps<Food>['columns'] = [
         {
             title: 'Image',
@@ -129,7 +109,7 @@ const Food = () => {
     const refetchData = async () => {
         setIsPending(true)
         const res = await getDishByRestaurant("tDF8JPDfjgTbTApXnBiR")
-        setFoods(res.data)
+        setFoods(res)
         setIsPending(false)
     }
     const handleDelete = async (id: string) => {

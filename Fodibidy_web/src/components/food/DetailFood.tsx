@@ -1,6 +1,7 @@
 import { Modal, Image, Typography, Divider, Tag, Rate, Table, type TableProps, Avatar } from "antd";
 import { ClockCircleOutlined, ShopOutlined, DollarOutlined, TagsOutlined, UserOutlined } from "@ant-design/icons";
 import { MdOutlineStar } from "react-icons/md";
+import convertDateFormat from "../../utils/convertDateFormat";
 
 interface Props {
     isDetailOpen: boolean;
@@ -118,7 +119,7 @@ const DetailFood = ({ isDetailOpen, setIsDetailOpen, detailFood }: Props) => {
                                 <Text strong>
                                     <ClockCircleOutlined style={{ marginRight: 8 }} />
                                     Created At:
-                                </Text>{" "}
+                                </Text>{" "}<span>{convertDateFormat(detailFood.createdAt)}</span>
                                 {/* <Text>{moment(detailFood.createdAt).format("DD/MM/YYYY")}</Text> */}
                             </div>
                         </div>
