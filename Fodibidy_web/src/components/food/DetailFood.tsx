@@ -2,6 +2,7 @@ import { Modal, Image, Typography, Divider, Tag, Rate, Table, type TableProps, A
 import { ClockCircleOutlined, ShopOutlined, DollarOutlined, TagsOutlined, UserOutlined } from "@ant-design/icons";
 import { MdOutlineStar } from "react-icons/md";
 import convertDateFormat from "../../utils/convertDateFormat";
+import formatVND from "../../utils/convertMoney";
 
 interface Props {
     isDetailOpen: boolean;
@@ -59,7 +60,7 @@ const DetailFood = ({ isDetailOpen, setIsDetailOpen, detailFood }: Props) => {
                         <Divider style={{ margin: "12px 0" }} />
 
                         {/* Restaurant and Category */}
-                        <div style={{ display: "flex", gap: 16 }}>
+                        <div style={{ display: "flex", gap: 36 }}>
                             <div>
                                 <Text strong>
                                     <ShopOutlined style={{ marginRight: 8 }} />
@@ -77,22 +78,22 @@ const DetailFood = ({ isDetailOpen, setIsDetailOpen, detailFood }: Props) => {
                         </div>
 
                         {/* Price and Rating */}
-                        <div style={{ display: "flex", gap: 16 }}>
+                        <div style={{ display: "flex", gap: 36, alignItems: 'center' }}>
                             <div>
                                 <Text strong>
                                     <DollarOutlined style={{ marginRight: 8 }} />
                                     Price:
                                 </Text>{" "}
-                                <Text>{detailFood.price}</Text>
+                                <Text>{formatVND(detailFood.price.toString())}</Text>
                             </div>
-                            <div>
-                                <Text strong>Rating:</Text>{" "}
+                            <div style={{ display: "flex", gap: 10, alignItems: 'center' }}>
+                                <Text strong>Rating:</Text>
                                 <Rate disabled allowHalf value={detailFood.rating} />
                             </div>
                         </div>
 
                         {/* Availability and Quantity */}
-                        <div style={{ display: "flex", gap: 16 }}>
+                        <div style={{ display: "flex", gap: 36 }}>
                             <div>
                                 <Text strong>Availability:</Text>{" "}
                                 <Tag color={detailFood.available ? "green" : "red"}>
@@ -110,7 +111,7 @@ const DetailFood = ({ isDetailOpen, setIsDetailOpen, detailFood }: Props) => {
                         </div>
 
                         {/* Sold Quantity and Dates */}
-                        <div style={{ display: "flex", gap: 16 }}>
+                        <div style={{ display: "flex", gap: 36 }}>
                             <div>
                                 <Text strong>Sold Quantity:</Text>{" "}
                                 <Text>{detailFood.soldQuantity}</Text>
@@ -125,7 +126,12 @@ const DetailFood = ({ isDetailOpen, setIsDetailOpen, detailFood }: Props) => {
                         </div>
                     </div>
                     <Text style={{ marginTop: 10, marginBottom: 10, display: "block" }} strong>Reviews:</Text>{" "}
-                    <Table<Review> columns={columns} dataSource={data} />;
+                    <Table<Review>
+                        pagination={{
+                            pageSize: 5, // Số item mỗi trang
+                            showTotal: (total) => `Total ${total} Reviews`,
+                        }}
+                        columns={columns} dataSource={data} />
                 </div>
             ) : (
                 <Text>No food details available.</Text>

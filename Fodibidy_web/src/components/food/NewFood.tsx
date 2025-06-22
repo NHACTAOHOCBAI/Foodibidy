@@ -48,6 +48,7 @@ const NewFood = ({ isModalOpen, setIsModalOpen, refetchData }: { isModalOpen: bo
         <>
             {contextHolder}
             <Modal
+                loading={isPending}
                 width={700}
                 title="Create Food"
                 open={isModalOpen}
@@ -73,7 +74,7 @@ const NewFood = ({ isModalOpen, setIsModalOpen, refetchData }: { isModalOpen: bo
                                 name="dishName"
                                 rules={[{ required: true, message: 'Please enter the food name' }]}
                             >
-                                <Input disabled={isPending} />
+                                <Input />
                             </Form.Item>
                         </Col>
 
@@ -84,7 +85,7 @@ const NewFood = ({ isModalOpen, setIsModalOpen, refetchData }: { isModalOpen: bo
                                 name="price"
                                 rules={[{ required: true, message: 'Please enter the price' }]}
                             >
-                                <InputNumber disabled={isPending} style={{ width: '100%' }} />
+                                <InputNumber style={{ width: '100%' }} />
                             </Form.Item>
 
                             <Form.Item
@@ -93,7 +94,7 @@ const NewFood = ({ isModalOpen, setIsModalOpen, refetchData }: { isModalOpen: bo
                                 rules={[{ required: true, message: 'Please select a category' }]}
                             >
                                 <Select
-                                    disabled={isPending} options={categoryOpt}
+                                    options={categoryOpt}
                                     onChange={(value, option) => {
                                         const opt = option as { value: string; label: string };
                                         setCategory({
@@ -109,7 +110,7 @@ const NewFood = ({ isModalOpen, setIsModalOpen, refetchData }: { isModalOpen: bo
                                 name="remainingQuantity"
                                 rules={[{ required: true, message: 'Please enter the quantity' }]}
                             >
-                                <InputNumber disabled={isPending} style={{ width: '100%' }} />
+                                <InputNumber min={0} style={{ width: '100%' }} />
                             </Form.Item>
                         </Col>
                     </Row>

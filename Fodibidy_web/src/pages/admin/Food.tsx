@@ -10,6 +10,7 @@ import convertDateFormat from '../../utils/convertDateFormat';
 import formatVND from '../../utils/convertMoney';
 import { PiEye } from 'react-icons/pi';
 import DetailFood from '../../components/food/DetailFood';
+import { getAllCategories } from '../../services/category';
 const Food = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const [isPending, setIsPending] = useState(false)
@@ -18,6 +19,7 @@ const Food = () => {
     const [updatedFood, setUpdatedFood] = useState<Food>()
     const [isDetailOpen, setIsDetailOpen] = useState(false)
     const [detailFood, setDetailFood] = useState<Food>()
+    const [categoryOpt, setCategoryOpt] = useState<{ text: string, value: string }[]>([])
     const columns: TableProps<Food>['columns'] = [
         {
             title: 'Image',
@@ -31,16 +33,7 @@ const Food = () => {
         {
             title: 'Category',
             dataIndex: ['category', 'name'],
-            filters: [
-                {
-                    text: 'London',
-                    value: 'London',
-                },
-                {
-                    text: 'New York',
-                    value: 'New York',
-                },
-            ],
+            filters: categoryOpt,
             onFilter: (value, record) => record.category.name.indexOf(value as string) === 0,
         },
         {
@@ -80,13 +73,13 @@ const Food = () => {
             title: "Action",
             render: (_, value) => (
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                    <div style={{ color: 'blue' }} onClick={() => {
+                    <div style={{ color: '#3674B5' }} onClick={() => {
                         setDetailFood(value)
                         setIsDetailOpen(true)
                     }}>
                         < PiEye />
                     </div>
-                    <div style={{ color: "yellow" }} onClick={() => {
+                    <div style={{ color: "#FADA7A" }} onClick={() => {
                         setUpdatedFood(value)
                         setIsUpdateOpen(true)
                     }}>
@@ -99,7 +92,7 @@ const Food = () => {
                         okText="Yes"
                         cancelText="No"
                     >
-                        <div style={{ color: "red" }}><DeleteOutlined /></div>
+                        <div style={{ color: "#ED3500" }}><DeleteOutlined /></div>
                     </Popconfirm>
                 </div>
             ),
@@ -109,6 +102,15 @@ const Food = () => {
     const refetchData = async () => {
         setIsPending(true)
         const res = await getDishByRestaurant("tDF8JPDfjgTbTApXnBiR")
+        console.log(res)
+        const cateRes = await getAllCategories()
+        const options = cateRes.map((record) => {
+            return ({
+                value: record.name,
+                text: record.name,
+            })
+        })
+        setCategoryOpt(options)
         setFoods(res)
         setIsPending(false)
     }
@@ -139,6 +141,8 @@ const Food = () => {
                 setIsModalOpen={setIsNewOpen}
             />
             <UpdateFood
+                setUpdatedFood={setUpdatedFood}
+                refetchData={refetchData}
                 isModalOpen={isUpdateOpen}
                 setIsModalOpen={setIsUpdateOpen}
                 updatedFood={updatedFood}
@@ -146,7 +150,13 @@ const Food = () => {
             <Button onClick={() => setIsNewOpen(true)} type='primary' style={{ marginLeft: 'auto', display: 'block', marginBottom: 10 }}>
                 <PlusOutlined />New Food
             </Button>
-            <Table<Food> loading={isPending} bordered columns={columns} dataSource={foods} rowKey="id" />
+            <Table<Food>
+                loading={isPending} bordered columns={columns} dataSource={foods} rowKey="id"
+                pagination={{
+                    pageSize: 5, // Số item mỗi trang
+                    showTotal: (total) => `Total ${total} Foods`,
+                }}
+            />
         </>
     )
 };

@@ -1,22 +1,60 @@
 import { Col, Form, Input, InputNumber, message, Modal, Row, Select, type UploadFile } from 'antd';
 import { useEffect, useState } from 'react';
 import UploadImage from '../UploadImage';
+import { categoryOptions } from '../../utils/selectOptions';
+import { updateDish } from '../../services/food';
 
-
-const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood }: { isModalOpen: boolean; setIsModalOpen: (value: boolean) => void; updatedFood: Food | undefined }) => {
+const currentRestaurant = {
+    id: "tDF8JPDfjgTbTApXnBiR",
+    restaurantName: "Ẩm Thực Miền Trung"
+}
+const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood, refetchData, setUpdatedFood }: { isModalOpen: boolean; setIsModalOpen: (value: boolean) => void; updatedFood: Food | undefined, refetchData: () => Promise<void>, setUpdatedFood: (value: Food | undefined) => void }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [form] = Form.useForm();
+    const [categoryOpt, setCategoryOpt] = useState<{ value: string, label: string }[]>([])
+    const [category, setCategory] = useState<{ id: string, name: string }>({ id: "", name: "" })
     const [messageApi, contextHolder] = message.useMessage();
     const [isPending, setIsPending] = useState(false);
     const handleCancel = () => {
         setIsModalOpen(false);
+        form.resetFields();
+        setFileList([
+            {
+                uid: '-1',
+                name: 'food_image_logo.jpg',
+                status: 'done',
+                url: "abc"
+            },
+        ])
+        setUpdatedFood(undefined)
     };
 
     const handleUpdate = async (values: Food) => {
-        console.log(values);
+        try {
+            setIsPending(true)
+            const imageFile = fileList[0]?.originFileObj as File;
+            await updateDish(updatedFood?.id as string, currentRestaurant, category, values.dishName, values.description, values.price, imageFile)
+            await refetchData()
+            messageApi.success("Update Food successfully")
+            handleCancel()
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                messageApi.error(error.message);
+            } else {
+                messageApi.error("An unexpected error occurred");
+            }
+        }
+        setIsPending(false)
     }
     useEffect(() => {
+        const fetchOpt = async () => {
+            const res = await categoryOptions()
+            setCategoryOpt(res)
+        }
+        fetchOpt()
         form.setFieldsValue(updatedFood);
+        form.setFieldValue('category', updatedFood?.category.id)
         setFileList([
             {
                 uid: '-1',
@@ -55,7 +93,7 @@ const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood }: { isModalOpen:
                                 name="dishName"
                                 rules={[{ required: true, message: 'Please enter the food name' }]}
                             >
-                                <Input disabled={isPending} />
+                                <Input />
                             </Form.Item>
                         </Col>
 
@@ -66,7 +104,7 @@ const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood }: { isModalOpen:
                                 name="price"
                                 rules={[{ required: true, message: 'Please enter the price' }]}
                             >
-                                <InputNumber disabled={isPending} style={{ width: '100%' }} />
+                                <InputNumber style={{ width: '100%' }} />
                             </Form.Item>
 
                             <Form.Item
@@ -74,7 +112,14 @@ const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood }: { isModalOpen:
                                 name="category"
                                 rules={[{ required: true, message: 'Please select a category' }]}
                             >
-                                <Select disabled={isPending} />
+                                <Select options={categoryOpt}
+                                    onChange={(value, option) => {
+                                        const opt = option as { value: string; label: string };
+                                        setCategory({
+                                            id: value,
+                                            name: opt.label
+                                        })
+                                    }} />
                             </Form.Item>
 
                             <Form.Item
@@ -82,7 +127,7 @@ const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood }: { isModalOpen:
                                 name="remainingQuantity"
                                 rules={[{ required: true, message: 'Please enter the quantity' }]}
                             >
-                                <InputNumber disabled={isPending} style={{ width: '100%' }} />
+                                <InputNumber style={{ width: '100%' }} />
                             </Form.Item>
                         </Col>
                     </Row>

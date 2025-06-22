@@ -19,13 +19,24 @@ const createDish = async (
     formData.append('description', description);
     formData.append('price', price.toString());
     formData.append('dishImage', dishImage);
-    axiosInstance.post('/dishes', formData, {
+    return axiosInstance.post('/dishes', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
     });
 };
+const updateDish = async (
+    id: string,
+    restaurant: { id: string; restaurantName: string },
+    category: { id: string; name: string },
+    dishName: string,
+    description: string,
+    price: number,
+    dishImage: File
+) => {
+    console.log(id, restaurant, category, dishImage, dishName, description, price)
+};
 const deleteDishById = async (id: string) => {
-    axiosInstance.delete(`/dishes/${id}`)
+    return axiosInstance.delete(`/dishes/${id}`)
 }
-export { getDishByRestaurant, createDish, deleteDishById }
+export { getDishByRestaurant, createDish, deleteDishById, updateDish }
