@@ -9,7 +9,10 @@ export const USER_MESSAGES = {
   REGISTER_SUCCESS: 'Register success',
   GET_PROFILE_SUCCESS: 'Get profile success',
   GET_ALL_PROFILE_SUCCESS: 'Get all profiles success',
-  VALIDATION_ERROR: 'User is not validated'
+  VALIDATION_ERROR: 'User is not validated',
+  EMAIL_ALREADY_EXISTS: 'Email already exists',
+  UPDATE_FAIL: 'Update fail',
+  DELETE_FAIL: 'Delete fail'
 }
 export const CATEGORY_MESSAGES = {
   CREATE_SUCCESS: 'Category created successfully',
@@ -18,7 +21,9 @@ export const CATEGORY_MESSAGES = {
   UPDATE_SUCCESS: 'Category updated successfully',
   DELETE_SUCCESS: 'Category deleted successfully',
   NOT_FOUND: 'Category not found',
-  SERVER_FAIL: 'Server get an error'
+  SERVER_FAIL: 'Server get an error',
+  UPDATE_FAIL: 'Update fail',
+  DELETE_FAIL: 'Delete fail'
 }
 
 export const ADDRESS_MESSAGES = {
@@ -28,7 +33,9 @@ export const ADDRESS_MESSAGES = {
   UPDATE_SUCCESS: 'Address updated successfully',
   DELETE_SUCCESS: 'Address deleted successfully',
   ADDRESS_NOT_FOUND: 'Address not found',
-  SERVER_FAIL: 'Server get an error'
+  SERVER_FAIL: 'Server get an error',
+  UPDATE_FAIL: 'Update fail',
+  DELETE_FAIL: 'Delete fail'
 }
 
 export const CART_MESSAGES = {
@@ -39,7 +46,9 @@ export const CART_MESSAGES = {
   UPDATE_SUCCESS: 'Cart updated successfully',
   DELETE_SUCCESS: 'Cart deleted successfully',
   CART_NOT_FOUND: 'Cart not found',
-  SERVER_FAIL: 'Server get an error'
+  SERVER_FAIL: 'Server get an error',
+  UPDATE_FAIL: 'Update fail',
+  DELETE_FAIL: 'Delete fail'
 }
 export const DISH_MESSAGES = {
   CREATE_SUCCESS: 'Dish created successfully',
@@ -48,7 +57,9 @@ export const DISH_MESSAGES = {
   UPDATE_SUCCESS: 'Dish updated successfully',
   DELETE_SUCCESS: 'Dish deleted successfully',
   DISH_NOT_FOUND: 'Dish not found',
-  SERVER_FAIL: 'Server get an error'
+  SERVER_FAIL: 'Server get an error',
+  UPDATE_FAIL: 'Update fail',
+  DELETE_FAIL: 'Delete fail'
 }
 
 export const NOTIFICATION_MESSAGES = {
@@ -58,7 +69,9 @@ export const NOTIFICATION_MESSAGES = {
   UPDATE_SUCCESS: 'Notification updated successfully',
   DELETE_SUCCESS: 'Notification deleted successfully',
   NOTIFICATION_NOT_FOUND: 'Notification not found',
-  SERVER_FAIL: 'Server get an error'
+  SERVER_FAIL: 'Server get an error',
+  UPDATE_FAIL: 'Update fail',
+  DELETE_FAIL: 'Delete fail'
 }
 export const ORDER_MESSAGES = {
   CREATE_SUCCESS: 'Order placed successfully',
@@ -67,7 +80,9 @@ export const ORDER_MESSAGES = {
   UPDATE_SUCCESS: 'Order updated successfully',
   DELETE_SUCCESS: 'Order deleted successfully',
   ORDER_NOT_FOUND: 'Order not found',
-  SERVER_FAIL: 'Server get an error'
+  SERVER_FAIL: 'Server get an error',
+  UPDATE_FAIL: 'Update fail',
+  DELETE_FAIL: 'Delete fail'
 }
 export const REVIEW_MESSAGES = {
   CREATE_SUCCESS: 'Review submitted successfully',
@@ -76,7 +91,9 @@ export const REVIEW_MESSAGES = {
   UPDATE_SUCCESS: 'Review updated successfully',
   DELETE_SUCCESS: 'Review deleted successfully',
   REVIEW_NOT_FOUND: 'Review not found',
-  SERVER_FAIL: 'Server get an error'
+  SERVER_FAIL: 'Server get an error',
+  UPDATE_FAIL: 'Update fail',
+  DELETE_FAIL: 'Delete fail'
 }
 export const RESTAURANT_MESSAGES = {
   CREATE_SUCCESS: 'Restaurant created successfully',
@@ -85,7 +102,9 @@ export const RESTAURANT_MESSAGES = {
   UPDATE_SUCCESS: 'Restaurant updated successfully',
   DELETE_SUCCESS: 'Restaurant deleted successfully',
   NOT_FOUND: 'Restaurant not found',
-  SERVER_FAIL: 'Server get an error'
+  SERVER_FAIL: 'Server get an error',
+  UPDATE_FAIL: 'Update fail',
+  DELETE_FAIL: 'Delete fail'
 }
 
 export const USER_DISH_MESSAGES = {
@@ -96,7 +115,9 @@ export const USER_DISH_MESSAGES = {
   DELETE_SUCCESS: 'User_dish deleted successfully',
   NOT_FOUND: 'User_dish not found',
   SERVER_FAIL: 'Server get an error',
-  DISH_EXIST: 'Dish exists'
+  DISH_EXIST: 'Dish exists',
+  UPDATE_FAIL: 'Update fail',
+  DELETE_FAIL: 'Delete fail'
 }
 
 export const FILE_MESSAGES = {

@@ -42,7 +42,11 @@ export const updateUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const result = await usersService.updateUser(req.params.userId, req.body)
+  const avatar = req.files?.avatar as UploadedFile
+
+  const address = JSON.parse(req.body.address as unknown as string)
+
+  const result = await usersService.updateUser(req.params.userId, { ...req.body, address, avatar })
   return res.json({ message: USER_MESSAGES.UPDATE_SUCCESS, data: result })
 }
 

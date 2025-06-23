@@ -49,13 +49,18 @@ class DishService {
 
   async updateDish(id: string, data: UpdateDishReqBody) {
     const doc = await this.dishCollection.doc(id).get()
-
+    const { dishImage, ...resDishBody } = data
+    let urlImage = ''
+    if (dishImage) {
+      urlImage = await CloudinaryService.uploadImage(dishImage, 'dish')
+    }
     if (!doc.exists) {
       throw new ErrorWithStatus({ message: DISH_MESSAGES.DISH_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
     }
 
     const updatedDish = {
-      ...data,
+      ...resDishBody,
+      dishImage: urlImage,
       updatedAt: new Date()
     }
 

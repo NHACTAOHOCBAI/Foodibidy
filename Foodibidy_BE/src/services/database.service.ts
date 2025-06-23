@@ -8,7 +8,7 @@ import { CartDetailsType } from '~/models/schemas/cartDetail.schema'
 import { CategoryType } from '~/models/schemas/category.schema'
 import { DishType } from '~/models/schemas/dish.schema'
 import { NotificationType } from '~/models/schemas/notification.schema'
-import { OrderType } from '~/models/schemas/order.schema'
+
 import { OrderDetailType } from '~/models/schemas/orderDetail.schema'
 import { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { ReviewType } from '~/models/schemas/review.schema'
@@ -98,10 +98,6 @@ class DatabaseService {
 
   get cart_details(): CollectionReference<CartDetailsType> {
     return this.db.collection('Cart_details') as CollectionReference<CartDetailsType>
-  }
-
-  get orders(): CollectionReference<OrderType> {
-    return this.db.collection('Orders') as CollectionReference<OrderType>
   }
 
   get order_details(): CollectionReference<OrderDetailType> {

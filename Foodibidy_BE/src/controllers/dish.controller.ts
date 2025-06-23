@@ -5,7 +5,7 @@ import { CreateDishReqBody, DishParams, UpdateDishReqBody } from '~/models/reque
 import dishService from '~/services/dish.service'
 
 export const createDish = async (req: Request<any, any, CreateDishReqBody>, res: Response, next: NextFunction) => {
-  const dishImage = (req.files?.dishImage as UploadedFile) || ''
+  const dishImage = req.files?.dishImage as UploadedFile
   const category = JSON.parse(req.body.category as unknown as string)
   const restaurant = JSON.parse(req.body.restaurant as unknown as string)
   const result = await dishService.createDish({ ...req.body, category, restaurant, dishImage })
@@ -41,7 +41,11 @@ export const updateDish = async (
   res: Response,
   next: NextFunction
 ) => {
-  const result = await dishService.updateDish(req.params.dishId, req.body)
+  const dishImage = req.files?.dishImage as UploadedFile
+  const category = JSON.parse(req.body.category as unknown as string)
+  const restaurant = JSON.parse(req.body.restaurant as unknown as string)
+
+  const result = await dishService.updateDish(req.params.dishId, { ...req.body, category, restaurant, dishImage })
   return res.json({ message: DISH_MESSAGES.UPDATE_SUCCESS, data: result })
 }
 

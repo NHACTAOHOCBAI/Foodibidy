@@ -24,15 +24,15 @@ export interface CreateDishReqBody {
 }
 
 export interface UpdateDishReqBody {
-  restaurantId?: string
-  categoryId?: string
+  restaurant?: Pick<RestaurantType, 'id' | 'restaurantName'>
+  category?: Pick<CategoryType, 'id' | 'name'>
   dishName?: string
   description?: string
-  price?: string
-  dishImage?: string
-  purchase_count?: string
+  price?: number
+  dishImage?: UploadedFile
+  soldQuantity?: number
   available?: boolean
-  remaining_quantity?: string | null
+  remainingQuantity?: number | null
   createdAt?: Date
   updatedAt?: Date
   rating?: string

@@ -1,13 +1,14 @@
 import { Router } from 'express'
 import { wrapRequestHandler } from '~/utils/handler'
+import { createOrder } from '~/controllers/order.controller'
 import {
-  createOrder,
-  getAllOrders,
-  updateOrder,
-  deleteOrder,
+  deleteOrderDetail,
+  getAllOrderDetails,
   getMyHistoryOrders,
-  getMyOngoingOrders
-} from '~/controllers/order.controller'
+  getMyOngoingOrders,
+  getOrderDetailByResId,
+  updateOrderDetail
+} from '~/controllers/orderDetail.controller'
 
 const ordersRouter = Router()
 
@@ -23,34 +24,41 @@ ordersRouter.post('/', wrapRequestHandler(createOrder))
  * Path: /orders
  * Method: GET
  */
-ordersRouter.get('/', wrapRequestHandler(getAllOrders))
+ordersRouter.get('/', wrapRequestHandler(getAllOrderDetails))
 
 /**
  * Get all user history orders
- * Path: /orders/history/:userId
+ * Path: /orders/history/:orderId
  * Method: GET
  */
-ordersRouter.get('/history/:userId', wrapRequestHandler(getMyHistoryOrders))
+ordersRouter.get('/history/:orderId', wrapRequestHandler(getMyHistoryOrders))
 
 /**
  * Get all user ongoing order
- * Path: /Ongoing/:userId
+ * Path: /orders/onGoing/:orderId
  * Method: GET
  */
-ordersRouter.get('/Ongoing/:userId', wrapRequestHandler(getMyOngoingOrders))
+ordersRouter.get('/onGoing/:orderId', wrapRequestHandler(getMyOngoingOrders))
+
+/**
+ * Get all restaurant order
+ * Path: /orders/restaurant/:orderId
+ * Method: GET
+ */
+ordersRouter.get('/restaurant/:orderId', wrapRequestHandler(getOrderDetailByResId))
 
 /**
  * Update an order by ID
  * Path: /orders/:orderId
  * Method: PUT
  */
-ordersRouter.put('/:orderId', wrapRequestHandler(updateOrder))
+ordersRouter.put('/:orderId', wrapRequestHandler(updateOrderDetail))
 
 /**
  * Delete an order by ID
  * Path: /orders/:orderId
  * Method: DELETE
  */
-ordersRouter.delete('/:orderId', wrapRequestHandler(deleteOrder))
+ordersRouter.delete('/:orderId', wrapRequestHandler(deleteOrderDetail))
 
 export default ordersRouter
