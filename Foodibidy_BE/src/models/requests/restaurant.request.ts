@@ -19,10 +19,9 @@ export interface CreateRestaurantReqBody {
   address: string
   phoneNumber: string
   category: Pick<CategoryType, 'id' | 'name'>[]
-  restaurantImage: UploadedFile
+  restaurantImage?: UploadedFile
   bio: string
 }
-
 
 export interface UpdateRestaurantReqBody {
   restaurantName?: string
@@ -34,5 +33,3 @@ export interface UpdateRestaurantReqBody {
   rating?: number
   bio?: string
 }
-
-

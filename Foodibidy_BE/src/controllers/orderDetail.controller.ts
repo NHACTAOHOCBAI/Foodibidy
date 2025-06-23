@@ -22,14 +22,20 @@ export const getOrderDetail = async (req: Request<OrderDetailParams>, res: Respo
   return res.json({ message: ORDER_MESSAGES.GET_SUCCESS, data: result })
 }
 
-export const getMyOngoingOrders = async (req: Request<OrderDetailParams>, res: Response, next: NextFunction) => {
+export const getMyOngoingOrders = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
   const limit = parseInt(req.query.limit as string, 10) || 0
   const page = parseInt(req.query.page as string, 10) || 0
   const result = await OrderDetailService.getMyOngoingOrders(limit, page, req.user.uid)
   return res.json({ message: ORDER_MESSAGES.GET_SUCCESS, data: result })
 }
 
-export const getMyHistoryOrders = async (req: Request<OrderDetailParams>, res: Response, next: NextFunction) => {
+export const getMyHistoryOrders = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
   const limit = parseInt(req.query.limit as string, 10) || 0
   const page = parseInt(req.query.page as string, 10) || 0
   const result = await OrderDetailService.getMyHistoryOrders(limit, page, req.user.uid)
