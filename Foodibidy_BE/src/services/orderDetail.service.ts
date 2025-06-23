@@ -5,6 +5,7 @@ import OrderDetail, { OrderDetailType } from '~/models/schemas/orderDetail.schem
 import { ORDER_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { handleFormatDate } from '~/utils/utils'
+import { OrderStatus } from '~/constants/enums'
 
 class OrderDetailService {
   private OrderDetailCollection = databaseService.order_details
@@ -38,7 +39,7 @@ class OrderDetailService {
     throw new ErrorWithStatus({ message: ORDER_MESSAGES.ORDER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
   }
 
-  async updateOrderDetail(id: string, data: UpdateOrderDetailReqBody) {
+  async updateOrderDetail(id: string, data: Partial<UpdateOrderDetailReqBody>) {
     const doc = await this.OrderDetailCollection.doc(id).get()
     const updatedOrderDetail = {
       ...data,
@@ -63,9 +64,14 @@ class OrderDetailService {
     }
   }
 
-  async getAllOrderDetails(): Promise<OrderDetailType[]> {
+  async getAllOrderDetails(pageSize: number, page: number): Promise<OrderDetailType[]> {
     try {
-      const snapshot = await this.OrderDetailCollection.get()
+      let query = this.OrderDetailCollection.orderBy('updatedAt', 'desc')
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
+      const snapshot = await query.get()
+
       const OrderDetails: OrderDetailType[] = []
       snapshot.forEach((doc) => {
         const data = doc.data()
@@ -79,6 +85,83 @@ class OrderDetailService {
     } catch (error) {
       console.error('Error getting all OrderDetails:', error)
       throw new Error(`Failed to get all OrderDetails: ${error}`)
+    }
+  }
+
+  async getMyOngoingOrders(pageSize: number, page: number, userId: String): Promise<OrderDetailType[]> {
+    try {
+      let query = this.OrderDetailCollection.where('user.id', '==', userId).where('status', 'in', [
+        OrderStatus.PROCESSING,
+        OrderStatus.PENDING
+      ])
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
+
+      const snapshot = await query.get()
+      const orders: OrderDetailType[] = []
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+        console.log(doc.id)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as OrderDetailType)
+      })
+      console.log('All orders:', orders)
+      return orders
+    } catch (error) {
+      console.error('Error getting all orders:', error)
+      throw new Error(`Failed to get all orders: ${error}`)
+    }
+  }
+  async getMyHistoryOrders(pageSize: number, page: number, userId: String): Promise<OrderDetailType[]> {
+    try {
+      let query = this.OrderDetailCollection.where('user.id', '==', userId).where('status', 'in', [
+        OrderStatus.DELIVERED,
+        OrderStatus.CANCELLED
+      ])
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
+
+      const snapshot = await query.get()
+      const orders: OrderDetailType[] = []
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+        console.log(doc.id)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as OrderDetailType)
+      })
+      console.log('All orders:', orders)
+      return orders
+    } catch (error) {
+      console.error('Error getting all orders:', error)
+      throw new Error(`Failed to get all orders: ${error}`)
+    }
+  }
+
+  async getOrderDetailByResId(pageSize: number, page: number, resId: String): Promise<OrderDetailType[]> {
+    try {
+      let query = this.OrderDetailCollection.where('restaurant.id', '==', resId)
+      const offset = (page - 1) * pageSize
+      if (offset > 0) query = query.offset(offset)
+      if (pageSize > 0) query = query.limit(pageSize)
+
+      const snapshot = await query.get()
+      const orders: OrderDetailType[] = []
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+        console.log(doc.id)
+        let updatedAt = handleFormatDate(data.updatedAt as Date)
+        let createdAt = handleFormatDate(data.createdAt as Date)
+        orders.push({ ...doc.data(), id: doc.id, createdAt, updatedAt } as OrderDetailType)
+      })
+      console.log('All orders:', orders)
+      return orders
+    } catch (error) {
+      console.error('Error getting all orders:', error)
+      throw new Error(`Failed to get all orders: ${error}`)
     }
   }
 }

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
+import { UploadedFile } from 'express-fileupload'
 
 import { RESTAURANT_MESSAGES } from '~/constants/messages'
 import { CreateRestaurantReqBody, RestaurantParams } from '~/models/requests/restaurant.request'
@@ -9,7 +10,10 @@ export const createRestaurant = async (
   res: Response,
   next: NextFunction
 ) => {
-  const result = await restaurantService.createRestaurant(req.body)
+  const user = JSON.parse(req.body.user as unknown as string)
+  const category = JSON.parse(req.body.category as unknown as string)
+  const restaurantImage = req.files?.restaurantImage as UploadedFile
+  const result = await restaurantService.createRestaurant({ ...req.body, user, category, restaurantImage })
   return res.json({ message: RESTAURANT_MESSAGES.CREATE_SUCCESS, data: result })
 }
 
@@ -30,7 +34,13 @@ export const updateRestaurant = async (
   res: Response,
   next: NextFunction
 ) => {
-  const result = await restaurantService.updateRestaurant(req.params.restaurantId, req.body)
+  const category = JSON.parse(req.body.category as unknown as string)
+  const restaurantImage = req.files?.restaurantImage as UploadedFile
+  const result = await restaurantService.updateRestaurant(req.params.restaurantId, {
+    ...req.body,
+    category,
+    restaurantImage
+  })
   return res.json({ message: RESTAURANT_MESSAGES.UPDATE_SUCCESS, data: result })
 }
 

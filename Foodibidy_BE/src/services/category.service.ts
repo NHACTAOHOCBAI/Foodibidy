@@ -18,7 +18,7 @@ class CategoryService {
     const { cateImage, ...resDishBody } = categoryData
     let urlImage = ''
     if (cateImage) {
-      urlImage = await CloudinaryService.uploadImage(cateImage, 'dish')
+      urlImage = await CloudinaryService.uploadImage(cateImage, 'category')
     }
 
     const newCategory = new Category({
@@ -112,9 +112,15 @@ class CategoryService {
     if (!doc.exists) {
       throw new ErrorWithStatus({ message: CATEGORY_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
     }
+    const { cateImage, ...resDishBody } = updateData
+    let urlImage = ''
+    if (cateImage) {
+      urlImage = await CloudinaryService.uploadImage(cateImage, 'category')
+    }
 
     await this.categoryCollection.doc(categoryId).update({
-      ...updateData,
+      ...resDishBody,
+      image: urlImage,
       updatedAt: new Date()
     })
   }

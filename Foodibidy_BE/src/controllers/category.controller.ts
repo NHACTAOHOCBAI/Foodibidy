@@ -9,7 +9,7 @@ export const createCategory = async (
   res: Response,
   next: NextFunction
 ) => {
-  const cateImage = (req.files?.cateImage as UploadedFile) || ''
+  const cateImage = req.files?.cateImage as UploadedFile
 
   const result = await categoryService.createCategory({ ...req.body, cateImage })
   return res.json({ message: CATEGORY_MESSAGES.CREATE_SUCCESS, data: result })
@@ -43,7 +43,8 @@ export const updateCategory = async (
   res: Response,
   next: NextFunction
 ) => {
-  const result = await categoryService.updateCategory(req.params.categoryId, req.body)
+  const cateImage = req.files?.cateImage as UploadedFile
+  const result = await categoryService.updateCategory(req.params.categoryId, { ...req.body, cateImage })
   return res.json({ message: CATEGORY_MESSAGES.UPDATE_SUCCESS, data: result })
 }
 

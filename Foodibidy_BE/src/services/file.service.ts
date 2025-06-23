@@ -37,7 +37,7 @@ export class CloudinaryService {
 
   static async uploadImage(file: UploadedFile, folder: string): Promise<string> {
     this.validateFile(file)
-    console.log(file)
+
     try {
       // Since upload_stream is callback-based, wrap with promise:
       return await new Promise((resolve, reject) => {
@@ -49,7 +49,6 @@ export class CloudinaryService {
             transformation: [{ width: 300, height: 300, crop: 'fill', quality: 'auto' }]
           },
           (error, result) => {
-            console.log('Public ID:', result)
             if (error || !result?.secure_url) {
               reject(
                 new ErrorWithStatus({

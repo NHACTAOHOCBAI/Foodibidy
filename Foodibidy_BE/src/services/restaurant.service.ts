@@ -5,6 +5,9 @@ import Restaurant, { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { RESTAURANT_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { handleFormatDate } from '~/utils/utils'
+import { CloudinaryService } from './file.service'
+import { firestore } from 'firebase-admin'
+import usersService from './user.service'
 
 class RestaurantService {
   private restaurantCollection = databaseService.restaurants
@@ -12,8 +15,15 @@ class RestaurantService {
 
   async createRestaurant(data: CreateRestaurantReqBody) {
     try {
+      const { restaurantImage, ...resRestaurant } = data
+      let urlImage = ''
+      if (restaurantImage) {
+        urlImage = await CloudinaryService.uploadImage(restaurantImage, 'restaurant')
+      }
+
       const newRestaurant = new Restaurant({
-        ...data,
+        ...resRestaurant,
+        restaurantImage: urlImage,
         createdAt: new Date()
       }).toObject()
 
@@ -74,28 +84,85 @@ class RestaurantService {
   }
 
   async updateRestaurant(id: string, data: UpdateRestaurantReqBody) {
+    const { restaurantImage, ...resRestaurant } = data
+    let urlImage = ''
+    if (restaurantImage) {
+      urlImage = await CloudinaryService.uploadImage(restaurantImage, 'restaurant')
+    }
+
     const doc = await this.restaurantCollection.doc(id).get()
     const updatedRestaurant = {
-      ...data,
+      ...resRestaurant,
+      restaurantImage: urlImage,
       updatedAt: new Date()
     }
 
     try {
       await this.restaurantCollection.doc(id).update(updatedRestaurant)
+
+      //xoa bang trung gian
+      const categorySnapshot = await this.restaurant_categoryCollection.where('restaurantId', '==', id).get()
+      const batch = firestore().batch()
+      categorySnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      await batch.commit()
+
+      for (const cate of data.category) {
+        await this.restaurant_categoryCollection.add({
+          restaurantId: id,
+          restaurantName: data.restaurantName as string,
+          categoryId: cate.id as string,
+          categoryName: cate.name
+        })
+      }
       console.log(`Update restaurant success with ID ${doc.id}`)
     } catch {
-      throw new ErrorWithStatus({ message: RESTAURANT_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+      throw new ErrorWithStatus({ message: RESTAURANT_MESSAGES.UPDATE_FAIL, status: HTTP_STATUS.BAD_REQUEST })
     }
   }
 
   async deleteRestaurant(id: string) {
     try {
+      const doc = await this.restaurantCollection.doc(id).get()
       await this.restaurantCollection.doc(id).delete()
+
+      //xoa user
+      await usersService.deleteUser(doc.data()?.user.id as string)
+
+      //xoa bang trung gian
+      const categorySnapshot = await this.restaurant_categoryCollection.where('restaurantId', '==', id).get()
+      const batch = firestore().batch()
+      categorySnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      await batch.commit()
+
       console.log(`Restaurant with ID ${id} deleted successfully`)
     } catch (error) {
       console.error(`Error deleting restaurant with ID ${id}:`, error)
-      throw new ErrorWithStatus({ message: RESTAURANT_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+      throw new ErrorWithStatus({ message: RESTAURANT_MESSAGES.DELETE_FAIL, status: HTTP_STATUS.BAD_REQUEST })
     }
+  }
+
+  async getRestaurantByUserId(id: string) {
+    const snapshot = await this.restaurantCollection.where('user.id', '==', id).limit(1).get()
+
+    if (snapshot.empty) {
+      return null
+    }
+
+    const doc = snapshot.docs[0]
+    return { id: doc.id, ...doc.data() }
+  }
+  async deleteRestaurantByUserId(userId: string) {
+    const snapshot = await this.restaurantCollection.where('user.id', '==', userId).limit(1).get()
+
+    const doc = snapshot.docs[0]
+    await this.deleteRestaurant(doc.id)
+
+    console.log(`Deleted restaurant of userId ${userId} with docId ${doc.id}`)
+    return doc.id
   }
 }
 
