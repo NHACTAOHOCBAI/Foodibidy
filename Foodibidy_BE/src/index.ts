@@ -13,7 +13,6 @@ import usersRouter from './routes/user.route'
 import user_dishRouter from './routes/user_dish.route'
 import databaseService from './services/database.service'
 import authRouter from '~/routes/auth.route'
-import './config/cloudinary'
 
 const app = express()
 
