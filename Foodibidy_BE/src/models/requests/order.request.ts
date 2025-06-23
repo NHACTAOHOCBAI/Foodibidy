@@ -15,22 +15,12 @@ export interface PaginationQuery {
 }
 
 export interface CreateOrderReqBody {
-  user: Pick<UserType, 'id' | 'fullName'>
-  restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
-  items: {
-    dish: Pick<DishType, 'id' | 'dishName' | 'price'>
-    quantity: number
-  }[]
-}
-
-export interface UpdateOrderReqBody {
-  user?: Pick<UserType, 'id' | 'fullName'>
-  restaurant?: Pick<RestaurantType, 'id' | 'restaurantName'>
-  totalPrice?: number
-  status?: OrderStatus
-  orderTime?: Date | string
-  items?: {
-    dish: Pick<DishType, 'id' | 'dishName' | 'price'>
-    quantity: number
+  user: Pick<UserType, 'id' | 'fullName' | 'phoneNumber'>
+  order: {
+    restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
+    items: {
+      dish: { id: string; dishName: string; price: number }
+      quantity: number
+    }[]
   }[]
 }

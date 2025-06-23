@@ -16,16 +16,14 @@ export interface CreateUserReqBody {
   avatar?: UploadedFile
 }
 
-
-
 export interface UpdateUserReqBody {
   role?: UserRole
   fullName?: string
   email?: string
   dateOfBirth?: string
   phoneNumber?: string | ''
-  avatar?: string | ''
-  address?: AddressType[] | []
+  avatar?: UploadedFile
+  address: Omit<AddressType, 'userId'>[] | []
 }
 
 export interface GetProfileRequestParams extends ParamsDictionary {

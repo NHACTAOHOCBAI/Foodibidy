@@ -2,6 +2,7 @@ import { ParamsDictionary, Query } from 'express-serve-static-core'
 import { RestaurantStatus } from '~/constants/enums'
 import { GetUserRes } from '../responses/user.response'
 import { CategoryType } from '../schemas/category.schema'
+import { UploadedFile } from 'express-fileupload'
 
 export interface RestaurantParams extends ParamsDictionary {
   RestaurantId: string
@@ -18,20 +19,20 @@ export interface CreateRestaurantReqBody {
   address: string
   phoneNumber: string
   category: Pick<CategoryType, 'id' | 'name'>[]
+  restaurantImage: UploadedFile
   bio: string
 }
 
 
 export interface UpdateRestaurantReqBody {
-  userId?: string
   restaurantName?: string
   address?: string
   status?: RestaurantStatus
-  restaurantImage?: string
+  restaurantImage: UploadedFile
+  category: Pick<CategoryType, 'id' | 'name'>[]
   phoneNumber?: string
   rating?: number
   bio?: string
-  createdAt?: Date
 }
 
 

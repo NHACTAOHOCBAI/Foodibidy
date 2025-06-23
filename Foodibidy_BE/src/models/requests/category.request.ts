@@ -17,5 +17,3 @@ export interface CreateCategoryReqBody {
   purchase?: number
   cateImage?: UploadedFile
 }
-
-export interface UpdateDishReqBody {}

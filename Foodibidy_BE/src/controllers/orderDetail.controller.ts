@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
 import { ORDER_MESSAGES } from '~/constants/messages'
-import { CreateOrderDetailReqBody, OrderDetailParams } from '~/models/requests/orderDetail.request'
+import {
+  CreateOrderDetailReqBody,
+  OrderDetailParams,
+  UpdateOrderDetailReqBody
+} from '~/models/requests/orderDetail.request'
+import orderDetailService from '~/services/orderDetail.service'
 import OrderDetailService from '~/services/orderDetail.service'
 
 export const createOrderDetail = async (
@@ -17,13 +22,36 @@ export const getOrderDetail = async (req: Request<OrderDetailParams>, res: Respo
   return res.json({ message: ORDER_MESSAGES.GET_SUCCESS, data: result })
 }
 
+export const getMyOngoingOrders = async (req: Request<OrderDetailParams>, res: Response, next: NextFunction) => {
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await OrderDetailService.getMyOngoingOrders(limit, page, req.user.uid)
+  return res.json({ message: ORDER_MESSAGES.GET_SUCCESS, data: result })
+}
+
+export const getMyHistoryOrders = async (req: Request<OrderDetailParams>, res: Response, next: NextFunction) => {
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await OrderDetailService.getMyHistoryOrders(limit, page, req.user.uid)
+  return res.json({ message: ORDER_MESSAGES.GET_ALL_SUCCESS, data: result })
+}
+
+export const getOrderDetailByResId = async (req: Request<OrderDetailParams>, res: Response, next: NextFunction) => {
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await OrderDetailService.getOrderDetailByResId(limit, page, req.params.RestaurantId)
+  return res.json({ message: ORDER_MESSAGES.GET_ALL_SUCCESS, data: result })
+}
+
 export const getAllOrderDetails = async (req: Request, res: Response, next: NextFunction) => {
-  const result = await OrderDetailService.getAllOrderDetails()
+  const limit = parseInt(req.query.limit as string, 10) || 0
+  const page = parseInt(req.query.page as string, 10) || 0
+  const result = await orderDetailService.getAllOrderDetails(limit, page)
   return res.json({ message: ORDER_MESSAGES.GET_ALL_SUCCESS, data: result })
 }
 
 export const updateOrderDetail = async (
-  req: Request<OrderDetailParams, any, CreateOrderDetailReqBody>,
+  req: Request<OrderDetailParams, any, UpdateOrderDetailReqBody>,
   res: Response,
   next: NextFunction
 ) => {
