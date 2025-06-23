@@ -73,6 +73,7 @@ class UsersService {
       throw error // Ném lỗi để controller xử lý
     }
   }
+
   async createRestaurantOwner(userData: CreateUserReqBody) {
     try {
       // Kiểm tra email đã tồn tại chưa

@@ -20,16 +20,13 @@ export const registerUser = async (req: Request, res: Response) => {
     const userData: CreateUserReqBody = {
       email: req.body.email,
       password: req.body.password,
-      confirmPassword: req.body.confirmPassword, // nếu có validate confirmPassword
-      fullName: req.body.fullName,
-      // dateOfBirth: req.body.dateOfBirth,
-      avatar: req.body.avatar
-      // address: req.body.address || []
+      confirmPassword: req.body.confirmPassword,
+      fullName: req.body.fullName
     }
 
     // Gọi service để tạo user
     const newUserId = await usersService.createUser(userData)
-    // tạo restaurantData từ user vừa được tạo
+
     res.status(201).json({
       message: 'User created successfully',
       userId: newUserId
@@ -72,7 +69,7 @@ export const registerRestaurantOwner = async (req: Request, res: Response) => {
       bio: restaurant.bio
     }
 
-    await restaurantService.createRestaurant(restaurantData);
+    const newRestaurantId = await restaurantService.createRestaurant(restaurantData);
 
     res.status(201).json({
       message: 'Restaurant Owner created successfully',
