@@ -69,11 +69,12 @@ export const registerRestaurantOwner = async (req: Request, res: Response) => {
             bio: restaurant.bio
         };
 
-        await restaurantService.createRestaurant(restaurantData);
+        const newRestaurantId = await restaurantService.createRestaurant(restaurantData);
 
         res.status(201).json({
-            message: 'User created successfully',
-            userId: newUserId
+            message: 'Restaurant Owner created successfully',
+            userId: newUserId,
+            restaurantId: newRestaurantId
         });
     } catch (error) {
         console.error('Error creating user:', error);
