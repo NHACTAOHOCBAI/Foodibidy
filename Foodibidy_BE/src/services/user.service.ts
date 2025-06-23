@@ -10,10 +10,13 @@ import { handleFormatDate } from '~/utils/utils'
 import cartService from './cart.service'
 import databaseService from './database.service'
 import { CloudinaryService } from './file.service'
-import restaurantService from './restaurant.service'
 import { UserRole } from '~/constants/enums'
+import restaurantService from './restaurant.service'
 
 class UsersService {
+  // dateOfBirth: new Date(userData.dateOfBirth)
+
+  // Khởi tạo collection người dùng và giỏ hàng từ databaseService
   private userCollection = databaseService.users
   private cartCollection = databaseService.carts
   private restaurant_categoryCollection = databaseService.restaurant_category
@@ -22,7 +25,7 @@ class UsersService {
     try {
       console.log(this.checkEmailExists(userData.email))
       if ((await this.checkEmailExists(userData.email)) === true) {
-        const { address, avatar, password, email, ...userDataWithoutAddress } = userData
+        const { avatar, password, email, ...userDataWithoutAddress } = userData
 
         let urlImage = ''
         if (avatar) {
@@ -45,15 +48,74 @@ class UsersService {
           email: email,
 
           avatar: urlImage,
-          passwordHash: hashPassword(password)
+          passwordHash: hashPassword(password) // Băm password để lưu Firestore (optional nếu bạn vẫn muốn lưu)
+          // dateOfBirth: new Date(userData.dateOfBirth)
         }).toObject()
 
         await this.userCollection.doc(firebaseUser.uid).set(newUser)
 
-        for (const data of address) {
-          const newAddress = new Address({ ...data, userId: firebaseUser.uid }).toObject()
-          await this.userCollection.doc(firebaseUser.uid).collection('addresses').add(newAddress)
+        // Thêm danh sách địa chỉ cho user
+        // for (const data of address) {
+        //   const newAddress = new Address({ ...data, userId: firebaseUser.uid }).toObject()
+        //   await this.userCollection.doc(firebaseUser.uid).collection('addresses').add(newAddress)
+        // }
+
+        // Tạo cart cho user
+        const cart = await cartService.createCart({ userId: firebaseUser.uid })
+
+        // Cập nhật lại cartId cho user
+        await this.userCollection.doc(firebaseUser.uid).update({ cartId: cart })
+        console.log('User created with ID:', firebaseUser.uid)
+        return firebaseUser.uid
+      } else throw new Error(`Email already exist`)
+    } catch (error) {
+      console.error('Error creating user:', error)
+      throw error // Ném lỗi để controller xử lý
+    }
+  }
+  async createRestaurantOwner(userData: CreateUserReqBody) {
+    try {
+      // Kiểm tra email đã tồn tại chưa
+      console.log(this.checkEmailExists(userData.email))
+      if ((await this.checkEmailExists(userData.email)) === true) {
+        const { avatar, password, email, ...userDataWithoutAddress } = userData
+
+        let urlImage = ''
+        // Nếu có avatar thì upload lên cloudinary
+        if (avatar) {
+          urlImage = await CloudinaryService.uploadImage(avatar, 'avatar')
         }
+
+        // Tạo user trên Firebase Authentication trước
+        const firebaseUser = await auth().createUser({
+          email: email,
+          password: password,
+          displayName: userData.fullName,
+          photoURL: urlImage || undefined
+        })
+
+        console.log('Firebase Auth user created with UID:', firebaseUser.uid)
+
+        // Tạo user mới với dữ liệu nhập vào lưu vào Firestore
+        const newUser = new User({
+          ...userDataWithoutAddress,
+          id: firebaseUser.uid,
+          role: UserRole.RESTAURANT,
+          email: email,
+          // firebaseUID: firebaseUser.uid, // lưu thêm UID Firebase để mapping sau này
+          avatar: urlImage,
+          passwordHash: hashPassword(password) // Băm password để lưu Firestore (optional nếu bạn vẫn muốn lưu)
+          // dateOfBirth: new Date(userData.dateOfBirth)
+        }).toObject()
+
+        // Thêm user vào Firestore
+        const docRef = await this.userCollection.doc(firebaseUser.uid).set(newUser)
+
+        // Thêm danh sách địa chỉ cho user
+        // for (const data of address) {
+        //   const newAddress = new Address({ ...data, userId: firebaseUser.uid }).toObject()
+        //   await this.userCollection.doc(firebaseUser.uid).collection('addresses').add(newAddress)
+        // }
 
         const cart = await cartService.createCart({ userId: firebaseUser.uid })
 

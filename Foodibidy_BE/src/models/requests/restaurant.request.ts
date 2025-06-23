@@ -23,6 +23,7 @@ export interface CreateRestaurantReqBody {
   bio: string
 }
 
+
 export interface UpdateRestaurantReqBody {
   restaurantName?: string
   address?: string
@@ -33,3 +34,5 @@ export interface UpdateRestaurantReqBody {
   rating?: number
   bio?: string
 }
+
+

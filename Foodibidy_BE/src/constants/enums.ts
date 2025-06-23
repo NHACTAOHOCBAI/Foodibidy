@@ -1,9 +1,9 @@
-export enum UserRole {
-  ADMIN = 'admin',
-  CUSTOMER = 'customer',
-  RESTAURANT = 'restaurant',
-  SHIPPER = 'shipper'
-}
+  export enum UserRole {
+    ADMIN = 'admin',
+    CUSTOMER = 'customer',
+    RESTAURANT = 'restaurant',
+    SHIPPER = 'shipper'
+  }
 
 export enum RestaurantStatus {
   PENDING = 'pending',

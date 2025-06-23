@@ -13,11 +13,11 @@ export const createUser = async (
   try {
     const avatar = req.files?.avatar as UploadedFile
 
-    const address = JSON.parse(req.body.address as unknown as string)
-    console.log(address)
+    // const address = JSON.parse(req.body.address as unknown as string)
+    // console.log(address)
     const result = await usersService.createUser({
       ...req.body,
-      address,
+      // address,
       avatar
     })
 
