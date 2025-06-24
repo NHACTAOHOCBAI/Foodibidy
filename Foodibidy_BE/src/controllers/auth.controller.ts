@@ -45,8 +45,6 @@ export const registerRestaurantOwner = async (req: Request, res: Response) => {
     const account: accountInfo = JSON.parse(req.body.account)
     const restaurant: restaurantInfo = JSON.parse(req.body.restaurant)
 
-    // Lấy file từ express-fileupload
-    const avatar = req.files?.avatar as UploadedFile | undefined
 
     const userData: CreateUserReqBody = {
       email: account.email,
@@ -55,10 +53,7 @@ export const registerRestaurantOwner = async (req: Request, res: Response) => {
       fullName: account.fullName
     }
 
-    const newUserId = await usersService.createRestaurantOwner({
-      ...userData,
-      avatar
-    })
+    const newUserId = await usersService.createRestaurantOwner(userData)
 
     const restaurantData: CreateRestaurantReqBody = {
       user: { id: newUserId, fullName: account.fullName, phoneNumber: restaurant.phoneNumber },

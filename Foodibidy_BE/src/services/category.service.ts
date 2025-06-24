@@ -10,6 +10,9 @@ import { DocumentData, FieldPath, QuerySnapshot } from 'firebase-admin/firestore
 import restaurant_categoryService from './restaurant_category.service'
 
 import { CloudinaryService } from './file.service'
+import dishService from './dish.service'
+import { da } from 'date-fns/locale'
+import { database } from 'firebase-admin'
 
 class CategoryService {
   private categoryCollection = databaseService.categories
@@ -126,6 +129,15 @@ class CategoryService {
   }
 
   async deleteCategory(categoryId: string) {
+    const dishesSnapshot = await databaseService.dishes.where('category.id', '==', categoryId).get()
+    for (const doc of dishesSnapshot.docs) {
+      await dishService.deleteDish(doc.id)
+    }
+
+    const restaurantSnapshot = await databaseService.restaurant_category.where('categoryId', '==', categoryId).get()
+    for (const doc of restaurantSnapshot.docs) {
+      await restaurant_categoryService.deleteRestaurant_Category(doc.id)
+    }
     await this.categoryCollection.doc(categoryId).delete()
   }
 }

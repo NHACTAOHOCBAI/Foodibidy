@@ -7,6 +7,7 @@ import Dish, { DishType } from '~/models/schemas/dish.schema'
 import { handleFormatDate } from '~/utils/utils'
 import databaseService from './database.service'
 import { CloudinaryService } from './file.service'
+import reviewService from './review.service'
 
 class DishService {
   private dishCollection = databaseService.dishes
@@ -75,6 +76,20 @@ class DishService {
 
   async deleteDish(id: string) {
     try {
+
+      const reviewSnapshot = await databaseService.reviews.where('dishId', '==', id).get()
+      for (const doc of reviewSnapshot.docs) {
+        await reviewService.deleteReview(doc.id)
+      }
+      const cart_detailsSnapshot = await databaseService.cart_details.where('dishId', '==', id).get()
+      for (const doc of cart_detailsSnapshot.docs) {
+        await databaseService.cart_details.doc(doc.id).delete()
+      }
+      const order_detailsSnapshot = await databaseService.order_details.where('dishId', '==', id).get()
+      for (const doc of order_detailsSnapshot.docs) {
+        await databaseService.order_details.doc(doc.id).delete()
+      }
+
       await this.dishCollection.doc(id).delete()
       console.log(`Dish with ID ${id} deleted successfully`)
     } catch (error) {

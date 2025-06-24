@@ -12,7 +12,9 @@ class ReviewService {
   async createReview(data: CreateReviewReqBody) {
     try {
       const newReview = new Review({
-        ...data
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date()
       }).toObject()
 
       const docRef = await this.reviewCollection.add(newReview)
