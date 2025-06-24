@@ -93,7 +93,7 @@ const Category = () => {
             {contextHolder}
             <div>
                 <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-                    <Button icon={<AiOutlinePlus />} onClick={() => setIsNewOpen(true)}>Create Category</Button>
+                    <Button type="primary" icon={<AiOutlinePlus />} onClick={() => setIsNewOpen(true)}>Create Category</Button>
                 </div>
                 <Table<Category>
                     loading={isPending}

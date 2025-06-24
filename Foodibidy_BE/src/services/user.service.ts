@@ -268,7 +268,7 @@ class UsersService {
 
       //xoa restaurant
       if (userData?.role === UserRole.RESTAURANT) {
-        const restaurantId = restaurantService.deleteRestaurantByUserId(userId)
+        const restaurantId = await restaurantService.deleteRestaurantByUserId(userId)
         console.log(restaurantId)
       }
 
@@ -277,6 +277,9 @@ class UsersService {
       console.log(`User with ID ${userId} deleted successfully`)
 
       // Xóa luôn Firebase Auth user nếu có firebaseUID
+      await auth().deleteUser(userId)
+      console.log(`Firebase Auth user with UID ${userId} deleted successfully`)
+
       // if (userData?.firebaseUID) {
       //   await auth().deleteUser(userData.firebaseUID)
       //   console.log(`Firebase Auth user with UID ${userData.firebaseUID} deleted successfully`)
