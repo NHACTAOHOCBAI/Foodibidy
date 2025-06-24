@@ -7,6 +7,8 @@ import Restaurant from "../pages/admin/Restaurant";
 import Category from "../pages/admin/Category";
 import Profile from "../pages/admin/Profile";
 import Account from "../pages/admin/Account";
+import Login from "../pages/auth/Login";
+import Register from "../pages/auth/Register";
 
 const router = createBrowserRouter([
     {
@@ -22,6 +24,14 @@ const router = createBrowserRouter([
             { path: '/my-restaurant', element: <Profile /> },
         ]
     },
+    {
+        path: '/login',
+        element: <Login />
+    },
+    {
+        path: '/register',
+        element: <Register />
+    }
 ]);
 export default router
 
