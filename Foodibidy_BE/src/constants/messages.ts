@@ -15,6 +15,8 @@ export const USER_MESSAGES = {
   DELETE_FAIL: 'Delete fail'
 }
 export const CATEGORY_MESSAGES = {
+  CATEGORY_HAS_RESTAURANT: 'Category has restaurant',
+  CATEGORY_HAS_DISHES: 'Category has dishes',
   CREATE_SUCCESS: 'Category created successfully',
   GET_SUCCESS: 'Get category successfully',
   GET_ALL_SUCCESS: 'Get all categories successfully',
