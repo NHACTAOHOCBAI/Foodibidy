@@ -195,6 +195,25 @@ class DishService {
       for (const doc of order_detailsSnapshot.docs) {
         await this.order_detailsCollection.doc(doc.id).update({ status: 'CANCEL' })
       }
+      // ✅ Xử lý xoá dish khỏi từng Cart
+      const cartSnapshot = await databaseService.carts.get()
+      for (const doc of cartSnapshot.docs) {
+        const cartData = doc.data() as CartType
+        if (!cartData.dishes) continue
+
+        const filteredDishes = cartData.dishes.filter(item => item.dish.id !== id)
+        if (filteredDishes.length !== cartData.dishes.length) {
+          await databaseService.carts.doc(doc.id).update({
+            dishes: filteredDishes,
+            updatedAt: new Date()
+          })
+        }
+      }
+      // xóa user_dish
+      const user_dishSnapshot = await databaseService.user_dish.where('dishId', '==', id).get()
+      for (const doc of user_dishSnapshot.docs) {
+        await databaseService.user_dish.doc(doc.id).delete()
+      }
 
       //xoá dish
       await this.dishCollection.doc(id).delete()
