@@ -1,13 +1,14 @@
-import { ErrorWithStatus } from '~/models/errors'
-import databaseService from './database.service'
-import { CreateOrderDetailReqBody, UpdateOrderDetailReqBody } from '~/models/requests/orderDetail.request'
-import OrderDetail, { OrderDetailType } from '~/models/schemas/orderDetail.schema'
-import { ORDER_MESSAGES } from '~/constants/messages'
-import HTTP_STATUS from '~/constants/httpStatus'
-import { handleFormatDate } from '~/utils/utils'
 import { OrderStatus } from '~/constants/enums'
-import dishService from './dish.service'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { DISH_MESSAGES, ORDER_MESSAGES, RESTAURANT_MESSAGES } from '~/constants/messages'
+import { ErrorWithStatus } from '~/models/errors'
+import { CreateOrderDetailReqBody, UpdateOrderDetailReqBody } from '~/models/requests/orderDetail.request'
+import { OrderDetailType } from '~/models/schemas/orderDetail.schema'
 import { UserType } from '~/models/schemas/user.schema'
+import { handleFormatDate, validateFieldMatchById } from '~/utils/utils'
+import databaseService from './database.service'
+import restaurantService from './restaurant.service'
+import dishService from './dish.service'
 
 class OrderDetailService {
   private OrderDetailCollection = databaseService.order_details
@@ -17,14 +18,24 @@ class OrderDetailService {
       const dishIds = await Promise.all(
         data.items.map(async (item) => {
           const dishRef = this.dishCollection.doc(item.dish.id as string)
-          const dishDoc = await dishRef.get()
-          const currentQuantity = dishDoc.data()?.remainingQuantity as number
+          const dishDoc = (await dishRef.get()).data()
+          if (!dishDoc)
+            throw new ErrorWithStatus({ message: DISH_MESSAGES.DISH_NOT_FOUND, status: HTTP_STATUS.BAD_REQUEST })
+          const currentQuantity = dishDoc.remainingQuantity as number
           const newQuantity = currentQuantity - item.quantity
-          if (newQuantity < 0)
+          if (dishDoc.dishName !== item.dish.dishName)
             throw new ErrorWithStatus({
-              message: 'Food remaining quantity is not enough,  please reduce the number of dishes you ordered.',
+              message: DISH_MESSAGES.DISH_NOT_FOUND,
               status: HTTP_STATUS.BAD_REQUEST
             })
+
+          if (newQuantity < 0)
+            throw new ErrorWithStatus({
+              message: 'Food remaining quantity is not enough, please reduce the number of dishes you ordered.',
+              status: HTTP_STATUS.BAD_REQUEST
+            })
+
+          item.dish.price = dishDoc.price as number
           await dishRef.update({
             remainingQuantity: newQuantity
           })
@@ -32,14 +43,11 @@ class OrderDetailService {
           return item.dish.id as string
         })
       )
-      console.log('user', data.user)
-      let user: Pick<UserType, 'id' | 'fullName' | 'phoneNumber'> = {
-        fullName: ''
-      }
-      if (data.user) user = data.user
+      console.log('user', data.items)
+
       const newOrderDetail = {
         ...data,
-        user,
+
         dishIds: dishIds
       }
       const docRef = await this.OrderDetailCollection.add(newOrderDetail)

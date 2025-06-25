@@ -1,6 +1,6 @@
 export interface CategoryType {
   id?: string
-  name: string
+  name?: string
   description?: string
   purchase?: number
   image?: string
@@ -10,7 +10,7 @@ export interface CategoryType {
 
 export default class Category {
   id?: string
-  name: string
+  name?: string
   description: string
   purchase: number
   image?: string

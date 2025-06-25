@@ -78,26 +78,52 @@ class DishService {
         data.category.name,
         CATEGORY_MESSAGES.NOT_FOUND
       )
-      // udpate order detail
-      const order_detailsSnapshot = await this.order_detailsCollection.where('dishIds', 'array-contains', id).get()
-      for (const doc of order_detailsSnapshot.docs) {
-        const data2 = doc.data()
-        const updatedItems = data2.items.map((item: any) => {
-          if (item.dish?.id === id) {
-            return {
-              ...item,
-              dish: {
-                ...item.dish,
-                dishName: data.dishName
+      if (data.price) {
+        // udpate order detail
+        const order_detailsSnapshot = await this.order_detailsCollection.where('dishIds', 'array-contains', id).get()
+        for (const doc of order_detailsSnapshot.docs) {
+          const data2 = doc.data()
+          const updatedItems = data2.items.map((item: any) => {
+            if (item.dish?.id === id) {
+              return {
+                ...item,
+                dish: {
+                  ...item.dish,
+                  price: data.price
+                }
               }
             }
-          }
-          return item
-        })
+            return item
+          })
 
-        await this.order_detailsCollection.doc(doc.id).update({
-          items: updatedItems
-        })
+          await this.order_detailsCollection.doc(doc.id).update({
+            items: updatedItems
+          })
+        }
+      }
+
+      if (data.dishName) {
+        // udpate order detail
+        const order_detailsSnapshot = await this.order_detailsCollection.where('dishIds', 'array-contains', id).get()
+        for (const doc of order_detailsSnapshot.docs) {
+          const data2 = doc.data()
+          const updatedItems = data2.items.map((item: any) => {
+            if (item.dish?.id === id) {
+              return {
+                ...item,
+                dish: {
+                  ...item.dish,
+                  dishName: data.dishName
+                }
+              }
+            }
+            return item
+          })
+
+          await this.order_detailsCollection.doc(doc.id).update({
+            items: updatedItems
+          })
+        }
       }
     }
 
@@ -179,9 +205,17 @@ class DishService {
     }
   }
 
-  async getAllDishes(pageSize: number, page: number): Promise<GetDishRes[]> {
+  async getAllDishes(pageSize: number, page: number, filter: string | undefined): Promise<GetDishRes[]> {
     try {
-      let query = this.dishCollection.orderBy('updatedAt', 'desc')
+      let query = this.dishCollection.orderBy('dishName')
+
+      if (filter) {
+        const start = filter.toLowerCase()
+        const end = start + '\uf8ff'
+        query = query.startAt(start).endAt(end)
+      }
+
+      query = query.orderBy('updatedAt', 'desc')
       const offset = (page - 1) * pageSize
       if (offset > 0) query = query.offset(offset)
       if (pageSize > 0) query = query.limit(pageSize)

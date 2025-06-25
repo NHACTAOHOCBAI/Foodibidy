@@ -11,8 +11,8 @@ export interface CreateUserReqBody {
   email: string
   password: string
   confirmPassword: string
-  // dateOfBirth: string
-  // address: Omit<AddressType, 'userId' | 'id'>[] | []
+  role?: UserRole
+  address?: Omit<AddressType, 'userId' | 'id'>[] | []
   avatar?: UploadedFile
 }
 
@@ -23,7 +23,7 @@ export interface UpdateUserReqBody {
   dateOfBirth?: string
   phoneNumber?: string | ''
   avatar?: UploadedFile
-  address: Omit<AddressType, 'userId'>[] | []
+  address?: Omit<AddressType, 'userId'>[] | []
 }
 
 export interface GetProfileRequestParams extends ParamsDictionary {

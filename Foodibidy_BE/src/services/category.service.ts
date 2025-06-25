@@ -162,7 +162,7 @@ class CategoryService {
     const snapshot = await databaseService.restaurant_category.where('categoryId', '==', categoryId).get()
     snapshot.forEach(async (doc) => {
       const data = doc.data()
-      data.categoryName = resDishBody.name || data.categoryName
+
       await databaseService.restaurant_category.doc(doc.id).update({
         ...data,
 

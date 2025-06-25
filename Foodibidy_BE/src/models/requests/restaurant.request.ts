@@ -27,9 +27,9 @@ export interface UpdateRestaurantReqBody {
   restaurantName?: string
   address?: string
   status?: RestaurantStatus
-  restaurantImage: UploadedFile
-  category: Pick<CategoryType, 'id' | 'name'>[]
+  restaurantImage?: UploadedFile
+
   phoneNumber?: string
-  rating?: number
+
   bio?: string
 }

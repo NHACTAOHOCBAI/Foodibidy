@@ -2,19 +2,21 @@ import { ErrorWithStatus } from '~/models/errors'
 import databaseService from './database.service'
 import { CreateRestaurantReqBody, UpdateRestaurantReqBody } from '~/models/requests/restaurant.request'
 import Restaurant, { RestaurantType } from '~/models/schemas/restaurant.schema'
-import { RESTAURANT_MESSAGES } from '~/constants/messages'
+import { CATEGORY_MESSAGES, RESTAURANT_MESSAGES, USER_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { handleFormatDate, updateNestedFieldInCollection } from '~/utils/utils'
+import { handleFormatDate, updateNestedFieldInCollection, validateFieldMatchById } from '~/utils/utils'
 import { CloudinaryService } from './file.service'
 import { firestore } from 'firebase-admin'
 import usersService from './user.service'
+import categoryService from './category.service'
 
 class RestaurantService {
   private restaurantCollection = databaseService.restaurants
   private restaurant_categoryCollection = databaseService.restaurant_category
   private dishCollection = databaseService.dishes
   private order_detailCollection = databaseService.order_details
-
+  private userCollection = databaseService.users
+  private cartCollection = databaseService.carts
   async createRestaurant(data: CreateRestaurantReqBody) {
     try {
       const { restaurantImage, ...resRestaurant } = data
@@ -70,7 +72,6 @@ class RestaurantService {
       if (offset > 0) query = query.offset(offset)
       if (pageSize > 0) query = query.limit(pageSize)
 
-
       const snapshot = await query.get()
       const restaurants: RestaurantType[] = []
       snapshot.forEach((doc) => {
@@ -123,20 +124,6 @@ class RestaurantService {
     try {
       await this.restaurantCollection.doc(id).update(updatedRestaurant)
 
-      //xoa bang trung gian
-      const categorySnapshot = await this.restaurant_categoryCollection.where('restaurantId', '==', id).get()
-      const batch = firestore().batch()
-      categorySnapshot.forEach((doc) => {
-        batch.delete(doc.ref)
-      })
-      await batch.commit()
-
-      for (const cate of data.category) {
-        await this.restaurant_categoryCollection.add({
-          restaurantId: id,
-          categoryId: cate.id as string
-        })
-      }
       console.log(`Update restaurant success with ID ${doc.id}`)
     } catch {
       throw new ErrorWithStatus({ message: RESTAURANT_MESSAGES.UPDATE_FAIL, status: HTTP_STATUS.BAD_REQUEST })
@@ -149,7 +136,19 @@ class RestaurantService {
       await this.restaurantCollection.doc(id).delete()
 
       //xoa user
-      await usersService.deleteUser(doc.data()?.user.id as string)
+      const userDoc = await this.userCollection.doc(doc.data()?.user.id as string).get()
+
+      if (!userDoc.exists) {
+        throw new ErrorWithStatus({ message: USER_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+      }
+
+      const userData = userDoc.data()
+
+      // Nếu user có cart thì xóa luôn cart
+      if (userData?.cartId) {
+        await this.cartCollection.doc(userData.cartId).delete()
+        console.log(`Cart with ID ${userData.cartId} deleted successfully`)
+      }
 
       //xoa bang trung gian
       const categorySnapshot = await this.restaurant_categoryCollection.where('restaurantId', '==', id).get()
