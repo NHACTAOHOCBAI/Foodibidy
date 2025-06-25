@@ -8,6 +8,7 @@ import { handleFormatDate, validateFieldMatchById } from '~/utils/utils'
 import databaseService from './database.service'
 import { CloudinaryService } from './file.service'
 import reviewService from './review.service'
+import { CartType } from '~/models/schemas/cart.schema'
 import restaurantService from './restaurant.service'
 import categoryService from './category.service'
 
@@ -119,6 +120,36 @@ class DishService {
       await this.dishCollection.doc(id).update(updatedDish)
 
       console.log(`Update dish success with ID ${doc.id}`)
+      // Sau khi update dish thành công, cập nhật trong cart
+      const cartSnapshot = await databaseService.carts.where('dishes', '!=', null).get()
+
+      for (const doc of cartSnapshot.docs) {
+        const cartData = doc.data() as CartType
+
+        let isUpdated = false
+
+        const updatedDishes = cartData.dishes?.map((dishItem) => {
+          if (dishItem.dish.id === id) {
+            isUpdated = true
+            return {
+              ...dishItem,
+              dish: {
+                ...dishItem.dish,
+                ...resDishBody, // cập nhật các field mới
+                dishImage: urlImage || dishItem.dish.dishImage
+              }
+            }
+          }
+          return dishItem
+        })
+
+        if (isUpdated) {
+          await databaseService.carts.doc(doc.id).update({
+            dishes: updatedDishes,
+            updatedAt: new Date()
+          })
+        }
+      }
     } catch (error) {
       console.error('Error updating dish:', error)
       throw new ErrorWithStatus({ message: DISH_MESSAGES.DISH_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })

@@ -60,13 +60,13 @@ const Restaurant = () => {
             title: 'Action',
             render: (_, value) => (
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                    <div style={{ color: 'blue' }} onClick={() => {
+                    <div style={{ color: '#3674B5' }} onClick={() => {
                         setDetailRestaurant(value);
                         setIsDetailOpen(true);
                     }}>
                         <PiEye />
                     </div>
-                    <div style={{ color: 'yellow' }} onClick={() => {
+                    <div style={{ color: '#FADA7A' }} onClick={() => {
                         setUpdatedRestaurant(value);
                         setIsUpdateOpen(true);
                     }}>
@@ -79,7 +79,7 @@ const Restaurant = () => {
                         okText="Yes"
                         cancelText="No"
                     >
-                        <div style={{ color: 'red' }}><DeleteOutlined /></div>
+                        <div style={{ color: '#ED3500' }}><DeleteOutlined /></div>
                     </Popconfirm>
                 </div>
             ),

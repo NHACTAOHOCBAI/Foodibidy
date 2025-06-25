@@ -13,6 +13,7 @@ import { CloudinaryService } from './file.service'
 import dishService from './dish.service'
 import { da } from 'date-fns/locale'
 import { database } from 'firebase-admin'
+import { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { update } from 'lodash'
 
 class CategoryService {
@@ -157,6 +158,52 @@ class CategoryService {
       image: urlImage,
       updatedAt: new Date()
     })
+    // update category trong restaurant_category
+    const snapshot = await databaseService.restaurant_category.where('categoryId', '==', categoryId).get()
+    snapshot.forEach(async (doc) => {
+      const data = doc.data()
+      data.categoryName = resDishBody.name || data.categoryName
+      await databaseService.restaurant_category.doc(doc.id).update({
+        ...data,
+
+        updatedAt: new Date()
+      })
+    })
+    // update category trong dishes
+    const dishSnapshot = await databaseService.dishes.where('category.id', '==', categoryId).get()
+
+    dishSnapshot.forEach(async (doc) => {
+      const data = doc.data()
+      data.category.name = resDishBody.name || data.category.name
+      await databaseService.dishes.doc(doc.id).update({
+        ...data,
+        updatedAt: new Date()
+      })
+    })
+    // update category trong restaurant
+    const restaurantSnapshot = await databaseService.restaurants.get()
+    for (const doc of restaurantSnapshot.docs) {
+      const data = doc.data() as RestaurantType
+      let isUpdated = false
+
+      const updatedCategories = data.category.map((cat) => {
+        if (cat.id === categoryId) {
+          isUpdated = true
+          return {
+            ...cat,
+            name: resDishBody.name || cat.name
+          }
+        }
+        return cat
+      })
+
+      if (isUpdated) {
+        await databaseService.restaurants.doc(doc.id).update({
+          category: updatedCategories,
+          updatedAt: new Date()
+        })
+      }
+    }
   }
 
   async deleteCategory(categoryId: string) {

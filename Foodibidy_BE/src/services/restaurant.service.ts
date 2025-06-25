@@ -70,6 +70,7 @@ class RestaurantService {
       if (offset > 0) query = query.offset(offset)
       if (pageSize > 0) query = query.limit(pageSize)
 
+
       const snapshot = await query.get()
       const restaurants: RestaurantType[] = []
       snapshot.forEach((doc) => {
