@@ -28,16 +28,9 @@ export interface CreateOrderDetailReqBody {
 }
 
 export interface UpdateOrderDetailReqBody {
-  user?: Pick<UserType, 'id' | 'fullName' | 'phoneNumber'>
-  restaurant?: Pick<RestaurantType, 'id' | 'restaurantName'>
   status?: OrderStatus
-  items?: {
-    dish: Pick<DishType, 'id' | 'dishName'>
-    quantity: number
-  }[]
-  orderTime?: Date
-  shipperName: string
-  shipperPhone: string
+  shipperName?: string
+  shipperPhone?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }

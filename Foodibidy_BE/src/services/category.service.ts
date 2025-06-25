@@ -14,9 +14,12 @@ import dishService from './dish.service'
 import { da } from 'date-fns/locale'
 import { database } from 'firebase-admin'
 import { RestaurantType } from '~/models/schemas/restaurant.schema'
+import { update } from 'lodash'
 
 class CategoryService {
   private categoryCollection = databaseService.categories
+  private dishCollection = databaseService.dishes
+  private restaurantCollection = databaseService.restaurants
 
   async createCategory(categoryData: CreateCategoryReqBody) {
     const { cateImage, ...resDishBody } = categoryData
@@ -121,6 +124,34 @@ class CategoryService {
     if (cateImage) {
       urlImage = await CloudinaryService.uploadImage(cateImage, 'category')
     }
+    //update dish
+    if (updateData.name) {
+      const dishesSnapshot = await this.dishCollection.where('category.id', '==', categoryId).get()
+      for (const doc of dishesSnapshot.docs) {
+        await this.dishCollection.doc(doc.id).update({
+          'category.name': updateData.name
+        })
+      }
+
+      //update res
+      const restaurantsSnapshot = await this.restaurantCollection.where('cateIds', 'array-contains', categoryId).get()
+      for (const doc of restaurantsSnapshot.docs) {
+        const data2 = doc.data()
+        const updatedItems = data2.category.map((item: any) => {
+          if (item.id === categoryId) {
+            return {
+              ...item,
+              name: updateData.name
+            }
+          }
+          return item
+        })
+
+        await this.restaurantCollection.doc(doc.id).update({
+          category: updatedItems
+        })
+      }
+    }
 
     await this.categoryCollection.doc(categoryId).update({
       ...resDishBody,
@@ -130,7 +161,6 @@ class CategoryService {
     // update category trong restaurant_category
     const snapshot = await databaseService.restaurant_category.where('categoryId', '==', categoryId).get()
     snapshot.forEach(async (doc) => {
-
       const data = doc.data()
       data.categoryName = resDishBody.name || data.categoryName
       await databaseService.restaurant_category.doc(doc.id).update({
@@ -174,7 +204,6 @@ class CategoryService {
         })
       }
     }
-
   }
 
   async deleteCategory(categoryId: string) {

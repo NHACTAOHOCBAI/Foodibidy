@@ -6,6 +6,7 @@ export interface RestaurantType {
   id?: string
   user: Pick<GetUserRes, 'id' | 'fullName' | 'phoneNumber'>
   category: Pick<CategoryType, 'id' | 'name'>[]
+  cateIds: string[]
   restaurantName: string
   address?: string
   purchase?: number
@@ -22,6 +23,7 @@ export default class Restaurant {
   id: string
   user: Pick<GetUserRes, 'id' | 'fullName' | 'phoneNumber'>
   category: Pick<CategoryType, 'id' | 'name'>[]
+  cateIds: string[]
   restaurantName: string
   address: string
   purchase?: number
@@ -37,6 +39,7 @@ export default class Restaurant {
     this.id = restaurant.id || ''
     this.user = restaurant.user
     this.category = restaurant.category
+    this.cateIds = restaurant.cateIds || []
     this.restaurantName = restaurant.restaurantName
     this.purchase = restaurant.purchase || 0
     this.address = restaurant.address || ''
@@ -54,6 +57,7 @@ export default class Restaurant {
       id: this.id,
       user: this.user,
       category: this.category,
+      cateIds: this.cateIds,
       restaurantName: this.restaurantName,
       address: this.address,
       purchase: this.purchase,

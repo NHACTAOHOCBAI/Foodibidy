@@ -1,17 +1,20 @@
 import HTTP_STATUS from '~/constants/httpStatus'
-import { DISH_MESSAGES } from '~/constants/messages'
+import { CATEGORY_MESSAGES, DISH_MESSAGES, RESTAURANT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/errors'
 import { CreateDishReqBody, UpdateDishReqBody } from '~/models/requests/dish.request'
 import { GetDishRes } from '~/models/responses/dish.response'
 import Dish, { DishType } from '~/models/schemas/dish.schema'
-import { handleFormatDate } from '~/utils/utils'
+import { handleFormatDate, validateFieldMatchById } from '~/utils/utils'
 import databaseService from './database.service'
 import { CloudinaryService } from './file.service'
 import reviewService from './review.service'
 import { CartType } from '~/models/schemas/cart.schema'
+import restaurantService from './restaurant.service'
+import categoryService from './category.service'
 
 class DishService {
   private dishCollection = databaseService.dishes
+  private order_detailsCollection = databaseService.order_details
 
   async createDish(data: CreateDishReqBody) {
     try {
@@ -20,6 +23,22 @@ class DishService {
       if (dishImage) {
         urlImage = await CloudinaryService.uploadImage(dishImage, 'dish')
       }
+
+      await validateFieldMatchById(
+        restaurantService.getRestaurant.bind(restaurantService),
+        data.restaurant.id,
+        'restaurantName',
+        data.restaurant.restaurantName,
+        RESTAURANT_MESSAGES.NOT_FOUND
+      )
+
+      await validateFieldMatchById(
+        categoryService.getCategory.bind(categoryService),
+        data.category.id,
+        'name',
+        data.category.name,
+        CATEGORY_MESSAGES.NOT_FOUND
+      )
 
       const newDish = new Dish({
         ...resDishBody,
@@ -51,6 +70,37 @@ class DishService {
 
   async updateDish(id: string, data: UpdateDishReqBody) {
     const doc = await this.dishCollection.doc(id).get()
+    if (data.category) {
+      await validateFieldMatchById(
+        categoryService.getCategory.bind(categoryService),
+        data.category.id,
+        'name',
+        data.category.name,
+        CATEGORY_MESSAGES.NOT_FOUND
+      )
+      // udpate order detail
+      const order_detailsSnapshot = await this.order_detailsCollection.where('dishIds', 'array-contains', id).get()
+      for (const doc of order_detailsSnapshot.docs) {
+        const data2 = doc.data()
+        const updatedItems = data2.items.map((item: any) => {
+          if (item.dish?.id === id) {
+            return {
+              ...item,
+              dish: {
+                ...item.dish,
+                dishName: data.dishName
+              }
+            }
+          }
+          return item
+        })
+
+        await this.order_detailsCollection.doc(doc.id).update({
+          items: updatedItems
+        })
+      }
+    }
+
     const { dishImage, ...resDishBody } = data
     let urlImage = ''
     if (dishImage) {
@@ -68,6 +118,7 @@ class DishService {
 
     try {
       await this.dishCollection.doc(id).update(updatedDish)
+
       console.log(`Update dish success with ID ${doc.id}`)
       // Sau khi update dish thành công, cập nhật trong cart
       const cartSnapshot = await databaseService.carts.where('dishes', '!=', null).get()
@@ -77,7 +128,7 @@ class DishService {
 
         let isUpdated = false
 
-        const updatedDishes = cartData.dishes?.map(dishItem => {
+        const updatedDishes = cartData.dishes?.map((dishItem) => {
           if (dishItem.dish.id === id) {
             isUpdated = true
             return {
@@ -99,7 +150,6 @@ class DishService {
           })
         }
       }
-
     } catch (error) {
       console.error('Error updating dish:', error)
       throw new ErrorWithStatus({ message: DISH_MESSAGES.DISH_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
@@ -108,18 +158,16 @@ class DishService {
 
   async deleteDish(id: string) {
     try {
-
+      //xoá review
       const reviewSnapshot = await databaseService.reviews.where('dishId', '==', id).get()
       for (const doc of reviewSnapshot.docs) {
         await reviewService.deleteReview(doc.id)
       }
-      const cart_detailsSnapshot = await databaseService.cart_details.where('dishId', '==', id).get()
-      for (const doc of cart_detailsSnapshot.docs) {
-        await databaseService.cart_details.doc(doc.id).delete()
-      }
-      const order_detailsSnapshot = await databaseService.order_details.where('dishId', '==', id).get()
+
+      //xoá order
+      const order_detailsSnapshot = await this.order_detailsCollection.where('dish.id', '==', id).get()
       for (const doc of order_detailsSnapshot.docs) {
-        await databaseService.order_details.doc(doc.id).delete()
+        await this.order_detailsCollection.doc(doc.id).update({ status: 'CANCEL' })
       }
       // ✅ Xử lý xoá dish khỏi từng Cart
       const cartSnapshot = await databaseService.carts.get()
@@ -141,6 +189,7 @@ class DishService {
         await databaseService.user_dish.doc(doc.id).delete()
       }
 
+      //xoá dish
       await this.dishCollection.doc(id).delete()
       console.log(`Dish with ID ${id} deleted successfully`)
     } catch (error) {

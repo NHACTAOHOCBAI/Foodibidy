@@ -6,12 +6,13 @@ import { CreateUserReqBody, UpdateUserReqBody } from '~/models/requests/user.req
 import Address from '~/models/schemas/address.schema'
 import User, { UserType } from '~/models/schemas/user.schema'
 import { hashPassword } from '~/utils/hashPassword'
-import { handleFormatDate } from '~/utils/utils'
+import { handleFormatDate, updateNestedFieldInCollection } from '~/utils/utils'
 import cartService from './cart.service'
 import databaseService from './database.service'
 import { CloudinaryService } from './file.service'
 import { UserRole } from '~/constants/enums'
 import restaurantService from './restaurant.service'
+import { id } from 'date-fns/locale'
 
 class UsersService {
   // dateOfBirth: new Date(userData.dateOfBirth)
@@ -19,7 +20,8 @@ class UsersService {
   // Khởi tạo collection người dùng và giỏ hàng từ databaseService
   private userCollection = databaseService.users
   private cartCollection = databaseService.carts
-  private restaurant_categoryCollection = databaseService.restaurant_category
+  private restaurantCollection = databaseService.restaurants
+  private order_detailCollection = databaseService.order_details
 
   async createUser(userData: CreateUserReqBody) {
     try {
@@ -233,6 +235,42 @@ class UsersService {
         } else {
           await addressCollection.add(address)
         }
+      }
+
+      if (updateData.fullName) {
+        await updateNestedFieldInCollection({
+          collection: this.order_detailCollection,
+          matchField: 'user.id',
+          matchValue: id,
+          nestedFieldPath: 'user.fullName',
+          updatedValue: updateData.fullName
+        })
+
+        await updateNestedFieldInCollection({
+          collection: this.restaurantCollection,
+          matchField: 'user.id',
+          matchValue: id,
+          nestedFieldPath: 'user.fullName',
+          updatedValue: updateData.fullName
+        })
+      }
+
+      if (updateData.phoneNumber) {
+        await updateNestedFieldInCollection({
+          collection: this.order_detailCollection,
+          matchField: 'user.id',
+          matchValue: id,
+          nestedFieldPath: 'user.phoneNumber',
+          updatedValue: updateData.phoneNumber
+        })
+
+        await updateNestedFieldInCollection({
+          collection: this.restaurantCollection,
+          matchField: 'user.id',
+          matchValue: id,
+          nestedFieldPath: 'user.phoneNumber',
+          updatedValue: updateData.phoneNumber
+        })
       }
 
       const updatedUser = {

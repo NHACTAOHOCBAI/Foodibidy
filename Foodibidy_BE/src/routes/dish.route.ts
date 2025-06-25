@@ -12,7 +12,7 @@ import { wrapRequestHandler } from '~/utils/handler'
 const dishesRouter = Router()
 
 /**
- * Description. Create a dishe
+ * Description. Create a dishes
  * Path: /dishes
  * Method: POST
  * Body : { email: string, password: string , confirmPassword:string, dateOfBirth:string }
@@ -35,21 +35,21 @@ dishesRouter.get('/restaurant/:restaurantId', wrapRequestHandler(getDishesByRest
 
 /**
  * Description. Get a dish
- * Path: /dishs/:dishId
+ * Path: /dishes/:dishId
  * Method: GET
  */
 dishesRouter.get('/:dishId', wrapRequestHandler(getDish))
 
 /**
- * Description. Get all dishs
- * Path: /dishs
+ * Description. Get all dishes
+ * Path: /dishes
  * Method: GET
  */
 dishesRouter.get('/', wrapRequestHandler(getAllDishes))
 
 /**
  * Description. Update a dish
- * Path: /dishs/:dishId
+ * Path: /dishes/:dishId
  * Method: PUT
  * Body : {roleId?: dishRole email?: string, name?: string, phoneNumber?: string, dateOfBirth?: string, avatar?: string }
  */
@@ -57,7 +57,7 @@ dishesRouter.put('/:dishId', wrapRequestHandler(updateDish))
 
 /**
  * Description. Delete a dish
- * Path: /dishs/:dishId
+ * Path: /dishes/:dishId
  * Method: Delete
  */
 dishesRouter.delete('/:dishId', wrapRequestHandler(deleteDish))
