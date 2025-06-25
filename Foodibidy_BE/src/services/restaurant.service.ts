@@ -4,7 +4,7 @@ import { CreateRestaurantReqBody, UpdateRestaurantReqBody } from '~/models/reque
 import Restaurant, { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { RESTAURANT_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { handleFormatDate } from '~/utils/utils'
+import { handleFormatDate, updateNestedFieldInCollection } from '~/utils/utils'
 import { CloudinaryService } from './file.service'
 import { firestore } from 'firebase-admin'
 import usersService from './user.service'
@@ -12,6 +12,8 @@ import usersService from './user.service'
 class RestaurantService {
   private restaurantCollection = databaseService.restaurants
   private restaurant_categoryCollection = databaseService.restaurant_category
+  private dishCollection = databaseService.dishes
+  private order_detailCollection = databaseService.order_details
 
   async createRestaurant(data: CreateRestaurantReqBody) {
     try {
@@ -21,9 +23,12 @@ class RestaurantService {
         urlImage = await CloudinaryService.uploadImage(restaurantImage, 'restaurant')
       }
 
+      const cateIds = data.category.map((cate) => cate.id).filter((id): id is string => !!id)
+
       const newRestaurant = new Restaurant({
         ...resRestaurant,
         restaurantImage: urlImage,
+        cateIds,
         createdAt: new Date()
       }).toObject()
 
@@ -31,9 +36,7 @@ class RestaurantService {
       for (const cate of data.category) {
         await this.restaurant_categoryCollection.add({
           restaurantId: docRef.id,
-          restaurantName: data.restaurantName,
-          categoryId: cate.id as string,
-          categoryName: cate.name
+          categoryId: cate.id as string
         })
       }
 
@@ -97,6 +100,25 @@ class RestaurantService {
       updatedAt: new Date()
     }
 
+    if (data.restaurantName) {
+      // update dish
+      await updateNestedFieldInCollection({
+        collection: this.dishCollection,
+        matchField: 'restaurant.id',
+        matchValue: id,
+        nestedFieldPath: 'restaurant.restaurantName',
+        updatedValue: data.restaurantName
+      })
+
+      // update order_detail
+      await updateNestedFieldInCollection({
+        collection: this.order_detailCollection,
+        matchField: 'restaurant.id',
+        matchValue: id,
+        nestedFieldPath: 'restaurant.restaurantName',
+        updatedValue: data.restaurantName
+      })
+    }
     try {
       await this.restaurantCollection.doc(id).update(updatedRestaurant)
 
@@ -111,9 +133,7 @@ class RestaurantService {
       for (const cate of data.category) {
         await this.restaurant_categoryCollection.add({
           restaurantId: id,
-          restaurantName: data.restaurantName as string,
-          categoryId: cate.id as string,
-          categoryName: cate.name
+          categoryId: cate.id as string
         })
       }
       console.log(`Update restaurant success with ID ${doc.id}`)

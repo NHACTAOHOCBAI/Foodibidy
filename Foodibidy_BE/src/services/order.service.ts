@@ -3,6 +3,9 @@ import { CreateOrderReqBody } from '~/models/requests/order.request'
 import { OrderStatus } from '~/constants/enums'
 
 import orderDetailService from './orderDetail.service'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { ErrorWithStatus } from '~/models/errors'
+import { error } from 'console'
 
 class OrderService {
   async createOrder(data: CreateOrderReqBody) {
@@ -17,8 +20,13 @@ class OrderService {
       console.log('Order created success')
       return
     } catch (error) {
-      console.error('Error creating order:', error)
-      throw new Error(`Failed to create order: ${error}`)
+      console.log(error)
+      if (error instanceof ErrorWithStatus) throw error
+
+      throw new ErrorWithStatus({
+        message: 'Unknown internal server error',
+        status: HTTP_STATUS.INTERNAL_SERVER_ERROR
+      })
     }
   }
 }

@@ -6,22 +6,55 @@ import { ORDER_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { handleFormatDate } from '~/utils/utils'
 import { OrderStatus } from '~/constants/enums'
+import dishService from './dish.service'
+import { UserType } from '~/models/schemas/user.schema'
 
 class OrderDetailService {
   private OrderDetailCollection = databaseService.order_details
-
+  private dishCollection = databaseService.dishes
   async createOrderDetail(data: CreateOrderDetailReqBody) {
     try {
-      const newOrderDetail = new OrderDetail({
-        ...data
-      }).toObject()
+      const dishIds = await Promise.all(
+        data.items.map(async (item) => {
+          const dishRef = this.dishCollection.doc(item.dish.id as string)
+          const dishDoc = await dishRef.get()
+          const currentQuantity = dishDoc.data()?.remainingQuantity as number
+          const newQuantity = currentQuantity - item.quantity
+          if (newQuantity < 0)
+            throw new ErrorWithStatus({
+              message: 'Food remaining quantity is not enough,  please reduce the number of dishes you ordered.',
+              status: HTTP_STATUS.BAD_REQUEST
+            })
+          await dishRef.update({
+            remainingQuantity: newQuantity
+          })
 
+          return item.dish.id as string
+        })
+      )
+      console.log('user', data.user)
+      let user: Pick<UserType, 'id' | 'fullName' | 'phoneNumber'> = {
+        fullName: ''
+      }
+      if (data.user) user = data.user
+      const newOrderDetail = {
+        ...data,
+        user,
+        dishIds: dishIds
+      }
       const docRef = await this.OrderDetailCollection.add(newOrderDetail)
       console.log('OrderDetail created with ID:', docRef.id)
       return docRef.id
     } catch (error) {
-      console.error('Error creating OrderDetail:', error)
-      throw new Error(`Failed to create OrderDetail: ${error}`)
+      console.log(error)
+      if (error instanceof ErrorWithStatus) {
+        throw error
+      } else {
+        throw new ErrorWithStatus({
+          message: `Unexpected error: ${JSON.stringify(error)}`,
+          status: HTTP_STATUS.INTERNAL_SERVER_ERROR
+        })
+      }
     }
   }
 
@@ -41,6 +74,9 @@ class OrderDetailService {
 
   async updateOrderDetail(id: string, data: Partial<UpdateOrderDetailReqBody>) {
     const doc = await this.OrderDetailCollection.doc(id).get()
+    if (doc.exists && doc.data()?.status === OrderStatus.CANCELLED)
+      throw new ErrorWithStatus({ message: 'Can not update an cancel order', status: HTTP_STATUS.BAD_REQUEST })
+
     const updatedOrderDetail = {
       ...data,
       updatedAt: new Date()

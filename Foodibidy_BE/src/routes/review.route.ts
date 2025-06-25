@@ -37,7 +37,7 @@ reviewsRouter.get('/:reviewId', wrapRequestHandler(getReview))
  * Path: /reviews/food/:foodId
  * Method: GET
  */
-reviewsRouter.get('/:foodId', wrapRequestHandler(getReviewByFood))
+reviewsRouter.get('/food/:foodId', wrapRequestHandler(getReviewByFood))
 
 /**
  * Update a review by ID
