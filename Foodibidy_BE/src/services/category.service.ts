@@ -178,11 +178,12 @@ class CategoryService {
   }
 
   async deleteCategory(categoryId: string) {
+    // delete category trong dishes
     const dishesSnapshot = await databaseService.dishes.where('category.id', '==', categoryId).get()
     for (const doc of dishesSnapshot.docs) {
       await dishService.deleteDish(doc.id)
     }
-
+    // delete category trong restaurant
     const restaurantSnapshot = await databaseService.restaurant_category.where('categoryId', '==', categoryId).get()
     for (const doc of restaurantSnapshot.docs) {
       await restaurant_categoryService.deleteRestaurant_Category(doc.id)

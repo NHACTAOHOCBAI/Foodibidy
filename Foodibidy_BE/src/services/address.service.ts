@@ -5,6 +5,7 @@ import Address, { AddressType } from '~/models/schemas/address.schema'
 import { ADDRESS_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { handleFormatDate } from '~/utils/utils'
+import { UserType } from '~/models/schemas/user.schema'
 
 class AddressService {
   private addressCollection = databaseService.addresses
@@ -58,6 +59,22 @@ class AddressService {
 
   async deleteAddress(id: string) {
     try {
+      // ✅ Tìm tất cả users có chứa address cần xoá
+      const usersSnapshot = await databaseService.users.get()
+      for (const doc of usersSnapshot.docs) {
+        const userData = doc.data() as UserType
+        if (!userData.address) continue
+
+        const filteredAddresses = userData.address.filter(addr => addr.id !== id)
+        if (filteredAddresses.length !== userData.address.length) {
+          await databaseService.users.doc(doc.id).update({
+            address: filteredAddresses,
+            updatedAt: new Date()
+          })
+        }
+
+
+      }
       await this.addressCollection.doc(id).delete()
       console.log(`Address with ID ${id} deleted successfully`)
     } catch (error) {

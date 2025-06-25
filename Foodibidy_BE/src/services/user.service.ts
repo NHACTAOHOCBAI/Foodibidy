@@ -271,6 +271,19 @@ class UsersService {
         const restaurantId = await restaurantService.deleteRestaurantByUserId(userId)
         console.log(restaurantId)
       }
+      // xoa orderdetail khỏi collection
+      const orderDetailSnapshot = await databaseService.order_details.where('user.id', '==', userId).get()
+      const batch = firestore().batch()
+      orderDetailSnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      //  xoa  user_dish khỏi collection
+      const userDishSnapshot = await databaseService.user_dish.where('user.id', '==', userId).get()
+      userDishSnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      await batch.commit()
+      console.log(`Order with user ID ${userId} deleted successfully`)
 
       // Xóa user khỏi collection
       await this.userCollection.doc(userId).delete()

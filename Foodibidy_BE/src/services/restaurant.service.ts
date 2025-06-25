@@ -8,6 +8,7 @@ import { handleFormatDate } from '~/utils/utils'
 import { CloudinaryService } from './file.service'
 import { firestore } from 'firebase-admin'
 import usersService from './user.service'
+import dishService from './dish.service'
 
 class RestaurantService {
   private restaurantCollection = databaseService.restaurants
@@ -131,6 +132,16 @@ class RestaurantService {
       //xoa user
       await usersService.deleteUser(doc.data()?.user.id as string)
 
+      //  delete restaurant trong dishes
+      const dishesSnapshot = await databaseService.dishes.where('restaurant.id', '==', id).get()
+      for (const doc of dishesSnapshot.docs) {
+        await dishService.deleteDish(doc.id)
+      }
+      // delete restaurant trong order_detail
+      const order_detailsSnapshot = await databaseService.order_details.where('restaurant.id', '==', id).get()
+      for (const doc of order_detailsSnapshot.docs) {
+        await databaseService.order_details.doc(doc.id).delete()
+      }
       //xoa bang trung gian
       const categorySnapshot = await this.restaurant_categoryCollection.where('restaurantId', '==', id).get()
       const batch = firestore().batch()
