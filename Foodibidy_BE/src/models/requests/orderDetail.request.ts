@@ -19,7 +19,7 @@ export interface CreateOrderDetailReqBody {
   restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
   status: OrderStatus
   items: {
-    dish: Pick<DishType, 'id' | 'dishName'>
+    dish: Pick<DishType, 'id' | 'dishName' | 'price'>
     quantity: number
   }[]
 

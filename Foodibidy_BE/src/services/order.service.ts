@@ -6,14 +6,42 @@ import orderDetailService from './orderDetail.service'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { ErrorWithStatus } from '~/models/errors'
 import { error } from 'console'
+import { UserType } from '~/models/schemas/user.schema'
+import { CATEGORY_MESSAGES, USER_MESSAGES } from '~/constants/messages'
+import { validateFieldMatchById } from '~/utils/utils'
+import categoryService from './category.service'
+import usersService from './user.service'
 
 class OrderService {
   async createOrder(data: CreateOrderReqBody) {
     try {
+      let user: Pick<UserType, 'id' | 'fullName' | 'phoneNumber'> = {
+        fullName: '',
+        phoneNumber: ''
+      }
+      if (data.user) {
+        user = data.user
+
+        await validateFieldMatchById(
+          usersService.getUser.bind(usersService),
+          user.id,
+          'fullName',
+          user.fullName,
+          USER_MESSAGES.NOT_FOUND
+        )
+        await validateFieldMatchById(
+          usersService.getUser.bind(usersService),
+          user.id,
+          'phoneNumber',
+          user.phoneNumber,
+          USER_MESSAGES.NOT_FOUND
+        )
+      }
+
       for (const order of data.order) {
         await orderDetailService.createOrderDetail({
           ...order,
-          user: data.user,
+          user: user,
           status: OrderStatus.PENDING
         })
       }

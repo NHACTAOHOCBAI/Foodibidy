@@ -20,7 +20,8 @@ export const getDish = async (req: Request<DishParams>, res: Response, next: Nex
 export const getAllDishes = async (req: Request, res: Response, next: NextFunction) => {
   const limit = parseInt(req.query.limit as string, 10) || 0
   const page = parseInt(req.query.page as string, 10) || 0
-  const result = await dishService.getAllDishes(limit, page)
+  const filter = req.query.filter as string | undefined
+  const result = await dishService.getAllDishes(limit, page, filter)
   return res.json({ message: DISH_MESSAGES.GET_ALL_SUCCESS, data: result })
 }
 export const getDishesByCategoryId = async (req: Request<DishParams>, res: Response, next: NextFunction) => {
