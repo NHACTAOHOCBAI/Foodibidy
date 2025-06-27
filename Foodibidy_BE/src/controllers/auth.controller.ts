@@ -13,7 +13,7 @@ import usersService from '~/services/user.service'
 import { CreateRestaurantReqBody } from '~/models/requests/restaurant.request'
 import restaurantService from '~/services/restaurant.service'
 import { UploadedFile } from 'express-fileupload'
-import console from 'console'
+import { RestaurantType } from '~/models/schemas/restaurant.schema'
 
 // Controller: Đăng ký người dùng
 export const registerUser = async (req: Request, res: Response) => {
@@ -94,9 +94,21 @@ export const getProfile = async (req: Request, res: Response) => {
     }
 
     const userData = userDoc.data()
-    const user = new User(userData!).toObject()
+    let responseData: { user: UserType; restaurant: RestaurantType | null } = {
+      user: new User(userData!).toObject(),
+      restaurant: null
+    }
 
-    res.status(200).json(user)
+    if (responseData.user.role === UserRole.RESTAURANT) {
+      const restaurantDoc = await restaurantService.getRestaurantByUserId(responseData.user.id!)
+      responseData = {
+        ...responseData,
+        restaurant: restaurantDoc
+      }
+    }
+
+    // Remove sensitive fields
+    res.status(200).json(responseData)
   } catch (error) {
     console.error('Error getting user profile:', error)
     res.status(500).json({ message: 'Error getting user profile', error })

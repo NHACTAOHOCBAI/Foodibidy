@@ -11,6 +11,7 @@ import reviewService from './review.service'
 import { CartType } from '~/models/schemas/cart.schema'
 import restaurantService from './restaurant.service'
 import categoryService from './category.service'
+import { forEach } from 'lodash'
 
 class DishService {
   private dishCollection = databaseService.dishes
@@ -18,19 +19,11 @@ class DishService {
 
   async createDish(data: CreateDishReqBody) {
     try {
-      const { dishImage, ...resDishBody } = data
+      const { dishImage, restaurant, ...resDishBody } = data
       let urlImage = ''
       if (dishImage) {
         urlImage = await CloudinaryService.uploadImage(dishImage, 'dish')
       }
-
-      await validateFieldMatchById(
-        restaurantService.getRestaurant.bind(restaurantService),
-        data.restaurant.id,
-        'restaurantName',
-        data.restaurant.restaurantName,
-        RESTAURANT_MESSAGES.NOT_FOUND
-      )
 
       await validateFieldMatchById(
         categoryService.getCategory.bind(categoryService),
@@ -39,9 +32,13 @@ class DishService {
         data.category.name,
         CATEGORY_MESSAGES.NOT_FOUND
       )
+      const resData = await restaurantService.getRestaurantByUserId(restaurant.id!).then((res) => {
+        return { id: res!.id, restaurantName: res!.restaurantName }
+      })
 
       const newDish = new Dish({
         ...resDishBody,
+        restaurant: resData,
         dishImage: urlImage
       }).toObject()
 
@@ -195,13 +192,13 @@ class DishService {
       for (const doc of order_detailsSnapshot.docs) {
         await this.order_detailsCollection.doc(doc.id).update({ status: 'CANCEL' })
       }
-      // ✅ Xử lý xoá dish khỏi từng Cart
+
       const cartSnapshot = await databaseService.carts.get()
       for (const doc of cartSnapshot.docs) {
         const cartData = doc.data() as CartType
         if (!cartData.dishes) continue
 
-        const filteredDishes = cartData.dishes.filter(item => item.dish.id !== id)
+        const filteredDishes = cartData.dishes.filter((item) => item.dish.id !== id)
         if (filteredDishes.length !== cartData.dishes.length) {
           await databaseService.carts.doc(doc.id).update({
             dishes: filteredDishes,
@@ -232,9 +229,12 @@ class DishService {
         const start = filter.toLowerCase()
         const end = start + '\uf8ff'
         query = query.startAt(start).endAt(end)
+        console.log('Filter applied:', filter)
+        console.log('Query:', query)
+        console.log('Start:', start)
+        console.log('End:', end)
       }
 
-      query = query.orderBy('updatedAt', 'desc')
       const offset = (page - 1) * pageSize
       if (offset > 0) query = query.offset(offset)
       if (pageSize > 0) query = query.limit(pageSize)
@@ -278,6 +278,7 @@ class DishService {
       throw new Error(`Failed to get all dishes: ${error}`)
     }
   }
+
   async getDishesByRestaurantId(pageSize: number, page: number, restaurantId: string): Promise<DishType[]> {
     try {
       let query = this.dishCollection.where('restaurant.id', '==', restaurantId)
@@ -299,6 +300,38 @@ class DishService {
     } catch (error) {
       console.error('Error getting all dishes:', error)
       throw new Error(`Failed to get all dishes: ${error}`)
+    }
+  }
+
+  async getMyDishes(userId: string): Promise<GetDishRes[]> {
+    try {
+      const restaurant = await restaurantService.getRestaurantByUserId(userId)
+      if (!restaurant) {
+        throw new ErrorWithStatus({
+          message: RESTAURANT_MESSAGES.NOT_FOUND,
+          status: HTTP_STATUS.NOT_FOUND
+        })
+      }
+      console.log(restaurant)
+      let query = this.dishCollection.where('restaurant.id', '==', restaurant.id)
+
+      const snapshot = await query.get()
+      const dishes: GetDishRes[] = []
+
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+        dishes.push({
+          id: doc.id,
+          ...data,
+          createdAt: handleFormatDate(data.createdAt as Date),
+          updatedAt: handleFormatDate(data.updatedAt as Date)
+        } as GetDishRes)
+      })
+
+      return dishes
+    } catch (error) {
+      console.error('Error getting my dishes:', error)
+      throw error
     }
   }
 }

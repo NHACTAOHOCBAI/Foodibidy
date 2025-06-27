@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { UserRole } from '~/constants/enums'
 import {
   createDish,
   deleteDish,
@@ -6,8 +7,10 @@ import {
   getDish,
   getDishesByCategoryId,
   getDishesByRestaurantId,
+  getMyDishes,
   updateDish
 } from '~/controllers/dish.controller'
+import { authenticateFirebase, authorizeRole } from '~/middlewares/auth.middlewares'
 import { wrapRequestHandler } from '~/utils/handler'
 const dishesRouter = Router()
 
@@ -32,6 +35,18 @@ dishesRouter.get('/category/:categoryId', wrapRequestHandler(getDishesByCategory
  * Method: GET
  */
 dishesRouter.get('/restaurant/:restaurantId', wrapRequestHandler(getDishesByRestaurantId))
+
+/**
+ * Description. Get all dishes have restaurantId
+ * Path: /dishes/myDishes
+ * Method: GET
+ */
+dishesRouter.get(
+  '/myDishes',
+  authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT]),
+  wrapRequestHandler(getMyDishes)
+)
 
 /**
  * Description. Get a dish

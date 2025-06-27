@@ -33,7 +33,7 @@ class ReviewService {
       const data = doc.data() as ReviewType
       let updatedAt = handleFormatDate(data.updatedAt as Date)
       let createdAt = handleFormatDate(data.createdAt as Date)
-      return { id: doc.id, ...doc.data(), updatedAt, createdAt }
+      return { ...doc.data(), id: doc.id, updatedAt, createdAt }
     }
     throw new ErrorWithStatus({ message: REVIEW_MESSAGES.REVIEW_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
   }

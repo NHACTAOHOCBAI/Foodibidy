@@ -12,7 +12,6 @@ import databaseService from './database.service'
 import { CloudinaryService } from './file.service'
 import { UserRole } from '~/constants/enums'
 import restaurantService from './restaurant.service'
-import { id } from 'date-fns/locale'
 
 class UsersService {
   private userCollection = databaseService.users

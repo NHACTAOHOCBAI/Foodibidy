@@ -1,15 +1,13 @@
+import { firestore } from 'firebase-admin'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { RESTAURANT_MESSAGES, USER_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/errors'
-import databaseService from './database.service'
 import { CreateRestaurantReqBody, UpdateRestaurantReqBody } from '~/models/requests/restaurant.request'
 import Restaurant, { RestaurantType } from '~/models/schemas/restaurant.schema'
-import { CATEGORY_MESSAGES, RESTAURANT_MESSAGES, USER_MESSAGES } from '~/constants/messages'
-import HTTP_STATUS from '~/constants/httpStatus'
-import { handleFormatDate, updateNestedFieldInCollection, validateFieldMatchById } from '~/utils/utils'
-import { CloudinaryService } from './file.service'
-import { firestore } from 'firebase-admin'
-import usersService from './user.service'
+import { handleFormatDate, updateNestedFieldInCollection } from '~/utils/utils'
+import databaseService from './database.service'
 import dishService from './dish.service'
-import categoryService from './category.service'
+import { CloudinaryService } from './file.service'
 
 class RestaurantService {
   private restaurantCollection = databaseService.restaurants
@@ -59,7 +57,7 @@ class RestaurantService {
       const data = doc.data() as RestaurantType
       let updatedAt = handleFormatDate(data.updatedAt as Date)
       let createdAt = handleFormatDate(data.createdAt as Date)
-      return { id: doc.id, ...doc.data(), updatedAt, createdAt }
+      return { ...doc.data(), updatedAt, createdAt }
     } else {
       console.error(`Error getting restaurant with ID ${id}`)
     }
@@ -184,7 +182,7 @@ class RestaurantService {
     }
 
     const doc = snapshot.docs[0]
-    return { id: doc.id, ...doc.data() }
+    return { ...doc.data(), id: doc.id }
   }
   async deleteRestaurantByUserId(userId: string) {
     const snapshot = await this.restaurantCollection.where('user.id', '==', userId).limit(1).get()

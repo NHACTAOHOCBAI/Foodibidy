@@ -20,6 +20,7 @@ export interface CreateDishReqBody {
   dishName: string
   description: string
   price: number
+  remainingQuantity: number
   dishImage?: UploadedFile
 }
 

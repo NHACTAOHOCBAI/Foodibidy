@@ -1,9 +1,8 @@
+import { UploadedFile } from 'express-fileupload'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { JwtPayload } from 'jsonwebtoken'
 import { TokenTypes, UserRole, UserVerifyStatus } from '~/constants/enums'
 import { AddressType } from '../schemas/address.schema'
-import { JwtPayload } from 'jsonwebtoken'
-import { UploadedFile } from 'express-fileupload'
-import { CreateRestaurantReqBody } from './restaurant.request'
 import { CategoryType } from '../schemas/category.schema'
 
 export interface CreateUserReqBody {
@@ -17,7 +16,6 @@ export interface CreateUserReqBody {
 }
 
 export interface UpdateUserReqBody {
-  role?: UserRole
   fullName?: string
   email?: string
   dateOfBirth?: string

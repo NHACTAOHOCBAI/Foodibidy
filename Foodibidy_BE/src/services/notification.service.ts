@@ -31,7 +31,7 @@ class NotificationService {
       const data = doc.data() as NotificationType
       let updatedAt = handleFormatDate(data.updatedAt as Date)
       let createdAt = handleFormatDate(data.createdAt as Date)
-      return { id: doc.id, ...doc.data(), updatedAt, createdAt }
+      return { ...doc.data(), id: doc.id, updatedAt, createdAt }
     } else {
       console.error(`Error getting notification with ID ${id}`)
     }

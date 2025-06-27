@@ -10,3 +10,16 @@ export const createOrder = async (req: Request<any, any, CreateOrderReqBody>, re
   const result = await orderService.createOrder(req.body)
   return res.json({ message: ORDER_MESSAGES.CREATE_SUCCESS, data: result })
 }
+
+export const getMyOrderDetail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user!.uid
+    const result = await orderService.getMyOrderDetail(userId)
+    return res.json({
+      message: ORDER_MESSAGES.GET_SUCCESS,
+      data: result
+    })
+  } catch (error) {
+    next(error)
+  }
+}

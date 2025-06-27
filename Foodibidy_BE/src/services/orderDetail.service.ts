@@ -23,6 +23,7 @@ class OrderDetailService {
             throw new ErrorWithStatus({ message: DISH_MESSAGES.DISH_NOT_FOUND, status: HTTP_STATUS.BAD_REQUEST })
           const currentQuantity = dishDoc.remainingQuantity as number
           const newQuantity = currentQuantity - item.quantity
+
           if (dishDoc.dishName !== item.dish.dishName)
             throw new ErrorWithStatus({
               message: DISH_MESSAGES.DISH_NOT_FOUND,
@@ -73,7 +74,7 @@ class OrderDetailService {
       const data = doc.data() as OrderDetailType
       let updatedAt = handleFormatDate(data.updatedAt as Date)
       let createdAt = handleFormatDate(data.createdAt as Date)
-      return { id: doc.id, ...doc.data(), updatedAt, createdAt }
+      return { ...doc.data(), id: doc.id, updatedAt, createdAt }
     } else {
       console.error(`Error getting OrderDetail with ID ${id}`)
     }
