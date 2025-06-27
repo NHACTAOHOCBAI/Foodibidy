@@ -17,7 +17,7 @@ const Food = () => {
     const [isNewOpen, setIsNewOpen] = useState(false);
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [updatedFood, setUpdatedFood] = useState<Food>()
-    const [isDetailOpen, setIsDetailOpen] = useState(false)
+    const [isDetailOpen, setIsDetailOpen] = useState(true)
     const [detailFood, setDetailFood] = useState<Food>()
     const [categoryOpt, setCategoryOpt] = useState<{ text: string, value: string }[]>([])
     const columns: TableProps<Food>['columns'] = [

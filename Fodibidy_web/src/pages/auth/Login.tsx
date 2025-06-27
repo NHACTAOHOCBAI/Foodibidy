@@ -18,9 +18,10 @@ const Login = () => {
     const navigate = useNavigate()
     return (
         <div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ width: 500, boxShadow: " 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", padding: 20 }}>
+            <div style={{ width: 500, boxShadow: " 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", padding: 24 }}>
                 <h1 style={{ marginLeft: 50 }}>Welcome to Foodibidy website</h1>
                 <Form
+                    layout='vertical'
                     name="basic"
                     initialValues={{ remember: true }}
                     onFinish={onFinish}
