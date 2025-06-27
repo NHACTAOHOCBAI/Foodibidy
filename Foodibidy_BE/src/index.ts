@@ -13,6 +13,7 @@ import usersRouter from './routes/user.route'
 import user_dishRouter from './routes/user_dish.route'
 import databaseService from './services/database.service'
 import authRouter from '~/routes/auth.route'
+import cookieParser from 'cookie-parser'
 
 const app = express()
 
@@ -24,6 +25,7 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions))
 app.use(express.json())
 app.use(fileUpload())
+app.use(cookieParser())
 
 //routes
 app.use('/api/v1/users', usersRouter)
@@ -66,7 +68,7 @@ const listRoutes = (app: express.Application) => {
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
-  listRoutes(app)
+  // listRoutes(app)
 
   databaseService.connect()
 })
