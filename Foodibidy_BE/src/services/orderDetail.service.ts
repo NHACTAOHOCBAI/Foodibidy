@@ -1,27 +1,68 @@
-import { ErrorWithStatus } from '~/models/errors'
-import databaseService from './database.service'
-import { CreateOrderDetailReqBody, UpdateOrderDetailReqBody } from '~/models/requests/orderDetail.request'
-import OrderDetail, { OrderDetailType } from '~/models/schemas/orderDetail.schema'
-import { ORDER_MESSAGES } from '~/constants/messages'
-import HTTP_STATUS from '~/constants/httpStatus'
-import { handleFormatDate } from '~/utils/utils'
 import { OrderStatus } from '~/constants/enums'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { DISH_MESSAGES, ORDER_MESSAGES, RESTAURANT_MESSAGES } from '~/constants/messages'
+import { ErrorWithStatus } from '~/models/errors'
+import { CreateOrderDetailReqBody, UpdateOrderDetailReqBody } from '~/models/requests/orderDetail.request'
+import { OrderDetailType } from '~/models/schemas/orderDetail.schema'
+import { UserType } from '~/models/schemas/user.schema'
+import { handleFormatDate, validateFieldMatchById } from '~/utils/utils'
+import databaseService from './database.service'
+import restaurantService from './restaurant.service'
+import dishService from './dish.service'
 
 class OrderDetailService {
   private OrderDetailCollection = databaseService.order_details
-
+  private dishCollection = databaseService.dishes
   async createOrderDetail(data: CreateOrderDetailReqBody) {
     try {
-      const newOrderDetail = new OrderDetail({
-        ...data
-      }).toObject()
+      const dishIds = await Promise.all(
+        data.items.map(async (item) => {
+          const dishRef = this.dishCollection.doc(item.dish.id as string)
+          const dishDoc = (await dishRef.get()).data()
+          if (!dishDoc)
+            throw new ErrorWithStatus({ message: DISH_MESSAGES.DISH_NOT_FOUND, status: HTTP_STATUS.BAD_REQUEST })
+          const currentQuantity = dishDoc.remainingQuantity as number
+          const newQuantity = currentQuantity - item.quantity
+          if (dishDoc.dishName !== item.dish.dishName)
+            throw new ErrorWithStatus({
+              message: DISH_MESSAGES.DISH_NOT_FOUND,
+              status: HTTP_STATUS.BAD_REQUEST
+            })
 
+          if (newQuantity < 0)
+            throw new ErrorWithStatus({
+              message: 'Food remaining quantity is not enough, please reduce the number of dishes you ordered.',
+              status: HTTP_STATUS.BAD_REQUEST
+            })
+
+          item.dish.price = dishDoc.price as number
+          await dishRef.update({
+            remainingQuantity: newQuantity
+          })
+
+          return item.dish.id as string
+        })
+      )
+      console.log('user', data.items)
+
+      const newOrderDetail = {
+        ...data,
+
+        dishIds: dishIds
+      }
       const docRef = await this.OrderDetailCollection.add(newOrderDetail)
       console.log('OrderDetail created with ID:', docRef.id)
       return docRef.id
     } catch (error) {
-      console.error('Error creating OrderDetail:', error)
-      throw new Error(`Failed to create OrderDetail: ${error}`)
+      console.log(error)
+      if (error instanceof ErrorWithStatus) {
+        throw error
+      } else {
+        throw new ErrorWithStatus({
+          message: `Unexpected error: ${JSON.stringify(error)}`,
+          status: HTTP_STATUS.INTERNAL_SERVER_ERROR
+        })
+      }
     }
   }
 
@@ -41,6 +82,9 @@ class OrderDetailService {
 
   async updateOrderDetail(id: string, data: Partial<UpdateOrderDetailReqBody>) {
     const doc = await this.OrderDetailCollection.doc(id).get()
+    if (doc.exists && doc.data()?.status === OrderStatus.CANCELLED)
+      throw new ErrorWithStatus({ message: 'Can not update an cancel order', status: HTTP_STATUS.BAD_REQUEST })
+
     const updatedOrderDetail = {
       ...data,
       updatedAt: new Date()

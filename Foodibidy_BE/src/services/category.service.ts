@@ -13,9 +13,13 @@ import { CloudinaryService } from './file.service'
 import dishService from './dish.service'
 import { da } from 'date-fns/locale'
 import { database } from 'firebase-admin'
+import { RestaurantType } from '~/models/schemas/restaurant.schema'
+import { update } from 'lodash'
 
 class CategoryService {
   private categoryCollection = databaseService.categories
+  private dishCollection = databaseService.dishes
+  private restaurantCollection = databaseService.restaurants
 
   async createCategory(categoryData: CreateCategoryReqBody) {
     const { cateImage, ...resDishBody } = categoryData
@@ -120,20 +124,95 @@ class CategoryService {
     if (cateImage) {
       urlImage = await CloudinaryService.uploadImage(cateImage, 'category')
     }
+    //update dish
+    if (updateData.name) {
+      const dishesSnapshot = await this.dishCollection.where('category.id', '==', categoryId).get()
+      for (const doc of dishesSnapshot.docs) {
+        await this.dishCollection.doc(doc.id).update({
+          'category.name': updateData.name
+        })
+      }
+
+      //update res
+      const restaurantsSnapshot = await this.restaurantCollection.where('cateIds', 'array-contains', categoryId).get()
+      for (const doc of restaurantsSnapshot.docs) {
+        const data2 = doc.data()
+        const updatedItems = data2.category.map((item: any) => {
+          if (item.id === categoryId) {
+            return {
+              ...item,
+              name: updateData.name
+            }
+          }
+          return item
+        })
+
+        await this.restaurantCollection.doc(doc.id).update({
+          category: updatedItems
+        })
+      }
+    }
 
     await this.categoryCollection.doc(categoryId).update({
       ...resDishBody,
       image: urlImage,
       updatedAt: new Date()
     })
+    // <<<<<<< HEAD
+    // =======
+    //     // update category trong restaurant_category
+    //     const snapshot = await databaseService.restaurant_category.where('categoryId', '==', categoryId).get()
+    //     snapshot.forEach(async (doc) => {
+    //       const data = doc.data()
+
+    //       await databaseService.restaurant_category.doc(doc.id).update({
+    //         ...data,
+    // >>>>>>> aa4e0ff4aa95dfda8d589f382e478b13d8c64518
+
+    // update category trong dishes
+    const dishSnapshot = await databaseService.dishes.where('category.id', '==', categoryId).get()
+
+    dishSnapshot.forEach(async (doc) => {
+      const data = doc.data()
+      data.category.name = resDishBody.name || data.category.name
+      await databaseService.dishes.doc(doc.id).update({
+        ...data,
+        updatedAt: new Date()
+      })
+    })
+    // update category trong restaurant
+    const restaurantSnapshot = await databaseService.restaurants.get()
+    for (const doc of restaurantSnapshot.docs) {
+      const data = doc.data() as RestaurantType
+      let isUpdated = false
+
+      const updatedCategories = data.category.map((cat) => {
+        if (cat.id === categoryId) {
+          isUpdated = true
+          return {
+            ...cat,
+            name: resDishBody.name || cat.name
+          }
+        }
+        return cat
+      })
+
+      if (isUpdated) {
+        await databaseService.restaurants.doc(doc.id).update({
+          category: updatedCategories,
+          updatedAt: new Date()
+        })
+      }
+    }
   }
 
   async deleteCategory(categoryId: string) {
+    // delete category trong dishes
     const dishesSnapshot = await databaseService.dishes.where('category.id', '==', categoryId).get()
     for (const doc of dishesSnapshot.docs) {
       await dishService.deleteDish(doc.id)
     }
-
+    // delete category trong restaurant
     const restaurantSnapshot = await databaseService.restaurant_category.where('categoryId', '==', categoryId).get()
     for (const doc of restaurantSnapshot.docs) {
       await restaurant_categoryService.deleteRestaurant_Category(doc.id)

@@ -6,26 +6,24 @@ import { CreateUserReqBody, UpdateUserReqBody } from '~/models/requests/user.req
 import Address from '~/models/schemas/address.schema'
 import User, { UserType } from '~/models/schemas/user.schema'
 import { hashPassword } from '~/utils/hashPassword'
-import { handleFormatDate } from '~/utils/utils'
+import { handleFormatDate, updateNestedFieldInCollection } from '~/utils/utils'
 import cartService from './cart.service'
 import databaseService from './database.service'
 import { CloudinaryService } from './file.service'
 import { UserRole } from '~/constants/enums'
 import restaurantService from './restaurant.service'
+import { id } from 'date-fns/locale'
 
 class UsersService {
-  // dateOfBirth: new Date(userData.dateOfBirth)
-
-  // Khởi tạo collection người dùng và giỏ hàng từ databaseService
   private userCollection = databaseService.users
   private cartCollection = databaseService.carts
-  private restaurant_categoryCollection = databaseService.restaurant_category
+  private restaurantCollection = databaseService.restaurants
+  private order_detailCollection = databaseService.order_details
 
   async createUser(userData: CreateUserReqBody) {
     try {
-      console.log(this.checkEmailExists(userData.email))
       if ((await this.checkEmailExists(userData.email)) === true) {
-        const { avatar, password, email, ...userDataWithoutAddress } = userData
+        const { avatar, password, email, address, ...userDataWithoutAddress } = userData
 
         let urlImage = ''
         if (avatar) {
@@ -44,82 +42,37 @@ class UsersService {
         const newUser = new User({
           ...userDataWithoutAddress,
           id: firebaseUser.uid,
-
           email: email,
-
           avatar: urlImage,
-          passwordHash: hashPassword(password) // Băm password để lưu Firestore (optional nếu bạn vẫn muốn lưu)
-          // dateOfBirth: new Date(userData.dateOfBirth)
+          role: userData.role || UserRole.CUSTOMER,
+          passwordHash: hashPassword(password)
         }).toObject()
 
         await this.userCollection.doc(firebaseUser.uid).set(newUser)
 
-        // Thêm danh sách địa chỉ cho user
-        // for (const data of address) {
-        //   const newAddress = new Address({ ...data, userId: firebaseUser.uid }).toObject()
-        //   await this.userCollection.doc(firebaseUser.uid).collection('addresses').add(newAddress)
-        // }
+        // Create addresses collection and add addresses if provided
+        const addressCollection = this.userCollection.doc(firebaseUser.uid).collection('addresses')
 
-        // Tạo cart cho user
-        const cart = await cartService.createCart({ userId: firebaseUser.uid })
+        if (address && address.length > 0) {
+          const batch = firestore().batch()
 
-        // Cập nhật lại cartId cho user
-        await this.userCollection.doc(firebaseUser.uid).update({ cartId: cart })
-        console.log('User created with ID:', firebaseUser.uid)
-        return firebaseUser.uid
-      } else throw new Error(`Email already exist`)
-    } catch (error) {
-      console.error('Error creating user:', error)
-      throw error // Ném lỗi để controller xử lý
-    }
-  }
+          for (const addressData of address) {
+            const newAddressRef = addressCollection.doc()
+            const newAddress = new Address({
+              ...addressData,
+              userId: firebaseUser.uid
+            }).toObject()
+            batch.set(newAddressRef, newAddress)
+          }
 
-  async createRestaurantOwner(userData: CreateUserReqBody) {
-    try {
-      // Kiểm tra email đã tồn tại chưa
-      console.log(this.checkEmailExists(userData.email))
-      if ((await this.checkEmailExists(userData.email)) === true) {
-        const { avatar, password, email, ...userDataWithoutAddress } = userData
-
-        let urlImage = ''
-        // Nếu có avatar thì upload lên cloudinary
-        if (avatar) {
-          urlImage = await CloudinaryService.uploadImage(avatar, 'avatar')
+          await batch.commit()
+          console.log(`Added ${address.length} addresses for user ${firebaseUser.uid}`)
         }
 
-        // Tạo user trên Firebase Authentication trước
-        const firebaseUser = await auth().createUser({
-          email: email,
-          password: password,
-          displayName: userData.fullName,
-          photoURL: urlImage || undefined
-        })
-
-        console.log('Firebase Auth user created with UID:', firebaseUser.uid)
-
-        // Tạo user mới với dữ liệu nhập vào lưu vào Firestore
-        const newUser = new User({
-          ...userDataWithoutAddress,
-          id: firebaseUser.uid,
-          role: UserRole.RESTAURANT,
-          email: email,
-          // firebaseUID: firebaseUser.uid, // lưu thêm UID Firebase để mapping sau này
-          avatar: urlImage,
-          passwordHash: hashPassword(password) // Băm password để lưu Firestore (optional nếu bạn vẫn muốn lưu)
-          // dateOfBirth: new Date(userData.dateOfBirth)
-        }).toObject()
-
-        // Thêm user vào Firestore
-        const docRef = await this.userCollection.doc(firebaseUser.uid).set(newUser)
-
-        // Thêm danh sách địa chỉ cho user
-        // for (const data of address) {
-        //   const newAddress = new Address({ ...data, userId: firebaseUser.uid }).toObject()
-        //   await this.userCollection.doc(firebaseUser.uid).collection('addresses').add(newAddress)
-        // }
-
+        // Create cart for user
         const cart = await cartService.createCart({ userId: firebaseUser.uid })
 
+        // Update user with cartId
         await this.userCollection.doc(firebaseUser.uid).update({ cartId: cart })
         console.log('User created with ID:', firebaseUser.uid)
         return firebaseUser.uid
@@ -129,6 +82,62 @@ class UsersService {
       throw error
     }
   }
+
+  // async createRestaurantOwner(userData: CreateUserReqBody) {
+  //   try {
+  //     // Kiểm tra email đã tồn tại chưa
+  //     console.log(this.checkEmailExists(userData.email))
+  //     if ((await this.checkEmailExists(userData.email)) === true) {
+  //       const { avatar, password, email, ...userDataWithoutAddress } = userData
+
+  //       let urlImage = ''
+  //       // Nếu có avatar thì upload lên cloudinary
+  //       if (avatar) {
+  //         urlImage = await CloudinaryService.uploadImage(avatar, 'avatar')
+  //       }
+
+  //       // Tạo user trên Firebase Authentication trước
+  //       const firebaseUser = await auth().createUser({
+  //         email: email,
+  //         password: password,
+  //         displayName: userData.fullName,
+  //         photoURL: urlImage || undefined
+  //       })
+
+  //       console.log('Firebase Auth user created with UID:', firebaseUser.uid)
+
+  //       // Tạo user mới với dữ liệu nhập vào lưu vào Firestore
+  //       const newUser = new User({
+  //         ...userDataWithoutAddress,
+  //         id: firebaseUser.uid,
+  //         role: UserRole.RESTAURANT,
+  //         email: email,
+  //         // firebaseUID: firebaseUser.uid, // lưu thêm UID Firebase để mapping sau này
+  //         avatar: urlImage,
+  //         passwordHash: hashPassword(password) // Băm password để lưu Firestore (optional nếu bạn vẫn muốn lưu)
+  //         // dateOfBirth: new Date(userData.dateOfBirth)
+  //       }).toObject()
+
+  //       // Thêm user vào Firestore
+  //       const docRef = await this.userCollection.doc(firebaseUser.uid).set(newUser)
+
+  //       // Thêm danh sách địa chỉ cho user
+  //       // for (const data of address) {
+  //       //   const newAddress = new Address({ ...data, userId: firebaseUser.uid }).toObject()
+  //       //   await this.userCollection.doc(firebaseUser.uid).collection('addresses').add(newAddress)
+  //       // }
+
+  //       const cart = await cartService.createCart({ userId: firebaseUser.uid })
+
+  //       await this.userCollection.doc(firebaseUser.uid).update({ cartId: cart })
+  //       console.log('User created with ID:', firebaseUser.uid)
+  //       return firebaseUser.uid
+  //     } else throw new Error(`Email already exist`)
+  //   } catch (error) {
+  //     console.error('Error creating user:', error)
+  //     throw error
+  //   }
+  // }
 
   async getAllUsers(): Promise<UserType[]> {
     try {
@@ -201,8 +210,10 @@ class UsersService {
         throw new ErrorWithStatus({ message: USER_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
       }
 
-      if (updateData.email)
-        if ((await this.checkEmailExists(updateData.email)) === false) throw new Error(`Email already exist`)
+      // Fix email check logic - should be true if email exists
+      if (updateData.email && !(await this.checkEmailExists(updateData.email))) {
+        throw new Error(`Email already exist`)
+      }
 
       const { avatar, address, ...updatedDataReq } = updateData
 
@@ -214,39 +225,82 @@ class UsersService {
       const batch = firestore().batch()
       const addressCollection = docRef.collection('addresses')
 
-      const existingAddressesSnapshot = await addressCollection.get()
-      const existingAddressIds = existingAddressesSnapshot.docs.map((doc) => doc.id)
+      // Handle addresses update
+      if (address && address.length > 0) {
+        // Delete all existing addresses first
+        const existingAddresses = await addressCollection.get()
+        existingAddresses.forEach((doc) => {
+          batch.delete(doc.ref)
+        })
 
-      const newAddresses = address ?? []
-      const newAddressIds = newAddresses.filter((addr) => addr.id).map((addr) => addr.id)
-
-      const deletedAddressIds = existingAddressIds.filter((id) => !newAddressIds.includes(id))
-
-      for (const id of deletedAddressIds) {
-        await addressCollection.doc(id).delete()
+        // Add new addresses
+        address.forEach((addressData) => {
+          const newAddressRef = addressCollection.doc()
+          const newAddress = new Address({
+            ...addressData,
+            userId
+          }).toObject()
+          batch.set(newAddressRef, newAddress)
+        })
       }
 
-      for (const address of newAddresses) {
-        if (address.id) {
-          const addressRef = addressCollection.doc(address.id)
-          batch.set(addressRef, address, { merge: true })
-        } else {
-          await addressCollection.add(address)
-        }
+      // Update user in other collections if name or phone changes
+      if (updateData.fullName) {
+        await updateNestedFieldInCollection({
+          collection: this.order_detailCollection,
+          matchField: 'user.id',
+          matchValue: userId, // Fix: use userId instead of id
+          nestedFieldPath: 'user.fullName',
+          updatedValue: updateData.fullName
+        })
+
+        await updateNestedFieldInCollection({
+          collection: this.restaurantCollection,
+          matchField: 'user.id',
+          matchValue: userId, // Fix: use userId instead of id
+          nestedFieldPath: 'user.fullName',
+          updatedValue: updateData.fullName
+        })
+      }
+
+      if (updateData.phoneNumber) {
+        await updateNestedFieldInCollection({
+          collection: this.order_detailCollection,
+          matchField: 'user.id',
+          matchValue: userId, // Fix: use userId instead of id
+          nestedFieldPath: 'user.phoneNumber',
+          updatedValue: updateData.phoneNumber
+        })
+
+        await updateNestedFieldInCollection({
+          collection: this.restaurantCollection,
+          matchField: 'user.id',
+          matchValue: userId, // Fix: use userId instead of id
+          nestedFieldPath: 'user.phoneNumber',
+          updatedValue: updateData.phoneNumber
+        })
       }
 
       const updatedUser = {
         ...updatedDataReq,
-        avatar: urlImage,
+        ...(urlImage && { avatar: urlImage }), // Only update avatar if new image uploaded
         updatedAt: new Date()
       }
 
+      // Commit batch operations first
       await batch.commit()
+
+      // Then update user document
       await docRef.update(updatedUser)
 
-      console.log(`Update user success with ID ${doc.id}`)
+      console.log(`Update user success with ID ${userId}`)
+      return true
     } catch (error) {
-      throw new ErrorWithStatus({ message: USER_MESSAGES.UPDATE_FAIL, status: HTTP_STATUS.BAD_REQUEST })
+      console.error('Error updating user:', error)
+      throw new ErrorWithStatus({
+        message: USER_MESSAGES.UPDATE_FAIL,
+        status: HTTP_STATUS.BAD_REQUEST
+      })
     }
   }
 
@@ -260,17 +314,24 @@ class UsersService {
 
       const userData = userDoc.data()
 
-      // Nếu user có cart thì xóa luôn cart
-      if (userData?.cartId) {
-        await this.cartCollection.doc(userData.cartId).delete()
-        console.log(`Cart with ID ${userData.cartId} deleted successfully`)
-      }
-
       //xoa restaurant
       if (userData?.role === UserRole.RESTAURANT) {
         const restaurantId = await restaurantService.deleteRestaurantByUserId(userId)
         console.log(restaurantId)
       }
+      // xoa orderdetail khỏi collection
+      const orderDetailSnapshot = await databaseService.order_details.where('user.id', '==', userId).get()
+      const batch = firestore().batch()
+      orderDetailSnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      //  xoa  user_dish khỏi collection
+      const userDishSnapshot = await databaseService.user_dish.where('user.id', '==', userId).get()
+      userDishSnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      await batch.commit()
+      console.log(`Order with user ID ${userId} deleted successfully`)
 
       // Xóa user khỏi collection
       await this.userCollection.doc(userId).delete()

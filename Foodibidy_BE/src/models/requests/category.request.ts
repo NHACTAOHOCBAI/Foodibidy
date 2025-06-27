@@ -12,7 +12,7 @@ export interface PaginationQuery {
 }
 
 export interface CreateCategoryReqBody {
-  name: string
+  name?: string
   description?: string
   purchase?: number
   cateImage?: UploadedFile

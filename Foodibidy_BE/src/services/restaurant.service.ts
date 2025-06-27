@@ -2,17 +2,22 @@ import { ErrorWithStatus } from '~/models/errors'
 import databaseService from './database.service'
 import { CreateRestaurantReqBody, UpdateRestaurantReqBody } from '~/models/requests/restaurant.request'
 import Restaurant, { RestaurantType } from '~/models/schemas/restaurant.schema'
-import { RESTAURANT_MESSAGES } from '~/constants/messages'
+import { CATEGORY_MESSAGES, RESTAURANT_MESSAGES, USER_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { handleFormatDate } from '~/utils/utils'
+import { handleFormatDate, updateNestedFieldInCollection, validateFieldMatchById } from '~/utils/utils'
 import { CloudinaryService } from './file.service'
 import { firestore } from 'firebase-admin'
 import usersService from './user.service'
+import dishService from './dish.service'
+import categoryService from './category.service'
 
 class RestaurantService {
   private restaurantCollection = databaseService.restaurants
   private restaurant_categoryCollection = databaseService.restaurant_category
-
+  private dishCollection = databaseService.dishes
+  private order_detailCollection = databaseService.order_details
+  private userCollection = databaseService.users
+  private cartCollection = databaseService.carts
   async createRestaurant(data: CreateRestaurantReqBody) {
     try {
       const { restaurantImage, ...resRestaurant } = data
@@ -21,9 +26,12 @@ class RestaurantService {
         urlImage = await CloudinaryService.uploadImage(restaurantImage, 'restaurant')
       }
 
+      const cateIds = data.category.map((cate) => cate.id).filter((id): id is string => !!id)
+
       const newRestaurant = new Restaurant({
         ...resRestaurant,
         restaurantImage: urlImage,
+        cateIds,
         createdAt: new Date()
       }).toObject()
 
@@ -31,9 +39,7 @@ class RestaurantService {
       for (const cate of data.category) {
         await this.restaurant_categoryCollection.add({
           restaurantId: docRef.id,
-          restaurantName: data.restaurantName,
-          categoryId: cate.id as string,
-          categoryName: cate.name
+          categoryId: cate.id as string
         })
       }
 
@@ -97,25 +103,28 @@ class RestaurantService {
       updatedAt: new Date()
     }
 
+    if (data.restaurantName) {
+      // update dish
+      await updateNestedFieldInCollection({
+        collection: this.dishCollection,
+        matchField: 'restaurant.id',
+        matchValue: id,
+        nestedFieldPath: 'restaurant.restaurantName',
+        updatedValue: data.restaurantName
+      })
+
+      // update order_detail
+      await updateNestedFieldInCollection({
+        collection: this.order_detailCollection,
+        matchField: 'restaurant.id',
+        matchValue: id,
+        nestedFieldPath: 'restaurant.restaurantName',
+        updatedValue: data.restaurantName
+      })
+    }
     try {
       await this.restaurantCollection.doc(id).update(updatedRestaurant)
 
-      //xoa bang trung gian
-      const categorySnapshot = await this.restaurant_categoryCollection.where('restaurantId', '==', id).get()
-      const batch = firestore().batch()
-      categorySnapshot.forEach((doc) => {
-        batch.delete(doc.ref)
-      })
-      await batch.commit()
-
-      for (const cate of data.category) {
-        await this.restaurant_categoryCollection.add({
-          restaurantId: id,
-          restaurantName: data.restaurantName as string,
-          categoryId: cate.id as string,
-          categoryName: cate.name
-        })
-      }
       console.log(`Update restaurant success with ID ${doc.id}`)
     } catch {
       throw new ErrorWithStatus({ message: RESTAURANT_MESSAGES.UPDATE_FAIL, status: HTTP_STATUS.BAD_REQUEST })
@@ -128,8 +137,30 @@ class RestaurantService {
       await this.restaurantCollection.doc(id).delete()
 
       //xoa user
-      await usersService.deleteUser(doc.data()?.user.id as string)
+      const userDoc = await this.userCollection.doc(doc.data()?.user.id as string).get()
 
+      if (!userDoc.exists) {
+        throw new ErrorWithStatus({ message: USER_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+      }
+
+      const userData = userDoc.data()
+
+      // Nếu user có cart thì xóa luôn cart
+      if (userData?.cartId) {
+        await this.cartCollection.doc(userData.cartId).delete()
+        console.log(`Cart with ID ${userData.cartId} deleted successfully`)
+      }
+
+      //  delete restaurant trong dishes
+      const dishesSnapshot = await databaseService.dishes.where('restaurant.id', '==', id).get()
+      for (const doc of dishesSnapshot.docs) {
+        await dishService.deleteDish(doc.id)
+      }
+      // delete restaurant trong order_detail
+      const order_detailsSnapshot = await databaseService.order_details.where('restaurant.id', '==', id).get()
+      for (const doc of order_detailsSnapshot.docs) {
+        await databaseService.order_details.doc(doc.id).delete()
+      }
       //xoa bang trung gian
       const categorySnapshot = await this.restaurant_categoryCollection.where('restaurantId', '==', id).get()
       const batch = firestore().batch()
@@ -159,6 +190,22 @@ class RestaurantService {
     const snapshot = await this.restaurantCollection.where('user.id', '==', userId).limit(1).get()
 
     const doc = snapshot.docs[0]
+    //  delete restaurant trong dishes
+    const dishesSnapshot = await databaseService.dishes.where('restaurant.id', '==', doc.id).get()
+    for (const doc of dishesSnapshot.docs) {
+      await dishService.deleteDish(doc.id)
+    }
+    // delete restaurant trong order_detail
+    const order_detailsSnapshot = await databaseService.order_details.where('restaurant.id', '==', doc.id).get()
+    for (const doc of order_detailsSnapshot.docs) {
+      await databaseService.order_details.doc(doc.id).delete()
+    }
+    //xoa bang trung gian
+    const categorySnapshot = await this.restaurant_categoryCollection.where('restaurantId', '==', doc.id).get()
+    const batch = firestore().batch()
+    categorySnapshot.forEach((doc) => {
+      batch.delete(doc.ref)
+    })
     await this.deleteRestaurant(doc.id)
 
     console.log(`Deleted restaurant of userId ${userId} with docId ${doc.id}`)

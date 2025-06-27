@@ -9,6 +9,7 @@ import {
   getOrderDetailByResId,
   updateOrderDetail
 } from '~/controllers/orderDetail.controller'
+import { authenticateFirebase } from '~/middlewares/auth.middlewares'
 
 const ordersRouter = Router()
 
@@ -31,34 +32,34 @@ ordersRouter.get('/', wrapRequestHandler(getAllOrderDetails))
  * Path: /orders/history/:orderId
  * Method: GET
  */
-ordersRouter.get('/history/:orderId', wrapRequestHandler(getMyHistoryOrders))
+ordersRouter.get('/history/:orderId', authenticateFirebase, wrapRequestHandler(getMyHistoryOrders))
 
 /**
  * Get all user ongoing order
  * Path: /orders/onGoing/:orderId
  * Method: GET
  */
-ordersRouter.get('/onGoing/:orderId', wrapRequestHandler(getMyOngoingOrders))
+ordersRouter.get('/onGoing/:orderId', authenticateFirebase, wrapRequestHandler(getMyOngoingOrders))
 
 /**
  * Get all restaurant order
  * Path: /orders/restaurant/:orderId
  * Method: GET
  */
-ordersRouter.get('/restaurant/:orderId', wrapRequestHandler(getOrderDetailByResId))
+ordersRouter.get('/restaurant/:orderId', authenticateFirebase, wrapRequestHandler(getOrderDetailByResId))
 
 /**
  * Update an order by ID
  * Path: /orders/:orderId
  * Method: PUT
  */
-ordersRouter.put('/:orderId', wrapRequestHandler(updateOrderDetail))
+ordersRouter.put('/:orderId', authenticateFirebase, wrapRequestHandler(updateOrderDetail))
 
 /**
  * Delete an order by ID
  * Path: /orders/:orderId
  * Method: DELETE
  */
-ordersRouter.delete('/:orderId', wrapRequestHandler(deleteOrderDetail))
+ordersRouter.delete('/:orderId', authenticateFirebase, wrapRequestHandler(deleteOrderDetail))
 
 export default ordersRouter

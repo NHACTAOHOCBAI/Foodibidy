@@ -31,7 +31,6 @@ app.use('/api/v1/categories', categoriesRouter)
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/restaurants', restaurantsRouter)
 app.use('/api/v1/userDish', user_dishRouter)
-// app.use('/api/v1/addresses', addressesRouter)
 app.use('/api/v1/carts', cartsRouter)
 app.use('/api/v1/orders', ordersRouter)
 app.use('/api/v1/dishes', dishesRouter)
@@ -43,7 +42,31 @@ app.use('/api/v1/auth', authRouter)
 //handle loi
 app.use(defaultErrorHandler)
 
+//
+const listRoutes = (app: express.Application) => {
+  console.log('>>>>>All registered routes:')
+  app._router.stack.forEach((middleware: any) => {
+    if (middleware.route) {
+      // Route middleware
+      const route = middleware.route
+      const method = Object.keys(route.methods)[0].toUpperCase()
+      console.log(`${method} ${route.path}`)
+    } else if (middleware.name === 'router') {
+      // Router middleware (for routes in separate files)
+      middleware.handle.stack.forEach((handler: any) => {
+        const route = handler.route
+        if (route) {
+          const method = Object.keys(route.methods)[0].toUpperCase()
+          console.log(`${method} ${middleware.regexp} → ${route.path}`)
+        }
+      })
+    }
+  })
+}
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
+  listRoutes(app)
+
   databaseService.connect()
 })
