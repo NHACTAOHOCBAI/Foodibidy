@@ -20,21 +20,24 @@ const dishesRouter = Router()
  * Method: POST
  * Body : { email: string, password: string , confirmPassword:string, dateOfBirth:string }
  */
-dishesRouter.post('/', wrapRequestHandler(createDish))
+dishesRouter.post('/', authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT]), wrapRequestHandler(createDish))
 
 /**
  * Description. Get all dishes have categoryId
  * Path: /dishes/category/:categoryId
  * Method: GET
  */
-dishesRouter.get('/category/:categoryId', wrapRequestHandler(getDishesByCategoryId))
+dishesRouter.get('/category/:categoryId', authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT, UserRole.CUSTOMER]), wrapRequestHandler(getDishesByCategoryId))
 
 /**
  * Description. Get all dishes have restaurantId
  * Path: /dishes/restaurant/:restaurantId
  * Method: GET
  */
-dishesRouter.get('/restaurant/:restaurantId', wrapRequestHandler(getDishesByRestaurantId))
+dishesRouter.get('/restaurant/:restaurantId', authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT, UserRole.CUSTOMER]), wrapRequestHandler(getDishesByRestaurantId))
 
 /**
  * Description. Get all dishes have restaurantId
@@ -53,14 +56,16 @@ dishesRouter.get(
  * Path: /dishes/:dishId
  * Method: GET
  */
-dishesRouter.get('/:dishId', wrapRequestHandler(getDish))
+dishesRouter.get('/:dishId', authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT, UserRole.CUSTOMER]), wrapRequestHandler(getDish))
 
 /**
  * Description. Get all dishes
  * Path: /dishes
  * Method: GET
  */
-dishesRouter.get('/', wrapRequestHandler(getAllDishes))
+dishesRouter.get('/', authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT, UserRole.CUSTOMER]), wrapRequestHandler(getAllDishes))
 
 /**
  * Description. Update a dish
@@ -68,12 +73,14 @@ dishesRouter.get('/', wrapRequestHandler(getAllDishes))
  * Method: PUT
  * Body : {roleId?: dishRole email?: string, name?: string, phoneNumber?: string, dateOfBirth?: string, avatar?: string }
  */
-dishesRouter.put('/:dishId', wrapRequestHandler(updateDish))
+dishesRouter.put('/:dishId', authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT]), wrapRequestHandler(updateDish))
 
 /**
  * Description. Delete a dish
  * Path: /dishes/:dishId
  * Method: Delete
  */
-dishesRouter.delete('/:dishId', wrapRequestHandler(deleteDish))
+dishesRouter.delete('/:dishId', authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT]), wrapRequestHandler(deleteDish))
 export default dishesRouter

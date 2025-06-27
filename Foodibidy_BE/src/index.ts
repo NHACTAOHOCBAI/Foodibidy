@@ -13,6 +13,7 @@ import usersRouter from './routes/user.route'
 import user_dishRouter from './routes/user_dish.route'
 import databaseService from './services/database.service'
 import authRouter from '~/routes/auth.route'
+import cookieParser from 'cookie-parser'
 
 const app = express()
 
@@ -24,6 +25,7 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions))
 app.use(express.json())
 app.use(fileUpload())
+app.use(cookieParser())
 
 //routes
 app.use('/api/v1/users', usersRouter)
@@ -42,7 +44,31 @@ app.use('/api/v1/auth', authRouter)
 //handle loi
 app.use(defaultErrorHandler)
 
+//
+const listRoutes = (app: express.Application) => {
+  console.log('>>>>>All registered routes:')
+  app._router.stack.forEach((middleware: any) => {
+    if (middleware.route) {
+      // Route middleware
+      const route = middleware.route
+      const method = Object.keys(route.methods)[0].toUpperCase()
+      console.log(`${method} ${route.path}`)
+    } else if (middleware.name === 'router') {
+      // Router middleware (for routes in separate files)
+      middleware.handle.stack.forEach((handler: any) => {
+        const route = handler.route
+        if (route) {
+          const method = Object.keys(route.methods)[0].toUpperCase()
+          console.log(`${method} ${middleware.regexp} → ${route.path}`)
+        }
+      })
+    }
+  })
+}
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
+  // listRoutes(app)
+
   databaseService.connect()
 })

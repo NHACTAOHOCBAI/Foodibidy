@@ -13,7 +13,72 @@ import usersService from '~/services/user.service'
 import { CreateRestaurantReqBody } from '~/models/requests/restaurant.request'
 import restaurantService from '~/services/restaurant.service'
 import { UploadedFile } from 'express-fileupload'
+import console from 'console'
+import axios from 'axios'
 import { RestaurantType } from '~/models/schemas/restaurant.schema'
+const FIREBASE_API_KEY = 'AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ'
+
+export const loginUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body
+  try {
+    const { data } = await axios.post(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
+      {
+        email,
+        password,
+        returnSecureToken: true
+      }
+    )
+
+    // Trả về idToken và lưu refreshToken vào cookie
+    res
+      .cookie('refreshToken', data.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 ngày
+      })
+      .status(200)
+      .json({
+        idToken: data.idToken,
+        expiresIn: data.expiresIn,
+        uid: data.localId
+      })
+  } catch (err) {
+    return res.status(401).json({ message: 'Đăng nhập thất bại' })
+  }
+}
+
+export const refreshToken = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: 'Không có refresh token' })
+  }
+
+  try {
+    const { data } = await axios.post(
+      `https://securetoken.googleapis.com/v1/token?key=${FIREBASE_API_KEY}`,
+      new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+    )
+
+    res.status(200).json({
+      idToken: data.id_token,
+      expiresIn: data.expires_in,
+      uid: data.user_id
+    })
+  } catch (error) {
+    res.status(401).json({ message: 'Refresh token không hợp lệ' })
+  }
+}
 
 // Controller: Đăng ký người dùng
 export const registerUser = async (req: Request, res: Response) => {
