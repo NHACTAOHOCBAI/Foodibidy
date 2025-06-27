@@ -191,6 +191,22 @@ class RestaurantService {
     const snapshot = await this.restaurantCollection.where('user.id', '==', userId).limit(1).get()
 
     const doc = snapshot.docs[0]
+    //  delete restaurant trong dishes
+    const dishesSnapshot = await databaseService.dishes.where('restaurant.id', '==', doc.id).get()
+    for (const doc of dishesSnapshot.docs) {
+      await dishService.deleteDish(doc.id)
+    }
+    // delete restaurant trong order_detail
+    const order_detailsSnapshot = await databaseService.order_details.where('restaurant.id', '==', doc.id).get()
+    for (const doc of order_detailsSnapshot.docs) {
+      await databaseService.order_details.doc(doc.id).delete()
+    }
+    //xoa bang trung gian
+    const categorySnapshot = await this.restaurant_categoryCollection.where('restaurantId', '==', doc.id).get()
+    const batch = firestore().batch()
+    categorySnapshot.forEach((doc) => {
+      batch.delete(doc.ref)
+    })
     await this.deleteRestaurant(doc.id)
 
     console.log(`Deleted restaurant of userId ${userId} with docId ${doc.id}`)

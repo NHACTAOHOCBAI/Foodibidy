@@ -29,7 +29,8 @@ restaurantsRouter.post('/',
  * Path: /restaurants
  * Method: GET
  */
-restaurantsRouter.get('/',
+restaurantsRouter.get('/', authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT, UserRole.CUSTOMER]),
   wrapRequestHandler(getAllRestaurants)
 )
 
@@ -38,7 +39,8 @@ restaurantsRouter.get('/',
  * Path: /restaurants/:restaurantId
  * Method: GET
  */
-restaurantsRouter.get('/:restaurantId',
+restaurantsRouter.get('/:restaurantId', authenticateFirebase,
+  authorizeRole([UserRole.ADMIN, UserRole.RESTAURANT, UserRole.CUSTOMER]),
   wrapRequestHandler(getRestaurant)
 )
 

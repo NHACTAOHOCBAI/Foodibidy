@@ -158,17 +158,7 @@ class CategoryService {
       image: urlImage,
       updatedAt: new Date()
     })
-    // update category trong restaurant_category
-    const snapshot = await databaseService.restaurant_category.where('categoryId', '==', categoryId).get()
-    snapshot.forEach(async (doc) => {
-      const data = doc.data()
-      data.categoryName = resDishBody.name || data.categoryName
-      await databaseService.restaurant_category.doc(doc.id).update({
-        ...data,
 
-        updatedAt: new Date()
-      })
-    })
     // update category trong dishes
     const dishSnapshot = await databaseService.dishes.where('category.id', '==', categoryId).get()
 
