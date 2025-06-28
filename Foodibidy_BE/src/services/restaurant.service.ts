@@ -24,22 +24,15 @@ class RestaurantService {
         urlImage = await CloudinaryService.uploadImage(restaurantImage, 'restaurant')
       }
 
-      const cateIds = data.category.map((cate) => cate.id).filter((id): id is string => !!id)
-
       const newRestaurant = new Restaurant({
         ...resRestaurant,
         restaurantImage: urlImage,
-        cateIds,
+        cateIds: [],
+        category: [],
         createdAt: new Date()
       }).toObject()
 
       const docRef = await this.restaurantCollection.add(newRestaurant)
-      for (const cate of data.category) {
-        await this.restaurant_categoryCollection.add({
-          restaurantId: docRef.id,
-          categoryId: cate.id as string
-        })
-      }
 
       console.log('Restaurant created with ID:', docRef.id)
       return docRef.id

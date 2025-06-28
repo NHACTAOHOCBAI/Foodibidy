@@ -63,7 +63,6 @@ export interface restaurantInfo {
   restaurantName: string
   address: string
   phoneNumber: string
-  category: Pick<CategoryType, 'id' | 'name'>[]
   bio: string
 }
 

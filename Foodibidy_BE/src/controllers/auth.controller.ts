@@ -16,6 +16,7 @@ import { UploadedFile } from 'express-fileupload'
 import console from 'console'
 import axios from 'axios'
 import { RestaurantType } from '~/models/schemas/restaurant.schema'
+import { ro } from 'date-fns/locale'
 const FIREBASE_API_KEY = 'AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ'
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -30,6 +31,13 @@ export const loginUser = async (req: Request, res: Response) => {
       }
     )
 
+    // lấy thông tin user từ uid
+    const userDoc = await databaseService.users.doc(data.localId).get()
+    const userData = userDoc.data()
+    if (!userData) {
+      return res.status(401).json({ message: 'User not found' })
+    }
+
     // Trả về idToken và lưu refreshToken vào cookie
     res
       .cookie('refreshToken', data.refreshToken, {
@@ -42,7 +50,12 @@ export const loginUser = async (req: Request, res: Response) => {
       .json({
         idToken: data.idToken,
         expiresIn: data.expiresIn,
-        uid: data.localId
+        uid: data.localId,
+        email: userData.email,
+        role: userData.role,
+        fullName: userData.fullName,
+        avatar: userData.avatar,
+        phoneNumber: userData.phoneNumber
       })
   } catch (err) {
     return res.status(401).json({ message: 'Đăng nhập thất bại' })
@@ -125,7 +138,6 @@ export const registerRestaurantOwner = async (req: Request, res: Response) => {
       restaurantName: restaurant.restaurantName,
       address: restaurant.address,
       phoneNumber: restaurant.phoneNumber,
-      category: restaurant.category,
       bio: restaurant.bio
     }
 
