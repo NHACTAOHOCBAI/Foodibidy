@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Tabs } from 'antd';
+import { Spin, Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 import MyRestaurant from '../../components/profile/MyRestaurant';
 import MyProfile from '../../components/profile/MyProfile';
@@ -32,17 +32,23 @@ const Profile = () => {
             key: '1',
             label: 'Restaurant',
             children: <MyRestaurant
-                isPending={isPending}
+                fetchMyProfile={fetchMyProfile}
                 myRestaurant={myProfile?.restaurant} />
         },
         {
             key: '2',
             label: 'Account',
-            children: <MyProfile />,
+            children: <MyProfile
+                fetchMyProfile={fetchMyProfile}
+                myAccount={myProfile?.user}
+            />,
         },
     ];
     return (
-        <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+        isPending ?
+            <div style={{ width: '100%', height: '100%', display: "flex", justifyContent: 'center', alignItems: 'center' }}> <Spin size="large" /> </div>
+            :
+            <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
     )
 }
 

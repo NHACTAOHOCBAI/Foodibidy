@@ -1,14 +1,52 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Form, Input, type UploadFile } from "antd"
 import UploadImage from "../UploadImage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import convertDateFormat from "../../utils/convertDateFormat";
+interface MyAccountProps {
+    myAccount: any;
+    fetchMyProfile: () => Promise<void>
+}
 
-const MyProfile = () => {
+const MyProfile = ({ myAccount, fetchMyProfile }: MyAccountProps) => {
     const [form] = Form.useForm();
     const [isPending, setIsPending] = useState(false);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const onFinish = (values) => {
         console.log('Success:', values);
     };
+    //  const handleReset = () => {
+    //         form.setFieldsValue({
+    //             restaurantName: myRestaurant?.restaurantName,
+    //             address: myRestaurant?.address,
+    //             status: myRestaurant?.status,
+    //             phoneNumber: myRestaurant?.phoneNumber,
+    //             bio: myRestaurant?.bio
+    //         })
+    //         setFileList([
+    //             {
+    //                 uid: '-1',
+    //                 name: 'avatar.jpg',
+    //                 status: 'done',
+    //                 url: myRestaurant?.avatar
+    //             },
+    //         ])
+    //     }
+    useEffect(() => {
+        form.setFieldsValue({
+            fullName: myAccount.fullName,
+            phone: myAccount.phoneNumber
+
+        })
+        setFileList([
+            {
+                uid: '-1',
+                name: 'avatar.jpg',
+                status: 'done',
+                url: myAccount?.avatar
+            },
+        ])
+    }, [myAccount, form])
     return (
         <Form
             form={form}
@@ -48,9 +86,9 @@ const MyProfile = () => {
                     </Form.Item>
                 </div>
                 <div>
-                    <p>Email :.....</p>
-                    <p>Role :.....</p>
-                    <p>Created :...</p>
+                    <p>Email : {myAccount.email}</p>
+                    <p>Role : {myAccount.role}</p>
+                    <p>Created : {convertDateFormat(myAccount.createdAt)}</p>
                 </div>
             </div>
             <div style={{ display: 'flex', gap: 20 }}>

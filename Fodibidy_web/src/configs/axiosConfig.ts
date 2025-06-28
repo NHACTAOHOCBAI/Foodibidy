@@ -19,7 +19,7 @@ const processQueue = (error: any, token: string | null = null) => {
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
     timeout: 10000,
-    // withCredentials: true, // QUAN TRỌNG: cho phép gửi cookies
+    withCredentials: true, // QUAN TRỌNG: cho phép gửi cookies
 });
 
 // Gắn accessToken nếu có
