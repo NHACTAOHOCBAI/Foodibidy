@@ -7,7 +7,6 @@ import {
   updateNotification,
   deleteNotification
 } from '~/controllers/notification.controller'
-import { CreateNotificationSchema } from '~/middlewares/notification.middlewares'
 
 const notificationsRouter = Router()
 
@@ -16,7 +15,7 @@ const notificationsRouter = Router()
  * Path: /notifications
  * Method: POST
  */
-notificationsRouter.post('/', CreateNotificationSchema, wrapRequestHandler(createNotification))
+notificationsRouter.post('/', wrapRequestHandler(createNotification))
 
 /**
  * Get all notifications

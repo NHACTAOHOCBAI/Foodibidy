@@ -34,14 +34,26 @@ ordersRouter.get('/', wrapRequestHandler(getAllOrderDetails))
  * Path: /orders/history/:orderId
  * Method: GET
  */
-ordersRouter.get('/history/:orderId', authenticateFirebase, wrapRequestHandler(getMyHistoryOrders))
+ordersRouter.get(
+  '/history/:orderId',
+  authenticateFirebase,
+  authorizeRole([UserRole.CUSTOMER]),
+  authenticateFirebase,
+  wrapRequestHandler(getMyHistoryOrders)
+)
 
 /**
  * Get all user ongoing order
  * Path: /orders/onGoing/:orderId
  * Method: GET
  */
-ordersRouter.get('/onGoing/:orderId', authenticateFirebase, wrapRequestHandler(getMyOngoingOrders))
+ordersRouter.get(
+  '/onGoing/:orderId',
+  authenticateFirebase,
+  authorizeRole([UserRole.CUSTOMER]),
+  authenticateFirebase,
+  wrapRequestHandler(getMyOngoingOrders)
+)
 
 /**
  * Get all restaurant order
@@ -55,7 +67,6 @@ ordersRouter.get('/restaurant/:resId', wrapRequestHandler(getOrderDetailByResId)
  * Path: /orders/myOrders
  * Method: GET
  */
-ordersRouter.get('/restaurant/:orderId', authenticateFirebase, wrapRequestHandler(getOrderDetailByResId))
 ordersRouter.get(
   '/myOrders',
   authenticateFirebase,

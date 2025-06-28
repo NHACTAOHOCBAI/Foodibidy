@@ -14,7 +14,7 @@ import { CreateRestaurantReqBody } from '~/models/requests/restaurant.request'
 import restaurantService from '~/services/restaurant.service'
 import { UploadedFile } from 'express-fileupload'
 import console from 'console'
-import axios from 'axios'
+
 import { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { ro } from 'date-fns/locale'
 const FIREBASE_API_KEY = 'AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ'
@@ -22,29 +22,43 @@ const FIREBASE_API_KEY = 'AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ'
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body
   try {
-    const { data } = await axios.post(
+    const response = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
       {
-        email,
-        password,
-        returnSecureToken: true
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          returnSecureToken: true
+        })
       }
     )
 
+
+
+    // Trả về idToken và lưu refreshToken vào cookie
+    if (!response.ok) {
+      const errorData = await response.json()
+      console.error('Firebase Login Error:', errorData)
+      return res.status(401).json({ message: 'Đăng nhập thất bại' })
+    }
+
+    const data = await response.json()
     // lấy thông tin user từ uid
     const userDoc = await databaseService.users.doc(data.localId).get()
     const userData = userDoc.data()
     if (!userData) {
       return res.status(401).json({ message: 'User not found' })
     }
-
-    // Trả về idToken và lưu refreshToken vào cookie
     res
       .cookie('refreshToken', data.refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 ngày
+        maxAge: 30 * 24 * 60 * 60 * 1000
       })
       .status(200)
       .json({
@@ -70,26 +84,36 @@ export const refreshToken = async (req: Request, res: Response) => {
   }
 
   try {
-    const { data } = await axios.post(
-      `https://securetoken.googleapis.com/v1/token?key=${FIREBASE_API_KEY}`,
-      new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken
-      }),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      }
-    )
+    const params = new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken
+    })
+
+    const response = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FIREBASE_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: params.toString()
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      console.error('Firebase Refresh Token Error:', errorData)
+
+      return res.status(401).json({ message: 'Refresh token không hợp lệ' })
+    }
+
+    const data = await response.json()
 
     res.status(200).json({
       idToken: data.id_token,
       expiresIn: data.expires_in,
       uid: data.user_id
     })
-  } catch (error) {
-    res.status(401).json({ message: 'Refresh token không hợp lệ' })
+  } catch (err) {
+    console.error('Network or unexpected error during token refresh:', err)
+    return res.status(500).json({ message: 'Lỗi máy chủ nội bộ khi làm mới token. Vui lòng thử lại sau.' })
   }
 }
 
