@@ -1,11 +1,15 @@
-import axios from "axios";
+
 import axiosInstance from "../configs/axiosConfig"
 
+const getMyProfile = async () => {
+    const res = await axiosInstance.get('/auth/profile')
+    console.log(res.data)
+    return res.data
+}
 
 const login = async (email: string, password: string) => {
-    const returnSecureToken = true;
-    const res = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ', { email, password, returnSecureToken })
-    return res
+    const res = await axiosInstance.post('/auth/login', { email, password })
+    return res.data
 }
 
 const logout = async () => {
@@ -26,4 +30,4 @@ const registerRestaurant = async (account: { email: string, password: string, fu
         },
     });
 }
-export { login, logout, register, registerRestaurant }
+export { login, logout, register, registerRestaurant, getMyProfile }

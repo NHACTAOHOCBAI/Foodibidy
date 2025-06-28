@@ -1,4 +1,5 @@
 import { Modal, Descriptions, Image, Tag, Typography, Collapse } from 'antd';
+import convertDateFormat from '../../utils/convertDateFormat';
 
 const { Title, Text } = Typography;
 const { Panel } = Collapse;
@@ -159,11 +160,7 @@ const DetailRestaurant = ({
                                 </Descriptions.Item>
                                 <Descriptions.Item label={<Text type="secondary">Created At</Text>}>
                                     <Text>
-                                        {new Date(detailRestaurant.createdAt).toLocaleDateString('en-US', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric',
-                                        })}
+                                        {convertDateFormat(detailRestaurant.createdAt)}
                                     </Text>
                                 </Descriptions.Item>
                             </Descriptions>

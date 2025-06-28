@@ -94,6 +94,7 @@ const Account = () => {
         setIsPending(true);
         try {
             const res = await getAllAccounts();
+            console.log(res)
             setAccounts(res);
         } catch (error) {
             messageApi.error(String(error));

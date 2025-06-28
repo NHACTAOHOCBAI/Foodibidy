@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
+import axios from "axios";
 
 const BASE_URL = "http://localhost:3000/api/v1";
-console.log('BASE_URL:', BASE_URL);
 let isRefreshing = false;
 let failedQueue: any[] = [];
 
@@ -20,6 +19,7 @@ const processQueue = (error: any, token: string | null = null) => {
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
     timeout: 10000,
+    // withCredentials: true, // QUAN TRỌNG: cho phép gửi cookies
 });
 
 // Gắn accessToken nếu có
@@ -36,7 +36,7 @@ axiosInstance.interceptors.request.use(
 
 // Xử lý tự động làm mới token nếu accessToken hết hạn
 axiosInstance.interceptors.response.use(
-    response => response.data,
+    response => response,
     async error => {
         const originalRequest = error.config;
 
@@ -61,8 +61,7 @@ axiosInstance.interceptors.response.use(
                     withCredentials: true, // cần thiết để cookies được gửi đi
                 });
 
-                const newAccessToken = response.data.data;
-                console.log(response.data)
+                const newAccessToken = response.data.data.accessToken;
                 localStorage.setItem('accessToken', newAccessToken);
 
                 processQueue(null, newAccessToken);

@@ -5,7 +5,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react';
 import NewFood from '../../components/food/NewFood';
 import UpdateFood from '../../components/food/UpdateFood';
-import { deleteDishById, getDishByRestaurant } from '../../services/food';
+import { deleteDishById, getMyDish } from '../../services/food';
 import convertDateFormat from '../../utils/convertDateFormat';
 import formatVND from '../../utils/convertMoney';
 import { PiEye } from 'react-icons/pi';
@@ -17,7 +17,7 @@ const Food = () => {
     const [isNewOpen, setIsNewOpen] = useState(false);
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [updatedFood, setUpdatedFood] = useState<Food>()
-    const [isDetailOpen, setIsDetailOpen] = useState(true)
+    const [isDetailOpen, setIsDetailOpen] = useState(false)
     const [detailFood, setDetailFood] = useState<Food>()
     const [categoryOpt, setCategoryOpt] = useState<{ text: string, value: string }[]>([])
     const columns: TableProps<Food>['columns'] = [
@@ -101,8 +101,7 @@ const Food = () => {
     const [foods, setFoods] = useState<Food[]>([])
     const refetchData = async () => {
         setIsPending(true)
-        const res = await getDishByRestaurant("tDF8JPDfjgTbTApXnBiR")
-        console.log(res)
+        const res = await getMyDish()
         const cateRes = await getAllCategories()
         const options = cateRes.map((record) => {
             return ({
@@ -112,6 +111,7 @@ const Food = () => {
         })
         setCategoryOpt(options)
         setFoods(res)
+        console.log(options, res)
         setIsPending(false)
     }
     const handleDelete = async (id: string) => {
@@ -153,7 +153,7 @@ const Food = () => {
             <Table<Food>
                 loading={isPending} bordered columns={columns} dataSource={foods} rowKey="id"
                 pagination={{
-                    pageSize: 5, // Số item mỗi trang
+                    pageSize: 4, // Số item mỗi trang
                     showTotal: (total) => `Total ${total} Foods`,
                 }}
             />

@@ -63,7 +63,6 @@ export interface restaurantInfo {
   restaurantName: string
   address: string
   phoneNumber: string
-
   bio: string
 }
 

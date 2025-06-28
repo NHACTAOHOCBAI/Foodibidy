@@ -1,37 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Col, Form, Input, message, Modal, Row, type UploadFile } from "antd"
+import { Col, Form, Input, message, Modal, Row } from "antd"
 import { useState } from "react";
-import UploadImage from "../UploadImage";
 import TextArea from "antd/es/input/TextArea";
-import { createRestaurant } from "../../services/restaurant";
+import { registerRestaurant } from "../../services/auth";
 interface Props {
     isModalOpen: boolean,
     setIsModalOpen: (value: boolean) => void,
     refetchData: () => Promise<void>
 }
 const NewRestaurant = ({ isModalOpen, setIsModalOpen, refetchData }: Props) => {
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
     const [isPending, setIsPending] = useState(false);
     const handleNew = async (values: any) => {
         try {
             setIsPending(true)
-            const imageFile = fileList[0]?.originFileObj as File;
-            await createRestaurant(
+            await registerRestaurant(
                 {
                     email: values.email,
                     password: values.password,
                     fullName: values.fullName,
-                    phoneNumber: values.phoneNumber,
-                },
-                {
-                    restaurantName: values.restaurantName,
-                    address: values.address,
-                    restaurantImage: imageFile,
-                    phoneNumber: values.restaurantPhone,
-                    bio: values.bio
-                }
+                }, {
+                restaurantName: values.restaurantName,
+                address: values.address,
+                phoneNumber: values.restaurantPhone,
+                bio: values.bio
+            }
             )
             await refetchData()
             messageApi.success("Create restaurant successfully")
@@ -48,6 +42,7 @@ const NewRestaurant = ({ isModalOpen, setIsModalOpen, refetchData }: Props) => {
     }
     const handleCancel = () => {
         setIsModalOpen(false);
+        form.resetFields()
     };
     return (
         <>
@@ -80,13 +75,6 @@ const NewRestaurant = ({ isModalOpen, setIsModalOpen, refetchData }: Props) => {
                                 <Input />
                             </Form.Item>
                             <Form.Item
-                                label="Phone"
-                                name="phoneNumber"
-                                rules={[{ required: true, message: 'Please enter the phone' }]}
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
                                 label="Password"
                                 name="password"
                                 rules={[{ required: true, message: 'Please enter the password' }]}
@@ -97,15 +85,6 @@ const NewRestaurant = ({ isModalOpen, setIsModalOpen, refetchData }: Props) => {
 
                         {/* Cột phải */}
                         <Col span={12}>
-                            <Form.Item label="Restaurant image">
-                                <div style={{ border: '1px dashed #d9d9d9', padding: 8, borderRadius: 4 }}>
-                                    <UploadImage
-                                        isPending={isPending}
-                                        fileList={fileList}
-                                        setFileList={setFileList}
-                                    />
-                                </div>
-                            </Form.Item>
                             <Form.Item
                                 label="Restaurant name"
                                 name="restaurantName"

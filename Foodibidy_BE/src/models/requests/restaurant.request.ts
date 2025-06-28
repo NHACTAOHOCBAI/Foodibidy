@@ -18,7 +18,6 @@ export interface CreateRestaurantReqBody {
   restaurantName: string
   address: string
   phoneNumber: string
-  category: Pick<CategoryType, 'id' | 'name'>[]
   restaurantImage?: UploadedFile
   bio: string
 }

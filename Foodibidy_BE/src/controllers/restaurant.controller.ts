@@ -15,9 +15,8 @@ export const createRestaurant = async (
   next: NextFunction
 ) => {
   const user = JSON.parse(req.body.user as unknown as string)
-  const category = JSON.parse(req.body.category as unknown as string)
   const restaurantImage = req.files?.restaurantImage as UploadedFile
-  const result = await restaurantService.createRestaurant({ ...req.body, user, category, restaurantImage })
+  const result = await restaurantService.createRestaurant({ ...req.body, user, restaurantImage })
   return res.json({ message: RESTAURANT_MESSAGES.CREATE_SUCCESS, data: result })
 }
 

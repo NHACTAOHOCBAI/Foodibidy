@@ -22,13 +22,11 @@ const UpdateRestaurant = ({ isModalOpen, setIsModalOpen, refetchData, updatedRes
             const imageFile = fileList[0]?.originFileObj as File;
             await updateRestaurant(
                 updatedRestaurant?.id as string,
-                {
-                    restaurantName: values.restaurantName,
-                    address: values.address,
-                    restaurantImage: imageFile,
-                    phoneNumber: values.restaurantPhone,
-                    bio: values.bio
-                }
+                values.restaurantName,
+                values.address,
+                values.restaurantPhone,
+                values.bio,
+                imageFile,
             )
             await refetchData()
             messageApi.success("Update restaurant successfully")
