@@ -5,7 +5,7 @@ import axiosInstance from "../configs/axiosConfig"
 const login = async (email: string, password: string) => {
     const returnSecureToken = true;
     const res = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ', { email, password, returnSecureToken })
-    return res
+    return res.data
 }
 
 const logout = async () => {

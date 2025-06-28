@@ -1,17 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Button, Checkbox, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router';
 import { login } from '../../services/auth';
+import { MyProfileContext } from '../../context/MyProfileContext';
 
 const Login = () => {
     const navigate = useNavigate()
+    const { setMyProfile } = useContext(MyProfileContext)
+
     const [isPending, setIsPending] = useState(false)
     const [messageApi, contextHolder] = message.useMessage();
     const onFinish = async ({ email, password }: { email: string, password: string }) => {
         setIsPending(true)
         try {
-            await login(email, password)
+            const res = await login(email, password)
+            localStorage.setItem('accessToken', res.idToken)
+            const value = {
+                email: res.email,
+                fullName: res.fullName,
+                role: res.role,
+                avatar: res.avatar,
+                phoneNumber: res.phoneNumber
+            }
+            setMyProfile(value)
+            localStorage.setItem("profile", JSON.stringify(value))
+            navigate('/dashboard')
             messageApi.success("Login successfully")
         }
         catch (err: any) {
@@ -48,7 +62,7 @@ const Login = () => {
                             name="password"
                             rules={[{ required: true, message: 'Please input your password!' }]}
                         >
-                            <Input.Password />
+                            <Input.Password disabled={isPending} />
                         </Form.Item>
 
                         <Form.Item name="remember" valuePropName="checked" label={null}>
@@ -56,7 +70,7 @@ const Login = () => {
                         </Form.Item>
 
                         <Form.Item label={null}>
-                            <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+                            <Button loading={isPending} type="primary" htmlType="submit" style={{ width: '100%' }}>
                                 Sign in
                             </Button>
                         </Form.Item>

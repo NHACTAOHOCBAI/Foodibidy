@@ -5,7 +5,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react';
 import NewFood from '../../components/food/NewFood';
 import UpdateFood from '../../components/food/UpdateFood';
-import { deleteDishById, getDishByRestaurant } from '../../services/food';
+import { deleteDishById, getMyDish } from '../../services/food';
 import convertDateFormat from '../../utils/convertDateFormat';
 import formatVND from '../../utils/convertMoney';
 import { PiEye } from 'react-icons/pi';
@@ -101,8 +101,7 @@ const Food = () => {
     const [foods, setFoods] = useState<Food[]>([])
     const refetchData = async () => {
         setIsPending(true)
-        const res = await getDishByRestaurant("tDF8JPDfjgTbTApXnBiR")
-        console.log(res)
+        const res = await getMyDish()
         const cateRes = await getAllCategories()
         const options = cateRes.map((record) => {
             return ({

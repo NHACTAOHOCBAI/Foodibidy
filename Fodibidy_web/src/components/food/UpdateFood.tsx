@@ -3,11 +3,8 @@ import { useEffect, useState } from 'react';
 import UploadImage from '../UploadImage';
 import { categoryOptions } from '../../utils/selectOptions';
 import { updateDish } from '../../services/food';
+import TextArea from 'antd/es/input/TextArea';
 
-const currentRestaurant = {
-    id: "tDF8JPDfjgTbTApXnBiR",
-    restaurantName: "Ẩm Thực Miền Trung"
-}
 const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood, refetchData, setUpdatedFood }: { isModalOpen: boolean; setIsModalOpen: (value: boolean) => void; updatedFood: Food | undefined, refetchData: () => Promise<void>, setUpdatedFood: (value: Food | undefined) => void }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [form] = Form.useForm();
@@ -33,7 +30,8 @@ const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood, refetchData, set
         try {
             setIsPending(true)
             const imageFile = fileList[0]?.originFileObj as File;
-            await updateDish(updatedFood?.id as string, currentRestaurant, category, values.dishName, values.description, values.price, imageFile)
+            console.log(updatedFood?.id as string)
+            await updateDish(updatedFood?.id as string, category, values.dishName, values.description, values.price, imageFile, values.remainingQuantity as number)
             await refetchData()
             messageApi.success("Update Food successfully")
             handleCancel()
@@ -95,10 +93,6 @@ const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood, refetchData, set
                             >
                                 <Input />
                             </Form.Item>
-                        </Col>
-
-                        {/* Cột phải */}
-                        <Col span={12}>
                             <Form.Item
                                 label="Price"
                                 name="price"
@@ -106,6 +100,10 @@ const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood, refetchData, set
                             >
                                 <InputNumber style={{ width: '100%' }} />
                             </Form.Item>
+                        </Col>
+
+                        {/* Cột phải */}
+                        <Col span={12}>
 
                             <Form.Item
                                 label="Category"
@@ -120,6 +118,14 @@ const UpdateFood = ({ isModalOpen, setIsModalOpen, updatedFood, refetchData, set
                                             name: opt.label
                                         })
                                     }} />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Description"
+                                name="description"
+                                rules={[{ required: true, message: 'Please enter the price' }]}
+                            >
+                                <TextArea rows={5} style={{ width: '100%' }} />
                             </Form.Item>
 
                             <Form.Item
