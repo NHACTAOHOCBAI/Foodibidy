@@ -17,7 +17,7 @@ const Food = () => {
     const [isNewOpen, setIsNewOpen] = useState(false);
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [updatedFood, setUpdatedFood] = useState<Food>()
-    const [isDetailOpen, setIsDetailOpen] = useState(true)
+    const [isDetailOpen, setIsDetailOpen] = useState(false)
     const [detailFood, setDetailFood] = useState<Food>()
     const [categoryOpt, setCategoryOpt] = useState<{ text: string, value: string }[]>([])
     const columns: TableProps<Food>['columns'] = [
@@ -111,6 +111,7 @@ const Food = () => {
         })
         setCategoryOpt(options)
         setFoods(res)
+        console.log(options, res)
         setIsPending(false)
     }
     const handleDelete = async (id: string) => {
@@ -152,7 +153,7 @@ const Food = () => {
             <Table<Food>
                 loading={isPending} bordered columns={columns} dataSource={foods} rowKey="id"
                 pagination={{
-                    pageSize: 5, // Số item mỗi trang
+                    pageSize: 4, // Số item mỗi trang
                     showTotal: (total) => `Total ${total} Foods`,
                 }}
             />

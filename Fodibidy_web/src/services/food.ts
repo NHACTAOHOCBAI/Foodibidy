@@ -38,7 +38,7 @@ const updateDish = async (
     formData.append('price', price.toString());
     formData.append('dishImage', dishImage);
     formData.append('remainingQuantity', remainingQuantity.toString());
-    return axiosInstance.post(`/dishes/${id}`, formData, {
+    return axiosInstance.put(`/dishes/${id}`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
@@ -51,7 +51,7 @@ const deleteDishById = async (id: string) => {
 
 const getMyDish = async () => {
     const res = await axiosInstance.get(`/dishes/myDishes`)
-    return res.data as Food[]
+    return res.data.data as Food[]
 }
 
 export { createDish, deleteDishById, updateDish, getMyDish }
