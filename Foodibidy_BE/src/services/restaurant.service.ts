@@ -204,5 +204,6 @@ class RestaurantService {
   }
 }
 
+
 const restaurantService = new RestaurantService()
 export default restaurantService
