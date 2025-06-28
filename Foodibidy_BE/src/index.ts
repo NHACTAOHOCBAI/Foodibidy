@@ -16,10 +16,18 @@ import authRouter from '~/routes/auth.route'
 import cookieParser from 'cookie-parser'
 
 const app = express()
+const allowedOrigins = ['http://localhost:5173']
 
 const port = 3000
 const corsOptions: CorsOptions = {
-  origin: '*'
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true
 }
 
 app.use(cors(corsOptions))
