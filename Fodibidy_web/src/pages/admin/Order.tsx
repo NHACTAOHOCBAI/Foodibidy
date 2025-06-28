@@ -1,14 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Table, Tag } from 'antd';
 import type { TableProps } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import UpdateOrder from '../../components/order/UpdateOrder';
-// import convertDateFormat from '../../utils/convertDateFormat';
+import { getMyOrder } from '../../services/order';
+import convertDateFormat from '../../utils/convertDateFormat';
 
 const Order = () => {
     const [isUpdateOpen, setIsUpdateOpen] = useState(false)
     const [updatedOrder, setUpdatedOrder] = useState<Order>()
+    const [isPending, setIsPending] = useState(false)
+    const [orders, setOrders] = useState<Order[]>([])
+    const refetchData = async () => {
+        setIsPending(true)
+        const res = await getMyOrder()
+        console.log(res)
+        setOrders(res)
+        setIsPending(false)
+    }
     const columns: TableProps<Order>['columns'] = [
         {
             title: 'Customer',
@@ -37,11 +47,11 @@ const Order = () => {
             sorter: (a, b) => a.totalPrice - b.totalPrice,
             render: (price) => `$${price.toFixed(2)}`,
         },
-        // {
-        //     title: 'Created At',
-        //     dataIndex: 'createdAt',
-        //     render: (time) => convertDateFormat(time),
-        // },
+        {
+            title: 'Placed At',
+            dataIndex: 'createdAt',
+            render: (time) => convertDateFormat(time),
+        },
         {
             title: 'Status',
             dataIndex: 'status',
@@ -78,11 +88,14 @@ const Order = () => {
             }
         }
     ];
-
+    useEffect(() => {
+        refetchData()
+    }, []);
     return (
         <>
             <Table<Order>
-                bordered columns={columns} dataSource={data} rowKey="id"
+                loading={isPending}
+                bordered columns={columns} dataSource={orders}
                 expandable={{
                     expandedRowRender: (record) => <div>
                         <p style={{ margin: 0 }}>Shipper phone : {record.shipperPhone}</p>
@@ -95,65 +108,12 @@ const Order = () => {
                 isUpdateOpen={isUpdateOpen}
                 setIsUpdateOpen={setIsUpdateOpen}
                 updatedOrder={updatedOrder}
+                setUpdatedOrder={setUpdatedOrder}
+                refetchData={refetchData}
             />
         </>
     );
 };
 
-const data: Order[] = [
-    {
-        id: 1,
-        user: { id: 'u1', fullName: 'Alice Johnson' },
-        restaurant: { id: 'r1', restaurantName: 'Pizza House' },
-        status: 'preparing',
-        orderTime: '2025-06-01T12:30:00Z',
-        deliveryPhone: '123-456-7890',
-        address: '123 Main St, Springfield',
-        items: [
-            {
-                dish: {
-                    id: 'f1',
-                    dishName: 'Pepperoni Pizza',
-                    price: "12.99",
-                    dishImage: 'https://satrafoods.com.vn/uploads/Images/mon-ngon-moi-ngay/bun-bo-hue.jpg',
-                },
-                quantity: 2,
-            },
-            {
-                dish: {
-                    id: 'f2',
-                    dishName: 'Cheese Pizza',
-                    price: "10.99",
-                    dishImage: 'https://via.placeholder.com/80',
-                },
-                quantity: 1,
-            },
-        ],
-        totalPrice: 36.97,
-        createdAt: '2025-06-01T12:31:00Z',
-    },
-    {
-        id: 2,
-        user: { id: 'u2', fullName: 'Bob Smith' },
-        restaurant: { id: 'r2', restaurantName: 'Sushi World' },
-        status: 'ongoing',
-        orderTime: '2025-05-28T18:00:00Z',
-        deliveryPhone: '555-222-3333',
-        address: '456 Elm St, Tokyo',
-        items: [
-            {
-                dish: {
-                    id: 'f3',
-                    dishName: 'Salmon Nigiri',
-                    price: "9.99",
-                    dishImage: 'https://via.placeholder.com/80',
-                },
-                quantity: 3,
-            },
-        ],
-        totalPrice: 29.97,
-        createdAt: '2025-05-28T18:05:00Z',
-    },
-];
 
 export default Order;
