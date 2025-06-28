@@ -89,7 +89,7 @@ const UpdateAccount = ({ isModalOpen, setIsModalOpen, refetchData, updatedAccoun
                         name="email"
                         rules={[{ required: true, message: 'Please enter the email' }, { type: 'email', message: 'Invalid email format' }]}
                     >
-                        <Input />
+                        <Input disabled />
                     </Form.Item>
                     <Form.Item
                         label="Full Name"
@@ -111,6 +111,7 @@ const UpdateAccount = ({ isModalOpen, setIsModalOpen, refetchData, updatedAccoun
                         rules={[{ required: true, message: 'Please select a role' }]}
                     >
                         <Select
+                            disabled
                             options={[
                                 { value: 'admin', label: 'Admin' },
                                 { value: 'restaurant', label: 'Restaurant' },

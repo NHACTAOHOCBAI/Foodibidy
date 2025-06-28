@@ -102,7 +102,6 @@ const NewAccount = ({ isModalOpen, setIsModalOpen, refetchData }: Props) => {
                                 <Select
                                     options={[
                                         { value: 'admin', label: 'Admin' },
-                                        { value: 'restaurant', label: 'Restaurant' },
                                         { value: 'customer', label: 'Customer' },
                                     ]}
                                 />
