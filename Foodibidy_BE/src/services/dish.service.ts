@@ -5,17 +5,19 @@ import { CreateDishReqBody, UpdateDishReqBody } from '~/models/requests/dish.req
 import { GetDishRes } from '~/models/responses/dish.response'
 import Dish, { DishType } from '~/models/schemas/dish.schema'
 import { handleFormatDate, validateFieldMatchById } from '~/utils/utils'
-import databaseService from './database.service'
+import databaseService, { admin } from './database.service'
 import { CloudinaryService } from './file.service'
 import reviewService from './review.service'
 import { CartType } from '~/models/schemas/cart.schema'
 import restaurantService from './restaurant.service'
 import categoryService from './category.service'
 import { forEach } from 'lodash'
+import Category from '~/models/schemas/category.schema'
 
 class DishService {
   private dishCollection = databaseService.dishes
   private order_detailsCollection = databaseService.order_details
+  private restaurantCollection = databaseService.restaurants
 
   async createDish(data: CreateDishReqBody) {
     try {
@@ -35,6 +37,15 @@ class DishService {
       const resData = await restaurantService.getRestaurantByUserId(restaurant.id!).then((res) => {
         return { id: res!.id, restaurantName: res!.restaurantName }
       })
+      const restaurantDoc = await this.restaurantCollection.doc(resData.id).get()
+      await restaurantDoc.ref.update({
+        categories: admin.firestore.FieldValue.arrayUnion({
+          id: data.category.id,
+          name: data.category.name
+        }),
+        cateIds: admin.firestore.FieldValue.arrayUnion(data.category.id)
+      })
+
 
       const newDish = new Dish({
         ...resDishBody,
@@ -212,6 +223,37 @@ class DishService {
         await databaseService.user_dish.doc(doc.id).delete()
       }
 
+
+      // Lấy thông tin món ăn cần xoá để biết category và restaurant
+      const dishDoc = await this.dishCollection.doc(id).get()
+      if (!dishDoc.exists) {
+        throw new ErrorWithStatus({ message: DISH_MESSAGES.DISH_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+      }
+      const dishData = dishDoc.data() as DishType
+      const categoryId = dishData.category?.id
+      const restaurantId = dishData.restaurant?.id
+
+      if (categoryId && restaurantId) {
+        // Đếm số lượng món ăn trong cùng category và cùng nhà hàng (trừ món này)
+        const sameCategorySnapshot = await this.dishCollection
+          .where('category.id', '==', categoryId)
+          .where('restaurant.id', '==', restaurantId)
+          .get()
+
+        if (sameCategorySnapshot.size <= 1) {
+          // Đây là món duy nhất thuộc category này trong nhà hàng → cần xoá category khỏi danh sách
+          const restaurantDoc = await this.restaurantCollection.doc(restaurantId).get()
+          if (restaurantDoc.exists) {
+            await restaurantDoc.ref.update({
+              categories: admin.firestore.FieldValue.arrayRemove({
+                id: categoryId,
+                name: dishData.category?.name
+              }),
+              cateIds: admin.firestore.FieldValue.arrayRemove(categoryId)
+            })
+          }
+        }
+      }
       //xoá dish
       await this.dishCollection.doc(id).delete()
       console.log(`Dish with ID ${id} deleted successfully`)
@@ -321,8 +363,8 @@ class DishService {
       snapshot.forEach((doc) => {
         const data = doc.data()
         dishes.push({
-          id: doc.id,
           ...data,
+          id: doc.id,
           createdAt: handleFormatDate(data.createdAt as Date),
           updatedAt: handleFormatDate(data.updatedAt as Date)
         } as GetDishRes)

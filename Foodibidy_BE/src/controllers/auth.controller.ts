@@ -16,6 +16,7 @@ import { UploadedFile } from 'express-fileupload'
 import console from 'console'
 
 import { RestaurantType } from '~/models/schemas/restaurant.schema'
+import { ro } from 'date-fns/locale'
 const FIREBASE_API_KEY = 'AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ'
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -36,6 +37,9 @@ export const loginUser = async (req: Request, res: Response) => {
       }
     )
 
+
+
+    // Trả về idToken và lưu refreshToken vào cookie
     if (!response.ok) {
       const errorData = await response.json()
       console.error('Firebase Login Error:', errorData)
@@ -43,7 +47,12 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     const data = await response.json()
-
+    // lấy thông tin user từ uid
+    const userDoc = await databaseService.users.doc(data.localId).get()
+    const userData = userDoc.data()
+    if (!userData) {
+      return res.status(401).json({ message: 'User not found' })
+    }
     res
       .cookie('refreshToken', data.refreshToken, {
         httpOnly: true,
@@ -55,7 +64,12 @@ export const loginUser = async (req: Request, res: Response) => {
       .json({
         idToken: data.idToken,
         expiresIn: data.expiresIn,
-        uid: data.localId
+        uid: data.localId,
+        email: userData.email,
+        role: userData.role,
+        fullName: userData.fullName,
+        avatar: userData.avatar,
+        phoneNumber: userData.phoneNumber
       })
   } catch (err) {
     return res.status(401).json({ message: 'Đăng nhập thất bại' })
@@ -148,7 +162,6 @@ export const registerRestaurantOwner = async (req: Request, res: Response) => {
       restaurantName: restaurant.restaurantName,
       address: restaurant.address,
       phoneNumber: restaurant.phoneNumber,
-      category: [],
       bio: restaurant.bio
     }
 
