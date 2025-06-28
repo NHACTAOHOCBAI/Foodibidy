@@ -79,7 +79,7 @@ class CartService {
       const snapshot = await this.cartCollection.get()
       const cartes: Cart[] = []
       snapshot.forEach((doc) => {
-        cartes.push({ id: doc.id, ...doc.data() } as Cart)
+        cartes.push({ ...doc.data(), id: doc.id } as Cart)
       })
       console.log('All cartes:', cartes)
       return cartes

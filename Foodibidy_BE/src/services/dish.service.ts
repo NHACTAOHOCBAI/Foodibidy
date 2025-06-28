@@ -321,8 +321,8 @@ class DishService {
       snapshot.forEach((doc) => {
         const data = doc.data()
         dishes.push({
-          id: doc.id,
           ...data,
+          id: doc.id,
           createdAt: handleFormatDate(data.createdAt as Date),
           updatedAt: handleFormatDate(data.updatedAt as Date)
         } as GetDishRes)
