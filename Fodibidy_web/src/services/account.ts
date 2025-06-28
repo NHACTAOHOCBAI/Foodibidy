@@ -2,7 +2,7 @@ import axiosInstance from "../configs/axiosConfig"
 
 const getAllAccounts = async () => {
     const res = await axiosInstance.get('/users')
-    return res.data as Account[]
+    return res.data.data as Account[]
 }
 const deleteAccountById = async (id: string) => {
     return axiosInstance.delete(`/users/${id}`)

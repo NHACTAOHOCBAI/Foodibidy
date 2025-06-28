@@ -64,7 +64,7 @@ const Category = () => {
             render: (_, value) => (
                 <div style={{ display: 'flex', gap: 10 }}>
                     <div
-                        style={{ color: "blue" }}
+                        style={{ color: "#FADA7A" }}
                         onClick={() => {
                             setIsUpdateOpen(true)
                             setUpdatedCategory(value)
@@ -79,7 +79,7 @@ const Category = () => {
                         okText="Yes"
                         cancelText="No"
                     >
-                        <div style={{ color: "red" }}><DeleteOutlined /></div>
+                        <div style={{ color: "#ED3500" }}><DeleteOutlined /></div>
                     </Popconfirm>
                 </div>
             ),
