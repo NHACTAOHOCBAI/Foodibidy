@@ -31,6 +31,7 @@ const registerRestaurant = async (account: { email: string, password: string, fu
 }
 
 const updateMyAccount = async (phoneNumber: string, fullName: string, avatar: File) => {
+    console.log(phoneNumber, fullName)
     const formData = new FormData();
     formData.append('phoneNumber', phoneNumber);
     formData.append('fullName', fullName);

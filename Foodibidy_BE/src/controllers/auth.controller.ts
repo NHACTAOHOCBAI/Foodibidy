@@ -233,7 +233,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     let address = undefined
     if (req.body.address) address = JSON.parse(req.body.address as unknown as string)
 
-    usersService.updateUser(req.user.uid, { ...req.body, address, avatar: avatar })
+    await usersService.updateUser(req.user.uid, { ...req.body, address, avatar: avatar })
 
     res.status(200).json({
       message: 'Update my profile successfully',
@@ -259,9 +259,8 @@ export const updateMyRes = async (req: Request, res: Response) => {
     const resId = await restaurantService.getRestaurantByUserId(req.user.uid)
     const restaurantImage = req.files?.restaurantImage as UploadedFile
 
-    restaurantService.updateRestaurant(resId?.id as string, { ...req.body, restaurantImage: restaurantImage })
-    const resDoc = await databaseService.restaurants.doc(resId?.id as string).get()
-    console.log(resDoc.data())
+    await restaurantService.updateRestaurant(resId?.id as string, { ...req.body, restaurantImage: restaurantImage })
+
     res.status(200).json({
       message: 'Update my restaurant successfully',
       userId: req.user.uid
