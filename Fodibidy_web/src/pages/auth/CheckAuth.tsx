@@ -5,9 +5,10 @@ import { MyProfileContext } from "../../context/MyProfileContext"
 
 const CheckAuth = ({ endpoint }: { endpoint: string }) => {
     const { myProfile } = useContext(MyProfileContext)
+    console.log(myProfile)
     if (myProfile) {
-        // if (myProfile.role === "admin" || endpoint === "foods" || endpoint === "orders")
-        return <Outlet />
+        if (myProfile.role === "admin" || endpoint === "foods" || endpoint === "orders")
+            return <Outlet />
     }
     return (
         <Result
