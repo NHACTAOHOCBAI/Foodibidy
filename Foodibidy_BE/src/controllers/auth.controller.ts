@@ -17,6 +17,7 @@ import console from 'console'
 
 import { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { ro } from 'date-fns/locale'
+import { handleFormatDate } from '~/utils/utils'
 const FIREBASE_API_KEY = 'AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ'
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -78,7 +79,6 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const refreshToken = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken
-
   if (!refreshToken) {
     return res.status(401).json({ message: 'Không có refresh token' })
   }
@@ -195,8 +195,12 @@ export const getProfile = async (req: Request, res: Response) => {
     }
 
     const userData = userDoc.data()
+    const user = new User(userData!).toObject()
+    user.createdAt = handleFormatDate(user.createdAt as Date)
+    user.updatedAt = handleFormatDate(user.updatedAt as Date)
+    user.dateOfBirth = handleFormatDate(user.dateOfBirth as Date)
     let responseData: { user: UserType; restaurant: RestaurantType | null } = {
-      user: new User(userData!).toObject(),
+      user: user,
       restaurant: null
     }
 
