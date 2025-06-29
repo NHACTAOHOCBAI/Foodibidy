@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Form, Input, message, Spin, type UploadFile } from "antd"
 import UploadImage from "../UploadImage";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import convertDateFormat from "../../utils/convertDateFormat";
 import { getMyProfile, updateMyAccount } from "../../services/auth";
+import { MyProfileContext } from "../../context/MyProfileContext";
 interface UserProfile {
     fullName: string;
     phoneNumber: string;
@@ -14,6 +15,7 @@ interface UserProfile {
 }
 
 const MyProfile = () => {
+    const { setMyProfile: updateMyProfile } = useContext(MyProfileContext)
     const [isLoading, setIsLoading] = useState(false)
     const [myProfile, setMyProfile] = useState<UserProfile | null>(null);
     const [form] = Form.useForm();
@@ -55,7 +57,8 @@ const MyProfile = () => {
     const fetchMyProfile = async () => {
         setIsLoading(true)
         const res = await getMyProfile()
-        console.log(res.user)
+        updateMyProfile(res.user)
+        localStorage.setItem("profile", JSON.stringify(res.user))
         form.setFieldsValue({
             fullName: res.user.fullName,
             phoneNumber: res.user.phoneNumber
@@ -68,6 +71,7 @@ const MyProfile = () => {
                 url: res.user?.avatar
             },
         ])
+
         setMyProfile(res.user)
         setIsLoading(false)
     }

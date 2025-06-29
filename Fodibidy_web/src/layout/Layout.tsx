@@ -119,7 +119,7 @@ const AppLayout: React.FC = () => {
                     :
                     <>
                         {contextHolder}
-                        <Layout style={{ height: '100%' }}>
+                        <Layout>
                             <Sider trigger={null} collapsible collapsed={collapsed}>
                                 <div className="demo-logo-vertical" />
                                 <Menu
@@ -168,7 +168,8 @@ const AppLayout: React.FC = () => {
                                     style={{
                                         margin: '24px 16px',
                                         padding: 24,
-                                        minHeight: 280,
+                                        height: "100%",
+                                        minHeight: '100vh',
                                         background: colorBgContainer,
                                         borderRadius: borderRadiusLG,
                                     }}
