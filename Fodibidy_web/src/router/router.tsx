@@ -10,6 +10,7 @@ import Account from "../pages/admin/Account";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import CheckAuth from "../pages/auth/CheckAuth";
+import { Button, Result } from "antd";
 
 const router = createBrowserRouter([
     {
@@ -32,7 +33,16 @@ const router = createBrowserRouter([
     {
         path: '/register',
         element: <Register />
+    },
+    {
+        path: "*", element: <Result
+            status="404"
+            title="404"
+            subTitle="Sorry, the page you visited does not exist."
+            extra={<Button type="primary">Back Home</Button>}
+        />
     }
+
 ]);
 export default router
 

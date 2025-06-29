@@ -3,7 +3,6 @@ import axiosInstance from "../configs/axiosConfig"
 
 const getMyProfile = async () => {
     const res = await axiosInstance.get('/auth/profile')
-    console.log(res.data)
     return res.data
 }
 
