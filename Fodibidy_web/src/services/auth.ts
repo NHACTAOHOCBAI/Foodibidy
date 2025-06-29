@@ -29,4 +29,31 @@ const registerRestaurant = async (account: { email: string, password: string, fu
         },
     });
 }
-export { login, logout, register, registerRestaurant, getMyProfile }
+
+const updateMyAccount = async (phoneNumber: string, fullName: string, avatar: File) => {
+    const formData = new FormData();
+    formData.append('phoneNumber', phoneNumber);
+    formData.append('fullName', fullName);
+    formData.append('avatar', avatar);
+    return await axiosInstance.put('/auth/profile', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+}
+const updateMyRestaurant = async (restaurantName: string, address: string, status: string, phoneNumber: string, bio: string, restaurantImage: File) => {
+    const formData = new FormData();
+    formData.append('restaurantName', restaurantName);
+    formData.append('address', address);
+    formData.append('status', status);
+    formData.append('phoneNumber', phoneNumber);
+    formData.append('status', status);
+    formData.append('bio', bio);
+    formData.append('restaurantImage', restaurantImage);
+    return await axiosInstance.put('/auth/profile/myRes', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+}
+export { login, logout, register, registerRestaurant, getMyProfile, updateMyAccount, updateMyRestaurant }

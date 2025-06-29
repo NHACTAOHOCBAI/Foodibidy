@@ -7,6 +7,7 @@ import TextArea from "antd/es/input/TextArea";
 import UploadImage from "../UploadImage";
 import { MdOutlineStar } from "react-icons/md";
 import convertDateFormat from "../../utils/convertDateFormat";
+import { updateMyRestaurant } from "../../services/auth";
 
 interface MyRestaurantProps {
     myRestaurant: any;
@@ -21,7 +22,10 @@ const MyRestaurant = ({ myRestaurant, fetchMyProfile }: MyRestaurantProps) => {
     const onFinish = async (values: any) => {
         setIsPending(true)
         try {
+            const imageFile = fileList[0]?.originFileObj as File;
+            await updateMyRestaurant(values.restaurantName, values.address, values.status, values.phoneNumber, values.bio, imageFile)
             await fetchMyProfile()
+            messageApi.success("Update my restaurant success")
         }
         catch (error) {
             if (error instanceof Error) {
@@ -142,7 +146,7 @@ const MyRestaurant = ({ myRestaurant, fetchMyProfile }: MyRestaurantProps) => {
                 </div>
                 <div style={{ display: 'flex', gap: 20 }}>
                     <Button disabled={isPending} onClick={() => handleReset()}>Reset</Button>
-                    <Button loading={isPending} type="primary">Save</Button>
+                    <Button loading={isPending} type="primary" onClick={() => form.submit()}>Save</Button>
                 </div>
             </Form>
         </>
