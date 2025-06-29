@@ -18,7 +18,7 @@ const processQueue = (error: any, token: string | null = null) => {
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
-    timeout: 10000,
+    timeout: 30000,
     withCredentials: true, // QUAN TRỌNG: cho phép gửi cookies
 });
 

@@ -30,6 +30,7 @@ const createAccount = async (value: { email: string, fullName: string, phoneNumb
     }
     formData.append('role', value.role);
     formData.append('password', value.password);
+    formData.append('confirmPassword', value.password);
     return axiosInstance.post(`/users`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',

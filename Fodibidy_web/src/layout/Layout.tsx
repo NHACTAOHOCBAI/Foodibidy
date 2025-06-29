@@ -24,8 +24,68 @@ const AppLayout: React.FC = () => {
     } = theme.useToken();
     const { pathname } = useLocation();
     const endpoints = pathname.split('/').pop() as string;
-    console.log(endpoints)
     const { myProfile, setMyProfile } = useContext(MyProfileContext)
+    let items = [
+        {
+            key: 'dashboard',
+            icon: <RxDashboard />,
+            label: <Link to="/dashboard">Dashboard</Link>,
+        },
+        {
+            key: 'foods',
+            icon: <PiBowlFood />,
+            label: <Link to="/foods">Food</Link>,
+        },
+        {
+            key: 'orders',
+            icon: <BiDish />,
+            label: <Link to="/orders">Order</Link>,
+        },
+        {
+            key: 'restaurants',
+            icon: <SiHomeassistantcommunitystore />,
+            label: <Link to="/restaurants">Restaurant</Link>,
+        },
+        {
+            key: 'categories',
+            icon: <MdOutlineFoodBank />,
+            label: <Link to="/categories">Category</Link>,
+        },
+        {
+            key: 'accounts',
+            icon: <MdOutlineAccountCircle />,
+            label: <Link to="/accounts">Account</Link>,
+        },
+        {
+            key: 'profile',
+            icon: <ImProfile />,
+            label: <Link to="/profile">Profile</Link>,
+        },
+    ];
+    if (myProfile?.role === "restaurant") {
+        items = [
+            {
+                key: 'dashboard',
+                icon: <RxDashboard />,
+                label: <Link to="/dashboard">Dashboard</Link>,
+            },
+            {
+                key: 'foods',
+                icon: <PiBowlFood />,
+                label: <Link to="/foods">Food</Link>,
+            },
+            {
+                key: 'orders',
+                icon: <BiDish />,
+                label: <Link to="/orders">Order</Link>,
+            },
+            {
+                key: 'profile',
+                icon: <ImProfile />,
+                label: <Link to="/profile">Profile</Link>,
+            },
+        ]
+    }
     useEffect(() => {
         const profile = localStorage.getItem("profile")
         if (profile) {
@@ -41,43 +101,7 @@ const AppLayout: React.FC = () => {
                     selectedKeys={[endpoints]}
                     theme="dark"
                     mode="inline"
-                    items={[
-                        {
-                            key: 'dashboard',
-                            icon: <RxDashboard />,
-                            label: <Link to="/dashboard">Dashboard</Link>,
-                        },
-                        {
-                            key: 'foods',
-                            icon: <PiBowlFood />,
-                            label: <Link to="/foods">Food</Link>,
-                        },
-                        {
-                            key: 'orders',
-                            icon: <BiDish />,
-                            label: <Link to="/orders">Order</Link>,
-                        },
-                        {
-                            key: 'restaurants',
-                            icon: <SiHomeassistantcommunitystore />,
-                            label: <Link to="/restaurants">Restaurant</Link>,
-                        },
-                        {
-                            key: 'categories',
-                            icon: <MdOutlineFoodBank />,
-                            label: <Link to="/categories">Category</Link>,
-                        },
-                        {
-                            key: 'accounts',
-                            icon: <MdOutlineAccountCircle />,
-                            label: <Link to="/accounts">Account</Link>,
-                        },
-                        {
-                            key: 'profile',
-                            icon: <ImProfile />,
-                            label: <Link to="/profile">Profile</Link>,
-                        },
-                    ]}
+                    items={items}
                 />
             </Sider>
             <Layout>
