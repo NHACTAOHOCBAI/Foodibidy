@@ -260,9 +260,10 @@ export const updateMyRes = async (req: Request, res: Response) => {
     const restaurantImage = req.files?.restaurantImage as UploadedFile
 
     restaurantService.updateRestaurant(resId?.id as string, { ...req.body, restaurantImage: restaurantImage })
-
+    const resDoc = await databaseService.restaurants.doc(resId?.id as string).get()
+    console.log(resDoc.data())
     res.status(200).json({
-      message: 'Update my profile successfully',
+      message: 'Update my restaurant successfully',
       userId: req.user.uid
     })
   } catch (error) {
