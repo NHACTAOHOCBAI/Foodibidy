@@ -11,8 +11,19 @@ import reviewService from './review.service'
 import { CartType } from '~/models/schemas/cart.schema'
 import restaurantService from './restaurant.service'
 import categoryService from './category.service'
-import { forEach } from 'lodash'
+import { filter, forEach } from 'lodash'
 import Category from '~/models/schemas/category.schema'
+import { id } from 'date-fns/locale'
+import { query } from 'express'
+import { doc } from 'firebase/firestore'
+import { string, number } from 'zod'
+import {
+  deleteDish,
+  getAllDishes,
+  getDishesByCategoryId,
+  getDishesByRestaurantId,
+  getMyDishes
+} from '~/controllers/dish.controller'
 
 class DishService {
   private dishCollection = databaseService.dishes
@@ -45,7 +56,6 @@ class DishService {
         }),
         cateIds: admin.firestore.FieldValue.arrayUnion(data.category.id)
       })
-
 
       const newDish = new Dish({
         ...resDishBody,
@@ -86,67 +96,71 @@ class DishService {
         data.category.name,
         CATEGORY_MESSAGES.NOT_FOUND
       )
-      if (data.price) {
-        // udpate order detail
-        const order_detailsSnapshot = await this.order_detailsCollection.where('dishIds', 'array-contains', id).get()
-        for (const doc of order_detailsSnapshot.docs) {
-          const data2 = doc.data()
-          const updatedItems = data2.items.map((item: any) => {
-            if (item.dish?.id === id) {
-              return {
-                ...item,
-                dish: {
-                  ...item.dish,
-                  price: data.price
-                }
+    }
+    if (data.price) {
+      // udpate order detail
+      const order_detailsSnapshot = await this.order_detailsCollection.where('dishIds', 'array-contains', id).get()
+      for (const doc of order_detailsSnapshot.docs) {
+        const data2 = doc.data()
+        const updatedItems = data2.items.map((item: any) => {
+          if (item.dish?.id === id) {
+            return {
+              ...item,
+              dish: {
+                ...item.dish,
+                price: data.price
               }
             }
-            return item
-          })
+          }
+          return item
+        })
 
-          await this.order_detailsCollection.doc(doc.id).update({
-            items: updatedItems
-          })
-        }
-      }
-
-      if (data.dishName) {
-        // udpate order detail
-        const order_detailsSnapshot = await this.order_detailsCollection.where('dishIds', 'array-contains', id).get()
-        for (const doc of order_detailsSnapshot.docs) {
-          const data2 = doc.data()
-          const updatedItems = data2.items.map((item: any) => {
-            if (item.dish?.id === id) {
-              return {
-                ...item,
-                dish: {
-                  ...item.dish,
-                  dishName: data.dishName
-                }
-              }
-            }
-            return item
-          })
-
-          await this.order_detailsCollection.doc(doc.id).update({
-            items: updatedItems
-          })
-        }
+        await this.order_detailsCollection.doc(doc.id).update({
+          items: updatedItems
+        })
       }
     }
 
-    const { dishImage, ...resDishBody } = data
-    let urlImage = ''
+    if (data.dishName) {
+      // update order detail
+      const order_detailsSnapshot = await this.order_detailsCollection.where('dishIds', 'array-contains', id).get()
+      for (const doc of order_detailsSnapshot.docs) {
+        const data2 = doc.data()
+        const updatedItems = data2.items.map((item: any) => {
+          if (item.dish?.id === id) {
+            return {
+              ...item,
+              dish: {
+                ...item.dish,
+                dishName: data.dishName
+              }
+            }
+          }
+          return item
+        })
+
+        await this.order_detailsCollection.doc(doc.id).update({
+          items: updatedItems
+        })
+      }
+    }
+
+    const { dishImage, category, ...resDishBody } = data
+    let urlImage = doc.data()?.dishImage || ''
     if (dishImage) {
       urlImage = await CloudinaryService.uploadImage(dishImage, 'dish')
     }
     if (!doc.exists) {
       throw new ErrorWithStatus({ message: DISH_MESSAGES.DISH_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
     }
-
+    let cateData = doc.data()?.category
+    if (category) {
+      cateData = category
+    }
     const updatedDish = {
       ...resDishBody,
       dishImage: urlImage,
+      category: cateData,
       updatedAt: new Date()
     }
 
@@ -222,7 +236,6 @@ class DishService {
       for (const doc of user_dishSnapshot.docs) {
         await databaseService.user_dish.doc(doc.id).delete()
       }
-
 
       // Lấy thông tin món ăn cần xoá để biết category và restaurant
       const dishDoc = await this.dishCollection.doc(id).get()

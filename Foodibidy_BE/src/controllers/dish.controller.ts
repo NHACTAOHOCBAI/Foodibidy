@@ -45,7 +45,8 @@ export const updateDish = async (
   next: NextFunction
 ) => {
   const dishImage = req.files?.dishImage as UploadedFile
-  const category = JSON.parse(req.body.category as unknown as string)
+  let category = undefined
+  if (req.body.category) category = JSON.parse(req.body.category as unknown as string)
 
   const result = await dishService.updateDish(req.params.dishId, { ...req.body, category, dishImage })
   return res.json({ message: DISH_MESSAGES.UPDATE_SUCCESS, data: result })
