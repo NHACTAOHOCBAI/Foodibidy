@@ -6,7 +6,8 @@ import {
   getProfile,
   logoutUser,
   registerRestaurantOwner,
-  updateProfile
+  updateProfile,
+  updateMyRes
 } from '~/controllers/auth.controller'
 import { authenticateFirebase } from '~/middlewares/auth.middlewares'
 
@@ -16,6 +17,7 @@ router.post('/refresh', refreshToken)
 router.post('/register', registerUser)
 router.get('/profile', authenticateFirebase, getProfile)
 router.put('/profile', authenticateFirebase, updateProfile)
+router.put('/profile/myRes', authenticateFirebase, updateMyRes)
 router.post('/logout', authenticateFirebase, logoutUser)
 router.post('/registerRestaurantOwner', registerRestaurantOwner)
 

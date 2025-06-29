@@ -9,6 +9,8 @@ import Profile from "../pages/admin/Profile";
 import Account from "../pages/admin/Account";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+import CheckAuth from "../pages/auth/CheckAuth";
+import { Button, Result } from "antd";
 
 const router = createBrowserRouter([
     {
@@ -16,12 +18,12 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
             { path: '/dashboard', element: <Dashboard /> },
-            { path: '/foods', element: <Food /> },
-            { path: '/orders', element: <Order /> },
-            { path: '/restaurants', element: <Restaurant /> },
-            { path: '/categories', element: <Category /> },
-            { path: '/accounts', element: <Account /> },
-            { path: '/my-restaurant', element: <Profile /> },
+            { path: '/foods', element: <CheckAuth endpoint="foods" />, children: [{ index: true, element: <Food /> }] },
+            { path: '/orders', element: <CheckAuth endpoint="orders" />, children: [{ index: true, element: <Order /> }] },
+            { path: '/restaurants', element: <CheckAuth endpoint="restaurants" />, children: [{ index: true, element: <Restaurant /> }] },
+            { path: '/categories', element: <CheckAuth endpoint="categories" />, children: [{ index: true, element: <Category /> }] },
+            { path: '/accounts', element: <CheckAuth endpoint="accounts" />, children: [{ index: true, element: <Account /> }] },
+            { path: '/profile', element: <Profile /> },
         ]
     },
     {
@@ -31,7 +33,16 @@ const router = createBrowserRouter([
     {
         path: '/register',
         element: <Register />
+    },
+    {
+        path: "*", element: <Result
+            status="404"
+            title="404"
+            subTitle="Sorry, the page you visited does not exist."
+            extra={<Button type="primary">Back Home</Button>}
+        />
     }
+
 ]);
 export default router
 

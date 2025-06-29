@@ -27,8 +27,6 @@ export interface UpdateRestaurantReqBody {
   address?: string
   status?: RestaurantStatus
   restaurantImage?: UploadedFile
-
   phoneNumber?: string
-
   bio?: string
 }

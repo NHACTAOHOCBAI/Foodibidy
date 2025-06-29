@@ -82,18 +82,18 @@ class RestaurantService {
 
   async updateRestaurant(id: string, data: UpdateRestaurantReqBody) {
     const { restaurantImage, ...resRestaurant } = data
-    let urlImage = ''
+    const doc = await this.restaurantCollection.doc(id).get()
+    let urlImage = doc.data()?.restaurantImage || ''
     if (restaurantImage) {
       urlImage = await CloudinaryService.uploadImage(restaurantImage, 'restaurant')
     }
 
-    const doc = await this.restaurantCollection.doc(id).get()
     const updatedRestaurant = {
       ...resRestaurant,
       restaurantImage: urlImage,
       updatedAt: new Date()
     }
-
+    console.log('updateRestaurant', updatedRestaurant)
     if (data.restaurantName) {
       // update dish
       await updateNestedFieldInCollection({
@@ -203,7 +203,6 @@ class RestaurantService {
     return doc.id
   }
 }
-
 
 const restaurantService = new RestaurantService()
 export default restaurantService

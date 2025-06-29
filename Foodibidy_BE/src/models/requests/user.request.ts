@@ -9,7 +9,7 @@ export interface CreateUserReqBody {
   fullName: string
   email: string
   password: string
-  confirmPassword: string
+  confirmPassword?: string
   role?: UserRole
   address?: Omit<AddressType, 'userId' | 'id'>[] | []
   avatar?: UploadedFile

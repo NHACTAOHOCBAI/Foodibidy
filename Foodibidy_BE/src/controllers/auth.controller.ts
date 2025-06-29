@@ -38,8 +38,6 @@ export const loginUser = async (req: Request, res: Response) => {
       }
     )
 
-
-
     // Trả về idToken và lưu refreshToken vào cookie
     if (!response.ok) {
       const errorData = await response.json()
@@ -232,8 +230,37 @@ export const updateProfile = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'User profile not found' })
     }
     const avatar = req.files?.avatar as UploadedFile
-    const address = JSON.parse(req.body.address as unknown as string)
+    let address = undefined
+    if (req.body.address) address = JSON.parse(req.body.address as unknown as string)
+
     usersService.updateUser(req.user.uid, { ...req.body, address, avatar: avatar })
+
+    res.status(200).json({
+      message: 'Update my profile successfully',
+      userId: req.user.uid
+    })
+  } catch (error) {
+    console.error('Error getting user profile:', error)
+    res.status(500).json({ message: 'Error getting user profile', error })
+  }
+}
+
+export const updateMyRes = async (req: Request, res: Response) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+
+  try {
+    const userDoc = await databaseService.users.doc(req.user.uid).get()
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: 'User profile not found' })
+    }
+
+    const resId = await restaurantService.getRestaurantByUserId(req.user.uid)
+    const restaurantImage = req.files?.restaurantImage as UploadedFile
+
+    restaurantService.updateRestaurant(resId?.id as string, { ...req.body, restaurantImage: restaurantImage })
+
     res.status(200).json({
       message: 'Update my profile successfully',
       userId: req.user.uid

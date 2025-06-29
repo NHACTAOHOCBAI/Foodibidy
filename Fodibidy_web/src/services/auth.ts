@@ -1,10 +1,13 @@
-import axios from "axios";
+
 import axiosInstance from "../configs/axiosConfig"
 
+const getMyProfile = async () => {
+    const res = await axiosInstance.get('/auth/profile')
+    return res.data
+}
 
 const login = async (email: string, password: string) => {
-    const returnSecureToken = true;
-    const res = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ', { email, password, returnSecureToken })
+    const res = await axiosInstance.post('/auth/login', { email, password })
     return res.data
 }
 
@@ -26,4 +29,31 @@ const registerRestaurant = async (account: { email: string, password: string, fu
         },
     });
 }
-export { login, logout, register, registerRestaurant }
+
+const updateMyAccount = async (phoneNumber: string, fullName: string, avatar: File) => {
+    const formData = new FormData();
+    formData.append('phoneNumber', phoneNumber);
+    formData.append('fullName', fullName);
+    formData.append('avatar', avatar);
+    return await axiosInstance.put('/auth/profile', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+}
+const updateMyRestaurant = async (restaurantName: string, address: string, status: string, phoneNumber: string, bio: string, restaurantImage: File) => {
+    const formData = new FormData();
+    formData.append('restaurantName', restaurantName);
+    formData.append('address', address);
+    formData.append('status', status);
+    formData.append('phoneNumber', phoneNumber);
+    formData.append('status', status);
+    formData.append('bio', bio);
+    formData.append('restaurantImage', restaurantImage);
+    return await axiosInstance.put('/auth/profile/myRes', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+}
+export { login, logout, register, registerRestaurant, getMyProfile, updateMyAccount, updateMyRestaurant }

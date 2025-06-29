@@ -216,7 +216,7 @@ class UsersService {
 
       const { avatar, address, ...updatedDataReq } = updateData
 
-      let urlImage = ''
+      let urlImage = doc.data()?.avatar || ''
       if (avatar) {
         urlImage = await CloudinaryService.uploadImage(avatar, 'avatar')
       }

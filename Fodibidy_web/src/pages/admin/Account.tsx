@@ -1,11 +1,11 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Table, Tag, Image, Popconfirm, Button, message } from 'antd';
+import { Table, Tag, Image, Popconfirm, Button, message, Input } from 'antd';
 import type { TableProps } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import convertDateFormat from '../../utils/convertDateFormat';
 import { PiEye } from 'react-icons/pi';
+import { RiResetLeftFill } from 'react-icons/ri';
 import { deleteAccountById, getAllAccounts } from '../../services/account';
 import NewAccount from '../../components/account/NewAccount';
 import UpdateAccount from '../../components/account/UpdateAccount';
@@ -17,8 +17,10 @@ const Account = () => {
     const [isNewOpen, setIsNewOpen] = useState(false);
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [updatedAccount, setUpdatedAccount] = useState<Account>();
-    const [isDetailOpen, setIsDetailOpen] = useState(false); // Changed to false for consistency
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [detailAccount, setDetailAccount] = useState<Account>();
+    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [searchText, setSearchText] = useState('');
 
     const columns: TableProps<Account>['columns'] = [
         {
@@ -88,7 +90,13 @@ const Account = () => {
         },
     ];
 
-    const [accounts, setAccounts] = useState<Account[]>([]);
+    // Lọc dữ liệu dựa trên searchText (theo email)
+    const filteredAccounts = useMemo(() => {
+        if (!searchText) return accounts;
+        return accounts.filter((account) =>
+            account.email.toLowerCase().includes(searchText.toLowerCase())
+        );
+    }, [accounts, searchText]);
 
     const refetchData = async () => {
         setIsPending(true);
@@ -112,12 +120,38 @@ const Account = () => {
         }
     };
 
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchText(e.target.value);
+    };
+
+    const handleReset = () => {
+        setSearchText('');
+    };
+
     useEffect(() => {
         refetchData();
     }, []);
 
     return (
         <>
+            <div
+                style={{
+                    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.05)',
+                    padding: 20,
+                    borderRadius: 8,
+                    marginBottom: 20,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    Email: <Input style={{ width: 400 }} value={searchText} onChange={handleSearchChange} placeholder="Search by email" />
+                </div>
+                <Button style={{ display: 'flex', alignItems: 'center' }} type="primary" onClick={handleReset}>
+                    <RiResetLeftFill /> Reset
+                </Button>
+            </div>
             {contextHolder}
             <Button
                 onClick={() => setIsNewOpen(true)}
@@ -130,10 +164,10 @@ const Account = () => {
                 loading={isPending}
                 bordered
                 columns={columns}
-                dataSource={accounts}
+                dataSource={filteredAccounts}
                 rowKey="id"
                 pagination={{
-                    pageSize: 5, // Số item mỗi trang
+                    pageSize: 4,
                     showTotal: (total) => `Total ${total} accounts`,
                 }}
             />

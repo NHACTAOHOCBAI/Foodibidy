@@ -8,4 +8,12 @@ const updateOrder = async (id: string, value: { status: string; shipperName?: st
     const res = await axiosInstance.put(`/orders/${id}`, value)
     return res.data as Order[]
 }
-export { getMyOrder, updateOrder }
+const geAllOrder = async () => {
+    const res = await axiosInstance.get(`/orders`)
+    return res.data.data as Order[]
+}
+const deleteOrder = async (id: string) => {
+    const res = await updateOrder(id, { status: "cancelled" })
+    return res
+}
+export { getMyOrder, updateOrder, geAllOrder, deleteOrder }
