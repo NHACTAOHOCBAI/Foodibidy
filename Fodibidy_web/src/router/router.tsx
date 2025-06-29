@@ -9,6 +9,7 @@ import Profile from "../pages/admin/Profile";
 import Account from "../pages/admin/Account";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+import CheckAuth from "../pages/auth/CheckAuth";
 
 const router = createBrowserRouter([
     {
@@ -16,12 +17,12 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
             { path: '/dashboard', element: <Dashboard /> },
-            { path: '/foods', element: <Food /> },
-            { path: '/orders', element: <Order /> },
-            { path: '/restaurants', element: <Restaurant /> },
-            { path: '/categories', element: <Category /> },
-            { path: '/accounts', element: <Account /> },
-            { path: '/my-restaurant', element: <Profile /> },
+            { path: '/foods', element: <CheckAuth endpoint="foods" />, children: [{ index: true, element: <Food /> }] },
+            { path: '/orders', element: <CheckAuth endpoint="orders" />, children: [{ index: true, element: <Order /> }] },
+            { path: '/restaurants', element: <CheckAuth endpoint="restaurants" />, children: [{ index: true, element: <Restaurant /> }] },
+            { path: '/categories', element: <CheckAuth endpoint="categories" />, children: [{ index: true, element: <Category /> }] },
+            { path: '/accounts', element: <CheckAuth endpoint="accounts" />, children: [{ index: true, element: <Account /> }] },
+            { path: '/profile', element: <Profile /> },
         ]
     },
     {
