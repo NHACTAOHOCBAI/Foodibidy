@@ -6,7 +6,7 @@ import AdminDashboard from "../../components/dashboard/AdminDashboard"
 const Dashboard = () => {
     const { myProfile } = useContext(MyProfileContext)
     return (
-        myProfile?.role === 'restaurant' ?
+        myProfile?.role === 'admin' ?
             <AdminDashboard />
             :
             <RestaurantDashboard />

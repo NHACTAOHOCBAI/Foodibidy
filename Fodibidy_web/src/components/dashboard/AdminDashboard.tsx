@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Card, Col, Row, Select, Typography, Spin } from "antd";
+import { Card, Col, Row, Typography, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Column, Line, Pie } from "@ant-design/charts";
 import moment from "moment";
 import useMessage from "antd/es/message/useMessage";
+import { getAdminDashboard } from "../../services/dashboard";
 
 const { Title } = Typography;
-const { Option } = Select;
 
 // Provided interfaces
 
@@ -21,17 +21,9 @@ interface DashboardData {
     ordersTrend: { date: string; orders: number }[];
     restaurantRevenue: { name: string; revenue: number }[];
     topFoodItems: Food[];
-    restaurants: Restaurant[];
-    accounts: Account[];
-    orders: Order[];
-    foodItems: Food[];
-    categories: Category[];
-    reviews: Review[];
 }
-
 const AdminDashboard = () => {
     const [data, setData] = useState<DashboardData | null>(null);
-    const [timeRange, setTimeRange] = useState("today");
     const [messageApi, contextHolder] = useMessage();
     const [loading, setLoading] = useState(false);
 
@@ -87,22 +79,14 @@ const AdminDashboard = () => {
                 rating: 4.5,
             },
         ],
-        restaurants: [], // Empty as not used
-        accounts: [], // Empty as not used
-        orders: [], // Empty as not used
-        foodItems: [], // Empty as not used
-        categories: [], // Empty as not used
-        reviews: [], // Empty as not used
     };
 
     // Fetch data (replace with API calls)
-    const fetchDashboardData = async (range: string) => {
+    const fetchDashboardData = async () => {
         setLoading(true);
         try {
-            // Simulate API call
-            // const response = await api.getAdminDashboardData(range);
-            // setData(response);
-            setData(mockData);
+            const response = await getAdminDashboard()
+            setData(response);
             messageApi.success("Data loaded successfully");
         } catch (error) {
             messageApi.error("Failed to load dashboard data");
@@ -112,8 +96,8 @@ const AdminDashboard = () => {
     };
 
     useEffect(() => {
-        fetchDashboardData(timeRange);
-    }, [timeRange]);
+        fetchDashboardData();
+    }, []);
 
     // Chart configurations
     const ordersChartConfig = {
@@ -147,20 +131,6 @@ const AdminDashboard = () => {
         <div style={{ padding: 24 }}>
             {contextHolder}
             <Title level={3}>Admin Dashboard</Title>
-            <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-                <Col>
-                    <Select
-                        value={timeRange}
-                        onChange={setTimeRange}
-                        style={{ width: 200 }}
-                        disabled={loading}
-                    >
-                        <Option value="today">Today</Option>
-                        <Option value="week">This Week</Option>
-                        <Option value="month">This Month</Option>
-                    </Select>
-                </Col>
-            </Row>
 
             {loading ? (
                 <div style={{ textAlign: "center", padding: 50 }}>

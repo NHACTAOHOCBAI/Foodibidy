@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axiosInstance from "../configs/axiosConfig"
 
-const getRestaurantDashboard = async (range: 'today' | 'week' | 'month') => {
-    console.log(range)
+const getAdminDashboard = async () => {
+    const res = await axiosInstance.get('/admin-dashboard')
+    return res.data
 }
-const getAdminDashboard = async (range: 'today' | 'week' | 'month') => {
-    console.log(range)
+const getRestaurantDashboard = async () => {
+    const res = await axiosInstance.get('/restaurant-dashboard')
+    return res.data
 }
 
 export { getRestaurantDashboard, getAdminDashboard }
