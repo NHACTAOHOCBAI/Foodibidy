@@ -57,7 +57,7 @@ axiosInstance.interceptors.response.use(
 
             try {
                 // Gửi request refresh mà không cần đính kèm gì – server đọc từ cookies
-                const response = await axios.get(`${BASE_URL}/auth/refresh`, {
+                const response = await axios.post(`${BASE_URL}/auth/refresh`, {
                     withCredentials: true, // cần thiết để cookies được gửi đi
                 });
 

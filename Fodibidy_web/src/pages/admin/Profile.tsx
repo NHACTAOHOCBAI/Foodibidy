@@ -3,8 +3,9 @@ import { Spin, Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 import MyRestaurant from '../../components/profile/MyRestaurant';
 import MyProfile from '../../components/profile/MyProfile';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { getMyProfile } from '../../services/auth';
+import { MyProfileContext } from '../../context/MyProfileContext';
 
 const onChange = (key: string) => {
     console.log(key);
@@ -16,6 +17,7 @@ type MyProfileType = {
 };
 
 const Profile = () => {
+    const { myProfile: profile } = useContext(MyProfileContext)
     const [myProfile, setMyProfile] = useState<MyProfileType | undefined>(undefined)
     const [isPending, setIsPending] = useState(false)
     const fetchMyProfile = async () => {
@@ -28,13 +30,17 @@ const Profile = () => {
         fetchMyProfile()
     }, [])
     const items: TabsProps['items'] = [
-        {
-            key: '1',
-            label: 'Restaurant',
-            children: <MyRestaurant
-                fetchMyProfile={fetchMyProfile}
-                myRestaurant={myProfile?.restaurant} />
-        },
+        ...(profile?.role === 'restaurant'
+            ? [
+                {
+                    key: '1',
+                    label: 'Restaurant',
+                    children: <MyRestaurant
+                        fetchMyProfile={fetchMyProfile}
+                        myRestaurant={myProfile?.restaurant} />
+                },
+            ]
+            : []),
         {
             key: '2',
             label: 'Account',
