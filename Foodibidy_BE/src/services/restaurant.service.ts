@@ -93,7 +93,7 @@ class RestaurantService {
       restaurantImage: urlImage,
       updatedAt: new Date()
     }
-
+    console.log('updateRestaurant', updatedRestaurant)
     if (data.restaurantName) {
       // update dish
       await updateNestedFieldInCollection({

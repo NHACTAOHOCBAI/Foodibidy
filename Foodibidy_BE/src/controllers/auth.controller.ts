@@ -253,8 +253,9 @@ export const updateMyRes = async (req: Request, res: Response) => {
     }
 
     const resId = await restaurantService.getRestaurantByUserId(req.user.uid)
-    const avatar = req.files?.avatar as UploadedFile
-    restaurantService.updateRestaurant(resId?.id as string, { ...req.body, avatar: avatar })
+    const restaurantImage = req.files?.restaurantImage as UploadedFile
+
+    restaurantService.updateRestaurant(resId?.id as string, { ...req.body, restaurantImage: restaurantImage })
 
     res.status(200).json({
       message: 'Update my profile successfully',
