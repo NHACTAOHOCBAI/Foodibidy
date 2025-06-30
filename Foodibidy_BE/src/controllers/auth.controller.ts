@@ -262,7 +262,7 @@ export const updateMyRes = async (req: Request, res: Response) => {
     await restaurantService.updateRestaurant(resId?.id as string, { ...req.body, restaurantImage: restaurantImage })
 
     res.status(200).json({
-      message: 'Update my profile successfully',
+      message: 'Update my restaurant successfully',
       userId: req.user.uid
     })
   } catch (error) {
