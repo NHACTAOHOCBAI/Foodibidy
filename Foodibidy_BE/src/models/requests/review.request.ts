@@ -11,7 +11,6 @@ export interface PaginationQuery {
 }
 
 export interface CreateReviewReqBody {
-  userId: string
   dishId: string
   rating: number
   comment: string

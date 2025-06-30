@@ -4,7 +4,9 @@ import { CreateReviewReqBody, ReviewParams } from '~/models/requests/review.requ
 import reviewService from '~/services/review.service'
 
 export const createReview = async (req: Request<any, any, CreateReviewReqBody>, res: Response, next: NextFunction) => {
-  const result = await reviewService.createReview(req.body)
+  const userId = req.user!.uid
+  const result = await reviewService.createReview(userId, req.body)
+
   return res.json({ message: REVIEW_MESSAGES.CREATE_SUCCESS, data: result })
 }
 

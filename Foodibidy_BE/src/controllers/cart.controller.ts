@@ -9,12 +9,20 @@ export const getCart = async (req: Request<CartParams>, res: Response, next: Nex
   return res.json({ message: CART_MESSAGES.GET_SUCCESS, data: result })
 }
 
+export const getMyCart = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.user!.uid
+
+  const result = await cartService.getMyCart(userId)
+  return res.json({ message: CART_MESSAGES.GET_SUCCESS, data: result })
+}
+
 export const addDishToCart = async (
   req: Request<CartParams, any, AddDishToCart>,
   res: Response,
   next: NextFunction
 ) => {
-  const result = await cartService.addDishToCart(req.params.cartId, req.body)
+  const userId = req.user!.uid
+  const result = await cartService.addDishToCart(userId, req.body)
   return res.json({ message: CART_MESSAGES.ADD_SUCCESS, data: result })
 }
 

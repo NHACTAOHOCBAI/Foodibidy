@@ -112,7 +112,7 @@ export const RESTAURANT_MESSAGES = {
 export const USER_DISH_MESSAGES = {
   CREATE_SUCCESS: 'User_dish created successfully',
   GET_SUCCESS: 'Get user_dish successfully',
-  GET_ALL_SUCCESS: 'Get all user_dish successfully',
+  GET_ALL_SUCCESS: 'Get all user fav dish successfully',
   UPDATE_SUCCESS: 'User_dish updated successfully',
   DELETE_SUCCESS: 'User_dish deleted successfully',
   NOT_FOUND: 'User_dish not found',

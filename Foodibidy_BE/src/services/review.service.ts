@@ -9,10 +9,11 @@ import { handleFormatDate } from '~/utils/utils'
 class ReviewService {
   private reviewCollection = databaseService.reviews
 
-  async createReview(data: CreateReviewReqBody) {
+  async createReview(userId: string, data: CreateReviewReqBody) {
     try {
       const newReview = new Review({
         ...data,
+        userId,
         createdAt: new Date(),
         updatedAt: new Date()
       }).toObject()

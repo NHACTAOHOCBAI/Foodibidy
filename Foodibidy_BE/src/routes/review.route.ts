@@ -18,15 +18,19 @@ const reviewsRouter = Router()
  * Path: /reviews
  * Method: POST
  */
-reviewsRouter.post('/', wrapRequestHandler(createReview))
+reviewsRouter.post('/', authorizeRole([UserRole.CUSTOMER, UserRole.RESTAURANT]), wrapRequestHandler(createReview))
 
 /**
  * Get all reviews
  * Path: /reviews
  * Method: GET
  */
-reviewsRouter.get('/', authenticateFirebase,
-  authorizeRole([UserRole.CUSTOMER, UserRole.RESTAURANT]), wrapRequestHandler(getAllReviews))
+reviewsRouter.get(
+  '/',
+  authenticateFirebase,
+  authorizeRole([UserRole.CUSTOMER, UserRole.RESTAURANT]),
+  wrapRequestHandler(getAllReviews)
+)
 
 /**
  * Get a review by ID
@@ -40,7 +44,11 @@ reviewsRouter.get('/:reviewId', authorizeRole([UserRole.CUSTOMER, UserRole.RESTA
  * Path: /reviews/food/:foodId
  * Method: GET
  */
-reviewsRouter.get('/food/:foodId', authorizeRole([UserRole.CUSTOMER, UserRole.RESTAURANT]), wrapRequestHandler(getReviewByFood))
+reviewsRouter.get(
+  '/food/:foodId',
+  authorizeRole([UserRole.CUSTOMER, UserRole.RESTAURANT]),
+  wrapRequestHandler(getReviewByFood)
+)
 
 /**
  * Update a review by ID

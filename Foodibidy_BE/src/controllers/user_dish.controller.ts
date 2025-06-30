@@ -22,7 +22,8 @@ export const checkLikeDish = async (req: Request<User_Dish>, res: Response, next
 export const getDishesByUserId = async (req: Request<DishParams>, res: Response, next: NextFunction) => {
   const limit = parseInt(req.query.limit as string, 10) || 0
   const page = parseInt(req.query.page as string, 10) || 0
-  const result = await user_dishService.getDishesByUserId(limit, page, req.params.userId)
+  const userId = req.user!.uid
+  const result = await user_dishService.getDishesByUserId(limit, page, userId)
   return res.json({ message: USER_DISH_MESSAGES.GET_ALL_SUCCESS, data: result })
 }
 

@@ -15,7 +15,7 @@ export interface PaginationQuery {
 }
 
 export interface CreateOrderReqBody {
-  user: Pick<UserType, 'id' | 'fullName' | 'phoneNumber'>
+  address: string
   order: {
     restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
     items: {

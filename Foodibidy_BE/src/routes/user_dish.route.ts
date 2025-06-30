@@ -1,5 +1,7 @@
 import { Router } from 'express'
+import { UserRole } from '~/constants/enums'
 import { checkLikeDish, createUser_Dish, deleteUser_Dish, getDishesByUserId } from '~/controllers/user_dish.controller'
+import { authenticateFirebase, authorizeRole } from '~/middlewares/auth.middlewares'
 import { wrapRequestHandler } from '~/utils/handler'
 const user_dishRouter = Router()
 
@@ -24,7 +26,12 @@ user_dishRouter.post('/checkDish', wrapRequestHandler(checkLikeDish))
  * Path: /userDish/:userId
  * Method: GET
  */
-user_dishRouter.get('/:userId', wrapRequestHandler(getDishesByUserId))
+user_dishRouter.get(
+  '/',
+  authenticateFirebase,
+  authorizeRole([UserRole.CUSTOMER]),
+  wrapRequestHandler(getDishesByUserId)
+)
 
 /**
  * Description. Delete a favorite dish

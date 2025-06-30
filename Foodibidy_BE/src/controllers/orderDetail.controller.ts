@@ -29,7 +29,7 @@ export const getMyOngoingOrders = async (req: Request, res: Response, next: Next
   const limit = parseInt(req.query.limit as string, 10) || 0
   const page = parseInt(req.query.page as string, 10) || 0
   const result = await OrderDetailService.getMyOngoingOrders(limit, page, req.user.uid)
-  return res.json({ message: ORDER_MESSAGES.GET_SUCCESS, data: result })
+  return res.json({ message: ORDER_MESSAGES.GET_ALL_SUCCESS, data: result })
 }
 
 export const getMyHistoryOrders = async (req: Request, res: Response, next: NextFunction) => {

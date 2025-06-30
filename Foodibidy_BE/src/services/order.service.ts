@@ -13,41 +13,31 @@ import orderDetailService from './orderDetail.service'
 import usersService from './user.service'
 import restaurantService from './restaurant.service'
 import databaseService from './database.service'
+import { firestore } from 'firebase-admin'
 
 class OrderService {
   private order_detailCollection = databaseService.order_details
-  async createOrder(data: CreateOrderReqBody) {
+  async createOrder(userId: string, data: CreateOrderReqBody) {
     try {
-      let user: Pick<UserType, 'id' | 'fullName' | 'phoneNumber'> = {
-        fullName: '',
-        phoneNumber: ''
-      }
-      if (data.user) {
-        user = data.user
-
-        await validateFieldMatchById(
-          usersService.getUser.bind(usersService),
-          user.id,
-          'fullName',
-          user.fullName,
-          USER_MESSAGES.NOT_FOUND
-        )
-        await validateFieldMatchById(
-          usersService.getUser.bind(usersService),
-          user.id,
-          'phoneNumber',
-          user.phoneNumber,
-          USER_MESSAGES.NOT_FOUND
-        )
-      }
+      const user = await usersService.getUser(userId)
 
       for (const order of data.order) {
         await orderDetailService.createOrderDetail({
           ...order,
-          user: user,
+          user: user as UserType,
           status: OrderStatus.PENDING
         })
       }
+      const batch = firestore().batch()
+      const cartDoc = await databaseService.carts.where('userId', '==', userId).get()
+      if (!cartDoc.empty) {
+        const cartRef = cartDoc.docs[0].ref
+        batch.update(cartRef, {
+          dishes: [],
+          updatedAt: new Date()
+        })
+      }
+      await batch.commit()
       console.log('Order created success')
       return
     } catch (error) {

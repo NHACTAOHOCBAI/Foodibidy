@@ -15,14 +15,14 @@ export interface PaginationQuery {
 }
 
 export interface CreateOrderDetailReqBody {
-  user?: Pick<UserType, 'id' | 'fullName' | 'phoneNumber'>
+  user?: UserType
   restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
   status: OrderStatus
   items: {
     dish: Pick<DishType, 'id' | 'dishName' | 'price'>
     quantity: number
   }[]
-
+  address?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }

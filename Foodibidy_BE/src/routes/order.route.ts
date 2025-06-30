@@ -20,7 +20,7 @@ const ordersRouter = Router()
  * Path: /orders
  * Method: POST
  */
-ordersRouter.post('/', wrapRequestHandler(createOrder))
+ordersRouter.post('/', authenticateFirebase, authorizeRole([UserRole.CUSTOMER]), wrapRequestHandler(createOrder))
 
 /**
  * Get all orders
@@ -31,11 +31,11 @@ ordersRouter.get('/', wrapRequestHandler(getAllOrderDetails))
 
 /**
  * Get all user history orders
- * Path: /orders/history/:orderId
+ * Path: /orders/myHistoryOrders
  * Method: GET
  */
 ordersRouter.get(
-  '/history/:orderId',
+  '/myHistoryOrders',
   authenticateFirebase,
   authorizeRole([UserRole.CUSTOMER]),
   authenticateFirebase,
@@ -44,11 +44,11 @@ ordersRouter.get(
 
 /**
  * Get all user ongoing order
- * Path: /orders/onGoing/:orderId
+ * Path: /orders/myOngoingOrders
  * Method: GET
  */
 ordersRouter.get(
-  '/onGoing/:orderId',
+  '/myOngoingOrders',
   authenticateFirebase,
   authorizeRole([UserRole.CUSTOMER]),
   authenticateFirebase,

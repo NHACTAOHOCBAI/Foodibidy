@@ -48,7 +48,6 @@ class OrderDetailService {
 
       const newOrderDetail = {
         ...data,
-
         dishIds: dishIds
       }
       const docRef = await this.OrderDetailCollection.add(newOrderDetail)
