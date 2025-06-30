@@ -27,59 +27,59 @@ const AdminDashboard = () => {
     const [messageApi, contextHolder] = useMessage();
     const [loading, setLoading] = useState(false);
 
-    // Mock data (minimized to include only necessary data for KPIs and charts)
-    const mockData: DashboardData = {
-        totalRestaurants: 10,
-        totalAccounts: 50,
-        totalOrders: 500,
-        totalFoodItems: 200,
-        totalCategories: 15,
-        averageRating: 4.5,
-        ordersTrend: [
-            { date: "2025-06-25", orders: 80 },
-            { date: "2025-06-26", orders: 100 },
-            { date: "2025-06-27", orders: 70 },
-            { date: "2025-06-28", orders: 120 },
-            { date: "2025-06-29", orders: 130 },
-        ],
-        restaurantRevenue: [
-            { name: "Restaurant A", revenue: 5000000 },
-            { name: "Restaurant B", revenue: 3000000 },
-            { name: "Restaurant C", revenue: 2000000 },
-        ],
-        topFoodItems: [
-            {
-                id: "F001",
-                restaurant: { id: "R001", restaurantName: "Restaurant A" },
-                category: { id: "C001", name: "Main Course" },
-                dishName: "Pizza",
-                description: "Classic Margherita Pizza",
-                price: 200000,
-                dishImage: "pizza.jpg",
-                soldQuantity: 200,
-                available: true,
-                remainingQuantity: 50,
-                createdAt: "2025-06-01",
-                updatedAt: "2025-06-29",
-                rating: 4.7,
-            },
-            {
-                id: "F002",
-                restaurant: { id: "R002", restaurantName: "Restaurant B" },
-                category: { id: "C001", name: "Main Course" },
-                dishName: "Burger",
-                description: "Beef Burger with Fries",
-                price: 150000,
-                dishImage: "burger.jpg",
-                soldQuantity: 150,
-                available: true,
-                remainingQuantity: 30,
-                createdAt: "2025-06-01",
-                updatedAt: "2025-06-29",
-                rating: 4.5,
-            },
-        ],
-    };
+    // // Mock data (minimized to include only necessary data for KPIs and charts)
+    // const mockData: DashboardData = {
+    //     totalRestaurants: 10,
+    //     totalAccounts: 50,
+    //     totalOrders: 500,
+    //     totalFoodItems: 200,
+    //     totalCategories: 15,
+    //     averageRating: 4.5,
+    //     ordersTrend: [
+    //         { date: "2025-06-25", orders: 80 },
+    //         { date: "2025-06-26", orders: 100 },
+    //         { date: "2025-06-27", orders: 70 },
+    //         { date: "2025-06-28", orders: 120 },
+    //         { date: "2025-06-29", orders: 130 },
+    //     ],
+    //     restaurantRevenue: [
+    //         { name: "Restaurant A", revenue: 5000000 },
+    //         { name: "Restaurant B", revenue: 3000000 },
+    //         { name: "Restaurant C", revenue: 2000000 },
+    //     ],
+    //     topFoodItems: [
+    //         {
+    //             id: "F001",
+    //             restaurant: { id: "R001", restaurantName: "Restaurant A" },
+    //             category: { id: "C001", name: "Main Course" },
+    //             dishName: "Pizza",
+    //             description: "Classic Margherita Pizza",
+    //             price: 200000,
+    //             dishImage: "pizza.jpg",
+    //             soldQuantity: 200,
+    //             available: true,
+    //             remainingQuantity: 50,
+    //             createdAt: "2025-06-01",
+    //             updatedAt: "2025-06-29",
+    //             rating: 4.7,
+    //         },
+    //         {
+    //             id: "F002",
+    //             restaurant: { id: "R002", restaurantName: "Restaurant B" },
+    //             category: { id: "C001", name: "Main Course" },
+    //             dishName: "Burger",
+    //             description: "Beef Burger with Fries",
+    //             price: 150000,
+    //             dishImage: "burger.jpg",
+    //             soldQuantity: 150,
+    //             available: true,
+    //             remainingQuantity: 30,
+    //             createdAt: "2025-06-01",
+    //             updatedAt: "2025-06-29",
+    //             rating: 4.5,
+    //         },
+    //     ],
+    // };
 
     // Fetch data (replace with API calls)
     const fetchDashboardData = async () => {
