@@ -65,4 +65,6 @@ export default class OrderDetail {
       receivedAt: this.receivedAt
     }
   }
+
+
 }
