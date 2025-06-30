@@ -1,31 +1,44 @@
 import axios from 'axios';
-const BASE_URL = "http://192.168.193.126:4000";  // Sửa lại IP này
+import { getToken } from '@/configs/accessTokent';
+
+const BASE_URL = "http://192.168.129.126:3000/api/v1"; // Sửa lại IP này
+
 const axiosInstance = axios.create({
-    baseURL: BASE_URL,  // URL gốc của API
-    timeout: 10000,
-    withCredentials: true,                   // Timeout sau 10 giây
-    // headers: {
-    //     'Content-Type': 'application/json',
-    // },
-});
-// Add a request interceptor
-axiosInstance.interceptors.request.use(function (config) {
-    // Do something before request is sent
-    return config;
-}, function (error) {
-    // Do something with request error
-    return Promise.reject(error);
+    baseURL: BASE_URL, // URL gốc của API
+    timeout: 10000, // Timeout sau 10 giây
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json',
+    },
 });
 
+// Add a request interceptor
+axiosInstance.interceptors.request.use(
+    async (config) => {
+        // Lấy accessToken từ AsyncStorage
+        const token = await getToken();
+        if (token) {
+            // Thêm accessToken vào header Authorization
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        // Xử lý lỗi request
+        return Promise.reject(error);
+    }
+);
+
 // Add a response interceptor
-axiosInstance.interceptors.response.use(function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    return response.data;
-}, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    return Promise.reject(error.response.data);
-});
+axiosInstance.interceptors.response.use(
+    (response) => {
+        // Trả về dữ liệu từ response
+        return response;
+    },
+    (error) => {
+        // Xử lý lỗi response
+        return Promise.reject(error.response ? error.response.data : error);
+    }
+);
 
 export default axiosInstance;

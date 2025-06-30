@@ -51,11 +51,11 @@ const InnerLayout = () => {
   const router = useRouter();
   const pathname = usePathname(); // ví dụ "/"
 
-  useEffect(() => {
-    if (pathname === "/") {
-      router.replace("/(tabs)");
-    }
-  }, [pathname]);
+  // useEffect(() => {
+  //   if (pathname === "/") {
+  //     router.replace("/(tabs)");
+  //   }
+  // }, [pathname]);
   return (
     <View className="flex-1">
       <StatusBar hidden />
