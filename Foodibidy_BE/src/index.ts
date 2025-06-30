@@ -13,6 +13,7 @@ import usersRouter from './routes/user.route'
 import user_dishRouter from './routes/user_dish.route'
 import databaseService from './services/database.service'
 import authRouter from '~/routes/auth.route'
+import dashboardRouter from './routes/Dashboard.route'
 import cookieParser from 'cookie-parser'
 
 const app = express()
@@ -36,6 +37,7 @@ app.use(fileUpload())
 app.use(cookieParser())
 
 //routes
+app.use('/api/v1', dashboardRouter)
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/categories', categoriesRouter)
 app.use('/api/v1/auth', authRoutes)

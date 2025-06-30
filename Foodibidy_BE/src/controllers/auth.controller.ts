@@ -18,6 +18,7 @@ import console from 'console'
 import { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { ro } from 'date-fns/locale'
 import { handleFormatDate } from '~/utils/utils'
+import { add } from 'lodash'
 const FIREBASE_API_KEY = 'AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ'
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -68,7 +69,8 @@ export const loginUser = async (req: Request, res: Response) => {
         role: userData.role,
         fullName: userData.fullName,
         avatar: userData.avatar,
-        phoneNumber: userData.phoneNumber
+        phoneNumber: userData.phoneNumber,
+        address: userData.address
       })
   } catch (err) {
     return res.status(401).json({ message: 'Đăng nhập thất bại' })
@@ -262,7 +264,7 @@ export const updateMyRes = async (req: Request, res: Response) => {
     await restaurantService.updateRestaurant(resId?.id as string, { ...req.body, restaurantImage: restaurantImage })
 
     res.status(200).json({
-      message: 'Update my profile successfully',
+      message: 'Update my restaurant successfully',
       userId: req.user.uid
     })
   } catch (error) {

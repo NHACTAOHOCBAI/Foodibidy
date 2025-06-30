@@ -6,6 +6,7 @@ import { registerRestaurant } from '../../services/auth';
 
 
 const Register = () => {
+    const [form] = Form.useForm()
     const navigate = useNavigate()
     const [isPending, setIsPending] = useState(false)
     const [messageApi, contextHolder] = message.useMessage();
@@ -14,6 +15,8 @@ const Register = () => {
         try {
             await registerRestaurant({ email, password, fullName }, { restaurantName, address, phoneNumber, bio: "" })
             messageApi.success("Register account successfully")
+            form.resetFields()
+            navigate('/login')
         }
         catch (err: any) {
             messageApi.error(err.error)
@@ -27,6 +30,7 @@ const Register = () => {
                 <div style={{ width: 500, boxShadow: " 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", padding: 24 }}>
                     <h1 style={{ marginLeft: 120 }}>Please sign up here</h1>
                     <Form
+                        form={form}
                         layout='vertical'
                         name="basic"
                         initialValues={{ remember: true }}

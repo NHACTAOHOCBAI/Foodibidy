@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import Toast from 'react-native-toast-message';
 import { useEffect } from "react";
 import { OrderProvider } from "@/context/OrderContext";
+import { MyAccountProvider } from "@/context/MyAccountContext";
 
 const CustomHeader = ({ title, color = "", isTransperant = false }: any) => {
   const router = useRouter();
@@ -51,11 +52,11 @@ const InnerLayout = () => {
   const router = useRouter();
   const pathname = usePathname(); // ví dụ "/"
 
-  useEffect(() => {
-    if (pathname === "/") {
-      router.replace("/(tabs)");
-    }
-  }, [pathname]);
+  // useEffect(() => {
+  //   if (pathname === "/") {
+  //     router.replace("/(tabs)");
+  //   }
+  // }, [pathname]);
   return (
     <View className="flex-1">
       <StatusBar hidden />
@@ -189,11 +190,13 @@ export default function RootLayout() {
   const queryClient = new QueryClient()
   return (
     <QueryClientProvider client={queryClient}>
-      <FilterProvider>
-        <OrderProvider>
-          <InnerLayout />
-        </OrderProvider>
-      </FilterProvider>
+      <MyAccountProvider>
+        <FilterProvider>
+          <OrderProvider>
+            <InnerLayout />
+          </OrderProvider>
+        </FilterProvider>
+      </MyAccountProvider>
       <Toast />
     </QueryClientProvider>
   )

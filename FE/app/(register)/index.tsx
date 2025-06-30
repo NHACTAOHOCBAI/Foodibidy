@@ -3,9 +3,11 @@ import * as Yup from 'yup';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'moti';
 import { Text, View } from 'react-native';
-
 import Input from '@/components/Input';
 import Button from '@/components/Button';
+import { register } from '@/services/auth';
+import { storeToken } from '@/configs/accessTokent';
+import { showErrorToast, showSuccessToast } from '@/components/Toast';
 
 const Signup = () => {
     const router = useRouter();
@@ -33,12 +35,22 @@ const Signup = () => {
                         confirmPassword: '',
                     }}
                     validationSchema={signupSchema}
-                    onSubmit={(values) => {
-                        console.log('Register with:', values);
-                        router.push('/(tabs)');
+                    onSubmit={async (values, { setSubmitting, setFieldError }) => {
+                        try {
+                            await register(values.email, values.password, values.name);
+                            showSuccessToast('Sign up successful!'); // Hiển thị toast thành công
+                            router.push('/(login)'); // Chuyển hướng sau khi đăng ký thành công
+                        } catch (error: any) {
+                            console.error('Signup error:', error);
+                            const errorMessage = error.response?.data?.message || 'Failed to sign up';
+                            showErrorToast(errorMessage); // Hiển thị toast lỗi
+                            setFieldError('email', errorMessage);
+                        } finally {
+                            setSubmitting(false); // Kết thúc trạng thái submitting
+                        }
                     }}
                 >
-                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
                         <>
                             <Text className="mb-[8px]">NAME</Text>
                             <Input
@@ -92,8 +104,14 @@ const Signup = () => {
                                     size="large"
                                     title="Sign up"
                                     onPress={handleSubmit}
+                                // Vô hiệu hóa nút khi đang submitting
                                 />
                             </View>
+
+                            <Text className="text-[#646982] text-[16px] mt-[42px] w-full text-center mb-[165px]">
+                                You already have an account ?{" "}
+                                <Text onPress={() => { router.navigate('/(login)') }} className="text-[14px] text-primary">LOG IN</Text>
+                            </Text>
                         </>
                     )}
                 </Formik>

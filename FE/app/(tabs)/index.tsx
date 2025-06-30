@@ -19,6 +19,7 @@ import { useGetCatgory } from '@/hooks/useCategory';
 import { useGetRestaurant } from '@/hooks/useRestaurants';
 import { getDish } from '@/services/dish';
 import LazyFlatList from '@/components/LazyFlatList';
+import { useMyAccount } from '@/context/MyAccountContext';
 
 const PAGE_SIZE = 4;
 
@@ -64,20 +65,20 @@ const Index = () => {
 
 
 const Header = () => {
-  const myProfile = getMyProfile();
+  const { avatar, fullName } = useMyAccount();
   const router = useRouter();
   return (
     <View className='px-[24px] absolute z-[1]  pb-[10px] bg-white w-full '>
 
       <View className='flex-row mt-[54px] items-center'>
         <Image
-          source={myProfile.avatar ? { uri: myProfile.avatar } : undefined}
+          source={avatar ? { uri: avatar } : undefined}
           className='w-[45px] h-[45px] rounded-full bg-accent'
         />
         <View className='ml-[18px] gap-[3px]'>
           <Text className='font-bold uppercase text-[12px] text-primary'>Deliver to</Text>
           <View className='flex-row items-center gap-[9px]'>
-            <Text className='text-[#676767]'>{myProfile.address[0].value}</Text>
+            {/* <Text className='text-[#676767]'>{myProfile.address[0].value}</Text> */}
             <Image source={icons.triangle} resizeMode='contain' className='w-[13px] h-[10px]' />
           </View>
         </View>
@@ -89,7 +90,7 @@ const Header = () => {
       </View>
 
       <View className='mt-[24px]' >
-        <Text className='text-[16px] text-[#1E1D1D]'>{`Hey ${myProfile.fullName.split(" ").pop()}, `}<Text className='font-bold'>Good Afternoon!</Text></Text>
+        <Text className='text-[16px] text-[#1E1D1D]'>{`Hey ${(fullName ?? '').split(" ").pop()}, `}<Text className='font-bold'>Good Afternoon!</Text></Text>
       </View>
 
       <Link
