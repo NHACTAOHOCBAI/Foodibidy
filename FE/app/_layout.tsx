@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import Toast from 'react-native-toast-message';
 import { useEffect } from "react";
 import { OrderProvider } from "@/context/OrderContext";
+import { MyAccountProvider } from "@/context/MyAccountContext";
 
 const CustomHeader = ({ title, color = "", isTransperant = false }: any) => {
   const router = useRouter();
@@ -189,11 +190,13 @@ export default function RootLayout() {
   const queryClient = new QueryClient()
   return (
     <QueryClientProvider client={queryClient}>
-      <FilterProvider>
-        <OrderProvider>
-          <InnerLayout />
-        </OrderProvider>
-      </FilterProvider>
+      <MyAccountProvider>
+        <FilterProvider>
+          <OrderProvider>
+            <InnerLayout />
+          </OrderProvider>
+        </FilterProvider>
+      </MyAccountProvider>
       <Toast />
     </QueryClientProvider>
   )

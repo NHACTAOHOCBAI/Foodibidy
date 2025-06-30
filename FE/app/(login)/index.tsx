@@ -7,8 +7,10 @@ import Button from '@/components/Button';
 import { storeToken } from '@/configs/accessTokent';
 import { login } from '@/services/auth';
 import { showErrorToast, showSuccessToast } from '@/components/Toast';
+import { useMyAccount } from '@/context/MyAccountContext';
 
 const Login = () => {
+    const { setAccountInfo } = useMyAccount();
     const router = useRouter();
     const loginSchema = Yup.object().shape({
         email: Yup.string().email('Invalid email').required('Required'),
@@ -27,7 +29,8 @@ const Login = () => {
                         try {
                             const response = await login(values.email, values.password);
                             console.log(response)
-                            const { idToken } = response; // Giả sử API trả về accessToken
+                            const { idToken, email, avatar, fullName, phoneNumber } = response;
+                            setAccountInfo({ avatar, phoneNumber, fullName, email }) // Giả sử API trả về accessToken
                             await storeToken(idToken); // Lưu token
                             showSuccessToast('Login successful!'); // Hiển thị toast thành công
                             router.push('/(tabs)'); // Chuyển hướng sau khi đăng nhập thành công
