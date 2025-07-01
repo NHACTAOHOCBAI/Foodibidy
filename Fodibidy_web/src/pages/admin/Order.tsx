@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo, useContext } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { DeleteOutlined } from '@ant-design/icons';
 import UpdateOrder from '../../components/order/UpdateOrder';
-import { deleteOrder, getMyOrder } from '../../services/order';
+import { deleteOrder, geAllOrder, getMyOrder } from '../../services/order';
 import convertDateFormat from '../../utils/convertDateFormat';
 import { RiResetLeftFill } from 'react-icons/ri';
 import { MyProfileContext } from '../../context/MyProfileContext';
@@ -130,7 +130,12 @@ const Order = () => {
     const refetchData = async () => {
         setIsPending(true);
         try {
-            const res = await getMyOrder();
+            let res: Order[] = []
+            if (myProfile?.role === "restaurant") {
+                res = await getMyOrder();
+            }
+            else
+                res = await geAllOrder();
             setOrders(res);
         } catch (error) {
             messageApi.error(String(error));

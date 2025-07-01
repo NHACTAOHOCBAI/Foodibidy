@@ -42,7 +42,7 @@ const Restock = ({ isModalOpen, setIsModalOpen, refetchData }: { isModalOpen: bo
             setFoodsOpt(value)
         }
         fetchOpt()
-    }, [])
+    }, [isModalOpen])
     return (
         <>
             {contextHolder}
