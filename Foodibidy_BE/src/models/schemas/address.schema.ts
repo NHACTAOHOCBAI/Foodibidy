@@ -2,16 +2,16 @@ import { AddressTypeName } from '~/constants/enums'
 
 export interface AddressType {
   id?: string
-  addressName: string
-  userId: string
-  typeName: AddressTypeName
+  addressName?: string
+  userId?: string
+  typeName?: AddressTypeName
 }
 
 export default class Address {
   id?: string
-  addressName: string
-  userId: string
-  typeName: AddressTypeName
+  addressName?: string
+  userId?: string
+  typeName?: AddressTypeName
 
   constructor(address: AddressType) {
     this.id = address.id || ''

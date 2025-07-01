@@ -3,9 +3,9 @@ import { AddressType } from './address.schema'
 export interface UserType {
   id?: string
   role?: UserRole
-  fullName: string
-  email: string
-  passwordHash: string
+  fullName?: string
+  email?: string
+  passwordHash?: string
   dateOfBirth?: Date | string
   phoneNumber?: string | ''
   avatar?: string | ''

@@ -9,6 +9,8 @@ import { deleteOrder, geAllOrder, getMyOrder } from "../../services/order";
 import convertDateFormat from "../../utils/convertDateFormat";
 import { RiResetLeftFill } from "react-icons/ri";
 import { MyProfileContext } from "../../context/MyProfileContext";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "../../configs/firebaseConfig";
 
 const Order = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -170,8 +172,61 @@ const Order = () => {
   };
 
   useEffect(() => {
-    refetchData();
-  }, []);
+    setIsPending(true);
+
+    const ordersRef = collection(db, "Order_details");
+
+    const q =
+      myProfile?.role === "restaurant"
+        ? query(ordersRef, where("restaurant.id", "==", "ABjVD8DuGhKTAL2sDgvg"))
+        : ordersRef;
+    console.log(q);
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const ordersData = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          console.log(data);
+          return {
+            id: Number(doc.id),
+            address: data.address,
+            user: {
+              id: data.user.id,
+              fullName: data.user.fullName,
+            },
+            restaurant: {
+              id: data.restaurant?.id,
+              restaurantName: data.restaurant?.restaurantName,
+            },
+            status: data.status,
+            orderTime: data.orderTime,
+            deliveryPhone: data.deliveryPhone,
+            items: data.items.map((item: any) => ({
+              dish: {
+                id: item.dish.id,
+                dishName: item.dish.dishName,
+                price: item.dish.price,
+                dishImage: item.dish.dishImage,
+              },
+              quantity: item.quantity,
+            })),
+            totalPrice: data.totalPrice,
+            createdAt: data.createdAt,
+            shipperPhone: data.shipperPhone,
+            shipperName: data.shipperName,
+          } as Order;
+        });
+        setOrders(ordersData);
+        setIsPending(false);
+      },
+      (error) => {
+        messageApi.error(`Error fetching orders: ${error.message}`);
+        setIsPending(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [myProfile?.role, messageApi]);
 
   return (
     <>

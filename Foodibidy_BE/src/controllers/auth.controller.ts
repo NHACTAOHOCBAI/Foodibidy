@@ -19,6 +19,7 @@ import { RestaurantType } from '~/models/schemas/restaurant.schema'
 import { ro } from 'date-fns/locale'
 import { handleFormatDate } from '~/utils/utils'
 import { add } from 'lodash'
+import userService from '~/services/user.service'
 const FIREBASE_API_KEY = 'AIzaSyAVILF-mEhw1cJdCpRGVBavDusJtBrB_xQ'
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -195,10 +196,7 @@ export const getProfile = async (req: Request, res: Response) => {
     }
 
     const userData = userDoc.data()
-    const user = new User(userData!).toObject()
-    user.createdAt = handleFormatDate(user.createdAt as Date)
-    user.updatedAt = handleFormatDate(user.updatedAt as Date)
-    user.dateOfBirth = handleFormatDate(user.dateOfBirth as Date)
+    const user = await userService.getUser(userData!.id!)
     let responseData: { user: UserType; restaurant: RestaurantType | null } = {
       user: user,
       restaurant: null
