@@ -12,7 +12,7 @@ class User_DishService {
   private user_dishCollection = databaseService.user_dish
   private dishCollection = databaseService.dishes
 
-  async createUser_Dish(user_dishData: User_DishType) {
+  async updateUser_Dish(user_dishData: User_DishType) {
     const newUser_Dish = new User_Dish({
       ...user_dishData
     }).toObject()
@@ -78,17 +78,6 @@ class User_DishService {
       console.error('Error getting all dishes:', error)
       throw new Error(`Failed to get all dishes: ${error}`)
     }
-  }
-  async updateUser_Dish(user_dishId: string, updateData: Partial<User_DishType>) {
-    const doc = await this.user_dishCollection.doc(user_dishId).get()
-    if (!doc.exists) {
-      throw new ErrorWithStatus({ message: CATEGORY_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
-    }
-
-    await this.user_dishCollection.doc(user_dishId).update({
-      ...updateData,
-      updatedAt: new Date()
-    })
   }
 
   async deleteUser_Dish(user_dishId: string) {

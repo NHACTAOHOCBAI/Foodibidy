@@ -5,17 +5,18 @@ import { DishParams } from '~/models/requests/dish.request'
 import User_Dish from '~/models/schemas/user_dish.schema'
 import user_dishService from '~/services/user_dish.service'
 
-export const createUser_Dish = async (
+export const updateUser_Dish = async (
   req: Request<ParamsDictionary, any, User_Dish>,
   res: Response,
   next: NextFunction
 ) => {
-  const result = await user_dishService.createUser_Dish(req.body)
+  const result = await user_dishService.updateUser_Dish(req.body)
   return res.json({ message: USER_DISH_MESSAGES.CREATE_SUCCESS, data: result })
 }
 
-export const checkLikeDish = async (req: Request<User_Dish>, res: Response, next: NextFunction) => {
-  const result = await user_dishService.checkLikeDish(req.body)
+export const checkLikeDish = async (req: Request<any, any, User_Dish>, res: Response, next: NextFunction) => {
+  const userId = req.user!.uid
+  const result = await user_dishService.checkLikeDish({ ...req.body, userId })
   if (result === '') return res.json({ message: USER_DISH_MESSAGES.NOT_FOUND, data: result })
   return res.json({ message: USER_DISH_MESSAGES.DISH_EXIST, data: result })
 }

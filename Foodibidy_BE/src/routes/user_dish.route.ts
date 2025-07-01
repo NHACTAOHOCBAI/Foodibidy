@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { UserRole } from '~/constants/enums'
-import { checkLikeDish, createUser_Dish, deleteUser_Dish, getDishesByUserId } from '~/controllers/user_dish.controller'
+import { checkLikeDish, updateUser_Dish, deleteUser_Dish, getDishesByUserId } from '~/controllers/user_dish.controller'
 import { authenticateFirebase, authorizeRole } from '~/middlewares/auth.middlewares'
 import { wrapRequestHandler } from '~/utils/handler'
 const user_dishRouter = Router()
@@ -11,7 +11,7 @@ const user_dishRouter = Router()
  * Method: POST
  * Body : {userId: string,dishId: string  }
  */
-user_dishRouter.post('/', wrapRequestHandler(createUser_Dish))
+user_dishRouter.post('/', authenticateFirebase, authorizeRole([UserRole.CUSTOMER]), wrapRequestHandler(updateUser_Dish))
 
 /**
  * Description.check a dish is in favorite list or not
@@ -19,15 +19,21 @@ user_dishRouter.post('/', wrapRequestHandler(createUser_Dish))
  * Method: POST
  * Body : {userId: string,dishId: string  }
  */
-user_dishRouter.post('/checkDish', wrapRequestHandler(checkLikeDish))
+user_dishRouter.post(
+  '/checkDish',
+  authenticateFirebase,
+  authorizeRole([UserRole.CUSTOMER]),
+  wrapRequestHandler(checkLikeDish)
+)
 
 /**
  * Description. Get all dishes have userId
- * Path: /userDish/:userId
+ * Path: /userDish/myFavoriteDishes
  * Method: GET
  */
+
 user_dishRouter.get(
-  '/',
+  '/myFavoriteDishes',
   authenticateFirebase,
   authorizeRole([UserRole.CUSTOMER]),
   wrapRequestHandler(getDishesByUserId)
