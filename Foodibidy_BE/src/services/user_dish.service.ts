@@ -46,8 +46,9 @@ class User_DishService {
 
       let dishes = snapshot.docs.map((doc) => doc.data().dishId) as string[]
       console.log(dishes)
+
       const allResults: DishType[] = []
-      const chunks = chunkArray(dishes, 10) // chia nhỏ array
+      const chunks = chunkArray(dishes, 10)
       for (const chunk of chunks) {
         let query = this.dishCollection.where(FieldPath.documentId(), 'in', chunk)
 
@@ -68,11 +69,13 @@ class User_DishService {
 
       // allResults.sort((a, b) => (b.purchase as number) - (a.purchase as number))
       //.slice(offset, pageSize + offset)
+
       if (page > 0) {
         console.log(allResults, offset, page)
         if (page <= allResults.length / pageSize) return allResults.slice(offset, pageSize + offset)
         else return []
       }
+
       return allResults
     } catch (error) {
       console.error('Error getting all dishes:', error)

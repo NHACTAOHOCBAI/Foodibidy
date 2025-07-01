@@ -10,7 +10,8 @@ export const updateUser_Dish = async (
   res: Response,
   next: NextFunction
 ) => {
-  const result = await user_dishService.updateUser_Dish(req.body)
+  const userId = req.user!.uid
+  const result = await user_dishService.updateUser_Dish({ ...req.body, userId })
   return res.json({ message: USER_DISH_MESSAGES.CREATE_SUCCESS, data: result })
 }
 
