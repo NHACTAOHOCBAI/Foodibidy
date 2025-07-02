@@ -11,7 +11,7 @@ export interface OrderDetailType {
   restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
   status: OrderStatus
   items: {
-    dish: Pick<DishType, 'id' | 'dishName'>
+    dish: Pick<DishType, 'id' | 'dishName' | 'price'>
     quantity: number
   }[]
   dishIds: string[]
@@ -28,7 +28,7 @@ export default class OrderDetail {
   restaurant: Pick<RestaurantType, 'id' | 'restaurantName'>
   status: OrderStatus
   items: {
-    dish: Pick<DishType, 'id' | 'dishName'>
+    dish: Pick<DishType, 'id' | 'dishName' | 'price'>
     quantity: number
   }[]
   dishIds: string[]
@@ -65,6 +65,4 @@ export default class OrderDetail {
       receivedAt: this.receivedAt
     }
   }
-
-
 }

@@ -5,7 +5,7 @@ import { DishType } from '../schemas/dish.schema'
 import { RestaurantType } from '../schemas/restaurant.schema'
 
 export interface OrderDetailParams extends ParamsDictionary {
-  OrderDetailId: string
+  orderId: string
   RestaurantId: string
 }
 

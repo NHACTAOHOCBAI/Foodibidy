@@ -17,6 +17,7 @@ class OrderDetailService {
     try {
       const dishIds = await Promise.all(
         data.items.map(async (item) => {
+          console.log(item.dish.price)
           const dishRef = this.dishCollection.doc(item.dish.id as string)
           const dishDoc = (await dishRef.get()).data()
           if (!dishDoc)
@@ -36,7 +37,6 @@ class OrderDetailService {
               status: HTTP_STATUS.BAD_REQUEST
             })
 
-          item.dish.price = dishDoc.price as number
           await dishRef.update({
             remainingQuantity: newQuantity
           })
@@ -110,10 +110,11 @@ class OrderDetailService {
 
   async getAllOrderDetails(pageSize: number, page: number): Promise<OrderDetailType[]> {
     try {
-      let query = this.OrderDetailCollection.orderBy('updatedAt', 'desc')
-      const offset = (page - 1) * pageSize
-      if (offset > 0) query = query.offset(offset)
-      if (pageSize > 0) query = query.limit(pageSize)
+      let query = this.OrderDetailCollection
+      //.orderBy('updatedAt', 'desc')
+      // const offset = (page - 1) * pageSize
+      // if (offset > 0) query = query.offset(offset)
+      // if (pageSize > 0) query = query.limit(pageSize)
       const snapshot = await query.get()
 
       const OrderDetails: OrderDetailType[] = []
