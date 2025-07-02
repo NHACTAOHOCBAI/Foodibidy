@@ -65,7 +65,7 @@ const Index = () => {
 
 
 const Header = () => {
-  const { avatar, fullName } = useMyAccount();
+  const { avatar, fullName, address } = useMyAccount();
   const router = useRouter();
   return (
     <View className='px-[24px] absolute z-[1]  pb-[10px] bg-white w-full '>
@@ -78,7 +78,7 @@ const Header = () => {
         <View className='ml-[18px] gap-[3px]'>
           <Text className='font-bold uppercase text-[12px] text-primary'>Deliver to</Text>
           <View className='flex-row items-center gap-[9px]'>
-            {/* <Text className='text-[#676767]'>{myProfile.address[0].value}</Text> */}
+            <Text className='text-[#676767]'>{address?.[0]?.addressName}</Text>
             <Image source={icons.triangle} resizeMode='contain' className='w-[13px] h-[10px]' />
           </View>
         </View>

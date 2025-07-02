@@ -1,7 +1,7 @@
 import axiosInstance from "@/configs/axiosConfig"
 
 const getMyFavouriteFood = async (page?: number, limit?: number) => {
-    const res = await axiosInstance.get(`/userDish/myFavoriteDishes?limit=${limit}&page=${page}`)
+    const res = await axiosInstance.get(`/userDish/myFavoriteDishes`)
     console.log(res.data)
     return res.data.data
 }

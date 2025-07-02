@@ -9,6 +9,11 @@ const login = async (email: string, password: string) => {
     return res.data;
 };
 
+const logout = async () => {
+    const res = await axiosInstance.post('/auth/logout');
+    return res.data;
+};
+
 const register = async (email: string, password: string, fullName: string) => {
     const formData = new FormData();
     formData.append('email', email);
@@ -70,4 +75,4 @@ const updateProfile = async ({
     });
 };
 
-export { login, register, updateProfile };
+export { login, register, updateProfile, logout };
