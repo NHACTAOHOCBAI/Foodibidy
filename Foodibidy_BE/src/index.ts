@@ -17,7 +17,7 @@ import dashboardRouter from './routes/Dashboard.route'
 import cookieParser from 'cookie-parser'
 
 const app = express()
-const allowedOrigins = ['http://localhost:5173']
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:8081']
 
 const port = 3000
 const corsOptions: CorsOptions = {
