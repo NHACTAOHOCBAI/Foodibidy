@@ -59,6 +59,7 @@ class DishService {
 
       const newDish = new Dish({
         ...resDishBody,
+        dishName: resDishBody.dishName.toLowerCase(),
         restaurant: resData,
         dishImage: urlImage
       }).toObject()

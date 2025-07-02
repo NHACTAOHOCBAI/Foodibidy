@@ -24,6 +24,7 @@ class OrderService {
       for (const order of data.order) {
         await orderDetailService.createOrderDetail({
           ...order,
+          address: data.address,
           user: user as UserType,
           status: OrderStatus.PENDING
         })
@@ -81,7 +82,6 @@ class OrderService {
     }
   }
 }
-
 
 const orderService = new OrderService()
 export default orderService

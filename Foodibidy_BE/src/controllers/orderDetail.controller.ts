@@ -61,7 +61,7 @@ export const updateOrderDetail = async (
   res: Response,
   next: NextFunction
 ) => {
-  const result = await OrderDetailService.updateOrderDetail(req.params.OrderDetailId, req.body)
+  const result = await OrderDetailService.updateOrderDetail(req.params.orderId, req.body)
   return res.json({ message: ORDER_MESSAGES.UPDATE_SUCCESS, data: result })
 }
 

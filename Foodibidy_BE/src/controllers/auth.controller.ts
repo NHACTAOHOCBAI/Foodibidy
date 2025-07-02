@@ -49,8 +49,11 @@ export const loginUser = async (req: Request, res: Response) => {
 
     const data = await response.json()
     // lấy thông tin user từ uid
-    const userDoc = await databaseService.users.doc(data.localId).get()
-    const userData = userDoc.data()
+    // const userDoc = await databaseService.users.doc(data.localId).get()
+    // const userData = userDoc.data()
+
+    const userData = await userService.getUser(data.localId)
+    console.log(userData)
     if (!userData) {
       return res.status(401).json({ message: 'User not found' })
     }

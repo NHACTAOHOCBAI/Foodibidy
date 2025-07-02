@@ -53,7 +53,8 @@ const Order = () => {
       title: "Total Price",
       dataIndex: "totalPrice",
       sorter: (a, b) => a.totalPrice - b.totalPrice,
-      render: (price) => `$${price.toFixed(2)}`,
+      render: (price) =>
+        typeof price === "number" ? `$${price.toFixed(2)}` : "N/A",
     },
     {
       title: "Placed At",
@@ -178,43 +179,15 @@ const Order = () => {
 
     const q =
       myProfile?.role === "restaurant"
-        ? query(ordersRef, where("restaurant.id", "==", "ABjVD8DuGhKTAL2sDgvg"))
+        ? query(ordersRef, where("restaurant.id", "==", "VH20h780T4g2SU9SN3jF"))
         : ordersRef;
-    console.log(q);
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
         const ordersData = snapshot.docs.map((doc) => {
           const data = doc.data();
           console.log(data);
-          return {
-            id: Number(doc.id),
-            address: data.address,
-            user: {
-              id: data.user.id,
-              fullName: data.user.fullName,
-            },
-            restaurant: {
-              id: data.restaurant?.id,
-              restaurantName: data.restaurant?.restaurantName,
-            },
-            status: data.status,
-            orderTime: data.orderTime,
-            deliveryPhone: data.deliveryPhone,
-            items: data.items.map((item: any) => ({
-              dish: {
-                id: item.dish.id,
-                dishName: item.dish.dishName,
-                price: item.dish.price,
-                dishImage: item.dish.dishImage,
-              },
-              quantity: item.quantity,
-            })),
-            totalPrice: data.totalPrice,
-            createdAt: data.createdAt,
-            shipperPhone: data.shipperPhone,
-            shipperName: data.shipperName,
-          } as Order;
+          return { ...data, id: doc.id } as Order;
         });
         setOrders(ordersData);
         setIsPending(false);
@@ -268,13 +241,14 @@ const Order = () => {
         refetchData={refetchData}
       />
       <Table<Order>
+        key={"order-table" + Math.random()}
         loading={isPending}
         bordered
         columns={columns}
         dataSource={filteredOrders}
         expandable={{
           expandedRowRender: (record) => (
-            <div>
+            <div key={record.id}>
               <p style={{ margin: 0 }}>
                 Shipper phone: {record.shipperPhone || "N/A"}
               </p>
