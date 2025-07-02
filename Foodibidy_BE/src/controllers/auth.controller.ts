@@ -40,7 +40,6 @@ export const loginUser = async (req: Request, res: Response) => {
       }
     )
 
-    // Trả về idToken và lưu refreshToken vào cookie
     if (!response.ok) {
       const errorData = await response.json()
       console.error('Firebase Login Error:', errorData)
@@ -48,15 +47,18 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     const data = await response.json()
-    // lấy thông tin user từ uid
-    // const userDoc = await databaseService.users.doc(data.localId).get()
-    // const userData = userDoc.data()
-
     const userData = await userService.getUser(data.localId)
-    console.log(userData)
+
     if (!userData) {
       return res.status(401).json({ message: 'User not found' })
     }
+
+    // Get restaurant info if user is restaurant owner
+    let restaurantData = null
+    if (userData.role === 'restaurant') {
+      restaurantData = await restaurantService.getRestaurantByUserId(data.localId)
+    }
+
     res
       .cookie('refreshToken', data.refreshToken, {
         httpOnly: true,
@@ -74,9 +76,11 @@ export const loginUser = async (req: Request, res: Response) => {
         fullName: userData.fullName,
         avatar: userData.avatar,
         phoneNumber: userData.phoneNumber,
-        address: userData.address
+        address: userData.address,
+        ...(restaurantData && { restaurantId: restaurantData.id }) // Add restaurant data if exists
       })
   } catch (err) {
+    console.error('Login error:', err)
     return res.status(401).json({ message: 'Đăng nhập thất bại' })
   }
 }

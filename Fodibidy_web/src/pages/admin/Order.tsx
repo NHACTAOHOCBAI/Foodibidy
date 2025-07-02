@@ -55,10 +55,28 @@ const Order = () => {
     },
     {
       title: "Total Price",
-      dataIndex: "totalPrice",
-      sorter: (a, b) => a.totalPrice - b.totalPrice,
-      render: (price) =>
-        typeof price === "number" ? `$${price.toFixed(2)}` : "N/A",
+      dataIndex: "items",
+      sorter: (a, b) => {
+        const totalA = a.items.reduce(
+          (sum, item) => sum + Number(item.dish.price) * item.quantity,
+          0
+        );
+        const totalB = b.items.reduce(
+          (sum, item) => sum + Number(item.dish.price) * item.quantity,
+          0
+        );
+        return totalA - totalB;
+      },
+      render: (items) => {
+        const total = items.reduce(
+          (
+            sum: number,
+            item: { dish: { price: number | string }; quantity: number }
+          ) => sum + Number(item.dish.price) * item.quantity,
+          0
+        );
+        return `$${total.toFixed(2)}`;
+      },
     },
     {
       title: "Placed At",
@@ -178,10 +196,11 @@ const Order = () => {
   useEffect(() => {
     setIsPending(true);
     const ordersRef = collection(db, "Order_details");
+    console.log(myProfile);
 
     const q =
       myProfile?.role === "restaurant"
-        ? query(ordersRef, where("restaurant.id", "==", "VH20h780T4g2SU9SN3jF"))
+        ? query(ordersRef, where("restaurant.id", "==", myProfile.restaurantId))
         : ordersRef;
 
     const unsubscribe = onSnapshot(
