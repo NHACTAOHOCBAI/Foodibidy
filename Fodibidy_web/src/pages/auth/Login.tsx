@@ -8,13 +8,13 @@ import { MyProfileContext } from '../../context/MyProfileContext';
 const Login = () => {
     const navigate = useNavigate()
     const { setMyProfile } = useContext(MyProfileContext)
-
     const [isPending, setIsPending] = useState(false)
     const [messageApi, contextHolder] = message.useMessage();
     const onFinish = async ({ email, password }: { email: string, password: string }) => {
         setIsPending(true)
         try {
             const res = await login(email, password)
+            console.log(res)
             localStorage.setItem('accessToken', res.idToken)
             const value = {
                 email: res.email,

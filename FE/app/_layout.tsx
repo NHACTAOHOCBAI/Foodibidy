@@ -117,6 +117,14 @@ const InnerLayout = () => {
           }}
         />
         <Stack.Screen
+          name="review/index"
+          options={{
+            header: () => <CustomHeader
+              isTransperant={true}
+            />
+          }}
+        />
+        <Stack.Screen
           name="foods/[id]"
           options={{
             header: () => <CustomHeader
