@@ -12,6 +12,8 @@ import { MyProfileContext } from "../../context/MyProfileContext";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../../configs/firebaseConfig";
 
+const PAGE_SIZE = 4;
+
 const Order = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
@@ -19,8 +21,10 @@ const Order = () => {
   const [isPending, setIsPending] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const { myProfile } = useContext(MyProfileContext);
 
+  // Column definitions
   const columns: TableProps<Order>["columns"] = [
     {
       title: "Customer",
@@ -127,7 +131,7 @@ const Order = () => {
     },
   ];
 
-  // Lọc dữ liệu dựa trên searchText (theo tên khách hàng)
+  // Filter by search text (customer or restaurant name)
   const filteredOrders = useMemo(() => {
     if (!searchText) return orders;
     return orders.filter(
@@ -138,6 +142,22 @@ const Order = () => {
           .includes(searchText.toLowerCase())
     );
   }, [orders, searchText]);
+
+  // Reset page when searchText changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchText]);
+
+  // Handle delete
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteOrder(id);
+      await refetchData();
+      messageApi.success("Deleted successfully");
+    } catch (error) {
+      messageApi.error(String(error));
+    }
+  };
 
   const refetchData = async () => {
     setIsPending(true);
@@ -154,43 +174,32 @@ const Order = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteOrder(id);
-      await refetchData();
-      messageApi.success("Delete order successfully");
-    } catch (error) {
-      messageApi.error(String(error));
-    }
-  };
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
-
-  const handleReset = () => {
-    setSearchText("");
-  };
-
+  // Firestore live update
   useEffect(() => {
     setIsPending(true);
-
     const ordersRef = collection(db, "Order_details");
 
     const q =
       myProfile?.role === "restaurant"
         ? query(ordersRef, where("restaurant.id", "==", "VH20h780T4g2SU9SN3jF"))
         : ordersRef;
+
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
         const ordersData = snapshot.docs.map((doc) => {
           const data = doc.data();
-          console.log(data);
           return { ...data, id: doc.id } as Order;
         });
+
+        const totalPages = Math.ceil(ordersData.length / PAGE_SIZE);
+        if (currentPage > totalPages) {
+          setCurrentPage(1);
+        }
+
         setOrders(ordersData);
         setIsPending(false);
+        messageApi.success(`New orders fetched successfully`);
       },
       (error) => {
         messageApi.error(`Error fetching orders: ${error.message}`);
@@ -199,7 +208,7 @@ const Order = () => {
     );
 
     return () => unsubscribe();
-  }, [myProfile?.role, messageApi]);
+  }, [myProfile?.role, messageApi, currentPage]);
 
   return (
     <>
@@ -220,14 +229,14 @@ const Order = () => {
           <Input
             style={{ width: 400 }}
             value={searchText}
-            onChange={handleSearchChange}
+            onChange={(e) => setSearchText(e.target.value)}
             placeholder="Search by customer or restaurant name"
           />
         </div>
         <Button
           style={{ display: "flex", alignItems: "center" }}
           type="primary"
-          onClick={handleReset}
+          onClick={() => setSearchText("")}
         >
           <RiResetLeftFill /> Reset
         </Button>
@@ -241,11 +250,18 @@ const Order = () => {
         refetchData={refetchData}
       />
       <Table<Order>
-        key={"order-table" + Math.random()}
+        key="order-table"
         loading={isPending}
         bordered
         columns={columns}
         dataSource={filteredOrders}
+        rowKey="id"
+        pagination={{
+          current: currentPage,
+          pageSize: PAGE_SIZE,
+          onChange: (page) => setCurrentPage(page),
+          showTotal: (total) => `Total ${total} Orders`,
+        }}
         expandable={{
           expandedRowRender: (record) => (
             <div key={record.id}>
@@ -258,13 +274,7 @@ const Order = () => {
             </div>
           ),
           rowExpandable: (record) =>
-            record.shipperName !== undefined ||
-            record.shipperPhone !== undefined,
-        }}
-        rowKey="id"
-        pagination={{
-          pageSize: 4,
-          showTotal: (total) => `Total ${total} Orders`,
+            !!record.shipperName || !!record.shipperPhone,
         }}
       />
     </>
