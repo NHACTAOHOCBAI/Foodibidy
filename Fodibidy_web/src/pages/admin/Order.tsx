@@ -187,34 +187,7 @@ const Order = () => {
         const ordersData = snapshot.docs.map((doc) => {
           const data = doc.data();
           console.log(data);
-          return {
-            id: doc.id,
-            address: data.address,
-            user: {
-              id: data.user.id,
-              fullName: data.user.fullName,
-            },
-            restaurant: {
-              id: data.restaurant?.id,
-              restaurantName: data.restaurant?.restaurantName,
-            },
-            status: data.status,
-            orderTime: data.orderTime,
-            deliveryPhone: data.deliveryPhone,
-            items: data.items.map((item: any) => ({
-              dish: {
-                id: item.dish.id,
-                dishName: item.dish.dishName,
-                price: item.dish.price,
-                dishImage: item.dish.dishImage,
-              },
-              quantity: item.quantity,
-            })),
-            totalPrice: data.totalPrice,
-            createdAt: data.createdAt,
-            shipperPhone: data.shipperPhone,
-            shipperName: data.shipperName,
-          } as Order;
+          return { ...data, id: doc.id } as Order;
         });
         setOrders(ordersData);
         setIsPending(false);
