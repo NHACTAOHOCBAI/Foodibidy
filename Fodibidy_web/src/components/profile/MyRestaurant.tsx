@@ -6,7 +6,6 @@ import type { UploadFile } from "antd/es/upload/interface";
 import TextArea from "antd/es/input/TextArea";
 import UploadImage from "../UploadImage";
 import { MdOutlineStar } from "react-icons/md";
-import convertDateFormat from "../../utils/convertDateFormat";
 import { getMyProfile, updateMyRestaurant } from "../../services/auth";
 
 
@@ -154,7 +153,6 @@ const MyRestaurant = () => {
                             <div style={{ display: "flex", alignItems: 'center', gap: 10 }}>
                                 Rating : {myProfile?.rating} <MdOutlineStar size={20} style={{ color: "yellow" }} />
                             </div>
-                            <p>Created at : {convertDateFormat(myProfile?.createdAt || "")}</p>
                             <p>Owner : {myProfile?.user?.fullName} ({myProfile?.user?.phoneNumber})</p>
                         </div>
                     </div>

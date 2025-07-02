@@ -107,13 +107,13 @@ const Order = () => {
     },
     ...(myProfile?.role === "admin"
       ? [
-          {
-            title: "Restaurant",
-            render: (_: any, record: Order) => (
-              <div>{record.restaurant?.restaurantName || "N/A"}</div>
-            ),
-          },
-        ]
+        {
+          title: "Restaurant",
+          render: (_: any, record: Order) => (
+            <div>{record.restaurant?.restaurantName || "N/A"}</div>
+          ),
+        },
+      ]
       : []),
     {
       title: "Actions",
