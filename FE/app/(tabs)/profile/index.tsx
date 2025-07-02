@@ -1,11 +1,23 @@
+import { showErrorToast, showSuccessToast } from '@/components/Toast'
 import { icons } from '@/constants/icons'
 import { useMyAccount } from '@/context/MyAccountContext'
+import { logout } from '@/services/auth'
 import { Link, useRouter } from 'expo-router'
 import { View, Text, Image, Pressable } from 'react-native'
 
 const profile = () => {
     const { avatar, fullName } = useMyAccount()
     const router = useRouter();
+    const handleLogout = async () => {
+        try {
+            await logout()
+            showSuccessToast('Logout successful!');
+            router.navigate('/(login)')
+        }
+        catch {
+            showErrorToast('Logout failed!');
+        }
+    }
     return (
         <View className='bg-white flex-1 px-[24px]'>
             <Text className='text-[17px] pt-[62px] pb-[32px]'>My Profile</Text>
@@ -47,6 +59,7 @@ const profile = () => {
                 className='p-[20px] gap-[16px] bg-[#F6F8FA] rounded-[16px] w-full mt-[32px]'
             >
                 <ProfileItem
+                    handlePress={handleLogout}
                     title="Log out"
                     img={icons.logout}
                 />

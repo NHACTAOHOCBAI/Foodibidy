@@ -92,7 +92,7 @@ const OrderItem = ({ order }: { order: Order }) => {
 
     // Xử lý theo dõi đơn hàng
     const handleTrackOrder = () => {
-        router.push(`/orders/track/${order.id}`);
+
     };
 
     return (
@@ -127,7 +127,8 @@ const OrderItem = ({ order }: { order: Order }) => {
                         <View className='w-[1px] h-full bg-gray-100' />
                         <Text className='text-[14px] text-[#6B6E82]'>{`${orderQuantity} Item${orderQuantity !== 1 ? 's' : ''}`}</Text>
                     </View>
-                    <Text className='text-[12px] text-gray-500 capitalize'>{order.status}</Text>
+                    <Text className='text-[12px] text-gray-500 capitalize'>
+                        {order.status}|{order.deliveryPhone}</Text>
                 </View>
             </View>
 
