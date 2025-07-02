@@ -78,3 +78,8 @@ interface Account {
     address: { id: number, typeName: string, addressName: string, value: string }[]
     cart: string
 }
+
+interface Address {
+    typeName: string,
+    addressName: string
+}

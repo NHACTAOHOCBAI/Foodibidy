@@ -1,7 +1,10 @@
 import axiosInstance from "@/configs/axiosConfig"
 
 const getDish = async (page?: number, limit?: number, filter?: string) => {
-    const res = await axiosInstance.get(`/dishes?limit=${limit}&page=${page}&filter=${filter}`)
+    let url = `/dishes?limit=${limit}&page=${page}`
+    if (filter)
+        url += `&filter=${filter}`
+    const res = await axiosInstance.get(url)
     return res.data.data
 }
 const getDishByCategory = async (idCategory: string, page?: number, limit?: number) => {
