@@ -9,6 +9,7 @@ import { handleFormatDate, validateFieldMatchById } from '~/utils/utils'
 import databaseService from './database.service'
 import restaurantService from './restaurant.service'
 import dishService from './dish.service'
+import { create } from 'lodash'
 
 class OrderDetailService {
   private OrderDetailCollection = databaseService.order_details
@@ -48,7 +49,8 @@ class OrderDetailService {
 
       const newOrderDetail = {
         ...data,
-        dishIds: dishIds
+        dishIds: dishIds,
+        createdAt: new Date()
       }
       const docRef = await this.OrderDetailCollection.add(newOrderDetail)
       console.log('OrderDetail created with ID:', docRef.id)
