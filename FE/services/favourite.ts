@@ -1,13 +1,22 @@
 import axiosInstance from "@/configs/axiosConfig"
 
-const getMyFavouriteFood = async (accountId: string, page?: number, limit?: number) => {
-    const res = await axiosInstance.get(`/userDish/${accountId}`)
+const getMyFavouriteFood = async (page?: number, limit?: number) => {
+    const res = await axiosInstance.get(`/userDish/myFavoriteDishes?limit=${limit}&page=${page}`)
+    console.log(res.data)
+    return res.data.data
+}
+
+const addFavouriteFood = async (dishId: string) => {
+    const res = await axiosInstance.post(`/userDish?`, { dishId })
     console.log(res.data)
     return res.data
 }
 
-const addFavouriteFood = async (userId: string, dishId: string) => {
-    const res = await axiosInstance.post(`/userDish?`, { userId, dishId })
-    return res.data
+const checkFavouriteFood = async (dishId: string) => {
+    const res = await axiosInstance.post(`/userDish/checkDish`, { dishId })
+    console.log(res.data)
+    if (res.data.message === "User_dish not found")
+        return false;
+    return true;
 }
-export { getMyFavouriteFood, addFavouriteFood }
+export { getMyFavouriteFood, addFavouriteFood, checkFavouriteFood }

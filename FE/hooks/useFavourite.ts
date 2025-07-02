@@ -3,14 +3,14 @@ import { addFavouriteFood, getMyFavouriteFood } from '@/services/favourite';
 
 export const useAddMyFavourite = () => {
     return useMutation({
-        mutationFn: ({ userId, dishId }: { userId: string, dishId: string }) =>
-            addFavouriteFood(userId, dishId),
+        mutationFn: ({ dishId }: { dishId: string }) =>
+            addFavouriteFood(dishId),
     });
 };
 
-export const useGetMyFavourite = (accountId: string, page?: number, limit?: number) => {
+export const useGetMyFavourite = (page?: number, limit?: number) => {
     return useQuery({
-        queryKey: ["get my favourite", accountId, page, limit,],
-        queryFn: () => getMyFavouriteFood(accountId, page, limit),
+        queryKey: ["get my favourite", page, limit,],
+        queryFn: () => getMyFavouriteFood(page, limit),
     })
 }

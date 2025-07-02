@@ -1,30 +1,28 @@
-import { useCallback, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { useCallback, useRef } from 'react';
+import { Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import FoodItem from '@/components/FoodItem';
+import LazyFlatList from '@/components/LazyFlatList';
 import { getMyFavouriteFood } from '@/services/favourite';
 
-const BookMark = () => {
-    const [favouriteFoods, setFavouriteFoods] = useState([]);
-    const [loading, setLoading] = useState(true);
+const PAGE_SIZE = 4; // Define page size for pagination
 
+const BookMark = () => {
+    // Fetch function for lazy loading
     const fetchMyFavourite = async (page: number) => {
-        try {
-            console.log('Fetching favourite foods, page:', page);
-            const data = await getMyFavouriteFood("FV6KteJ9KjODzkKHA998");
-            setFavouriteFoods(data);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching favourite foods:', error);
-            setLoading(false);
-        }
+        return await getMyFavouriteFood(page); // Assume getMyFavouriteFood accepts page param
     };
 
+    // useFocusEffect to refetch on screen focus
     useFocusEffect(
         useCallback(() => {
-            fetchMyFavourite(1);
+            // Call loadInitial from LazyFlatList
+            loadInitialRef.current();
         }, [])
     );
+
+    // Ref to call loadInitial from LazyFlatList
+    const loadInitialRef = useRef(() => { });
 
     const renderHeader = () => (
         <Text className='text-[17px] pt-[62px] pb-[32px] px-[24px]'>
@@ -32,27 +30,16 @@ const BookMark = () => {
         </Text>
     );
 
-    const renderItem = ({ item }: { item: any }) => <FoodItem food={item} />;
-
     return (
         <View className='flex-1 bg-white'>
-            <FlatList
-                data={favouriteFoods}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
-                ListHeaderComponent={renderHeader}
-                ListEmptyComponent={
-                    <Text className='text-center text-[16px] text-gray-500'>
-                        {loading ? 'Loading...' : 'No favourite foods found'}
-                    </Text>
-                }
-                contentContainerStyle={{ paddingBottom: 20 }}
+            <LazyFlatList
                 numColumns={2}
-                columnWrapperStyle={{
-                    justifyContent: 'space-between',
-                    paddingHorizontal: 16,
-                    marginVertical: 10, // Thêm khoảng cách dọc giữa các hàng
-                }}
+                fetchData={fetchMyFavourite}
+                pageSize={PAGE_SIZE}
+                renderItem={({ item }: { item: Food }) => <FoodItem food={item} />}
+                keyExtractor={(item) => item.id.toString()}
+                ListHeaderComponent={renderHeader()}
+                setLoadInitialRef={(ref) => (loadInitialRef.current = ref)}
             />
         </View>
     );

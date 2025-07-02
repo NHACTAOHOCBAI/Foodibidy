@@ -72,7 +72,6 @@ interface Order {
         dish: Pick<Food, 'id' | 'dishName' | 'price' | 'dishImage'>;
         quantity: number;
     }[]
-    totalPrice: number;
     createdAt: string
 }
 

@@ -1,22 +1,29 @@
 import { icons } from '@/constants/icons'
+import { useMyAccount } from '@/context/MyAccountContext'
 import { Link, useRouter } from 'expo-router'
 import { View, Text, Image, Pressable } from 'react-native'
 
 const profile = () => {
+    const { avatar, fullName } = useMyAccount()
     const router = useRouter();
     return (
         <View className='bg-white flex-1 px-[24px]'>
             <Text className='text-[17px] pt-[62px] pb-[32px]'>My Profile</Text>
             <View className='flex-row gap-[32px]'>
-                <Image
-                    className='bg-accent rounded-full w-[100px] h-[100px]'
-                />
+                {avatar ? (
+                    <Image
+                        className='bg-accent rounded-full w-[100px] h-[100px]'
+                        source={{ uri: avatar }}
+                    />
+                ) : (
+                    <View className="bg-gray-300 rounded-full w-[100px] h-[100px] mr-2.5 justify-center items-center">
+
+                    </View>
+                )}
+
                 <View className='justify-center gap-[8px]'>
                     <Text className='text-[20px] font-bold'>
-                        {myProfile.name}
-                    </Text>
-                    <Text className='text-[14px] text-[#A0A5BA]'>
-                        {myProfile.bio}
+                        {fullName}
                     </Text>
                 </View>
             </View>
@@ -72,27 +79,5 @@ const ProfileItem = ({ title, img, handlePress }: any) => {
             </View>
         </Pressable>
     )
-}
-const myProfile: Account = {
-    id: 1,
-    name: "Nguyen Dang Phuc",
-    address: [
-        {
-            type: "home",
-            location: "Quang Binh"
-        },
-        {
-            type: "work",
-            location: "Di an, Binh Duong"
-        }
-    ],
-    currentAddress: {
-        type: "home",
-        location: "Quang Binh"
-    },
-    phone: "0838609516",
-    email: "dangphucnguyen20112005@gmail.com",
-    avatar: "",
-    bio: "I love chicken"
 }
 export default profile

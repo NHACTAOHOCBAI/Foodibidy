@@ -1,46 +1,57 @@
 {
   "expo": {
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "fonts": {
-      "Sen-Regular": "./assets/fonts/Sen-Regular.ttf",
-      "Sen-Bold": "./assets/fonts/Sen-Bold.ttf",
-      "Sen-Italic": "./assets/fonts/Sen-Italic.ttf"
-    },
-    "name": "Movie",
-    "slug": "native",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#ffffff"
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Ứng dụng cần truy cập thư viện ảnh để chọn ảnh đại diện."
       }
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ],
-      "expo-font"
-    ],
-    "experiments": {
-      "typedRoutes": true
+    "android": {
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     }
+  },
+  "assetBundlePatterns": [
+    "**/*"
+  ],
+  "fonts": {
+    "Sen-Regular": "./assets/fonts/Sen-Regular.ttf",
+    "Sen-Bold": "./assets/fonts/Sen-Bold.ttf",
+    "Sen-Italic": "./assets/fonts/Sen-Italic.ttf"
+  },
+  "name": "Movie",
+  "slug": "native",
+  "version": "1.0.0",
+  "orientation": "portrait",
+  "scheme": "myapp",
+  "userInterfaceStyle": "automatic",
+  "newArchEnabled": true,
+  "ios": {
+    "supportsTablet": true
+  },
+  "android": {
+    "adaptiveIcon": {
+      "backgroundColor": "#ffffff"
+    }
+  },
+  "web": {
+    "bundler": "metro",
+    "output": "static"
+  },
+  "plugins": [
+    "expo-router",
+    [
+      "expo-splash-screen",
+      {
+        "imageWidth": 200,
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      }
+    ],
+    "expo-font"
+  ],
+  "experiments": {
+    "typedRoutes": true
   }
 }

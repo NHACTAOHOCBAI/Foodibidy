@@ -1,9 +1,8 @@
 import Button from '@/components/Button';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { View, ScrollView, FlatList, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
-import moment from 'moment'
-import { getHistoryOrders } from '@/services/order';
+import { useCallback, useRef } from 'react';
+import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { getMyHistoryOrders } from '@/services/order';
 import LazyFlatList from '@/components/LazyFlatList';
 interface DetailOrder {
     id: string;
@@ -31,7 +30,7 @@ interface Order {
 const PAGE_SIZE = 4;
 const History = () => {
     const fetchHistoryOrders = async (page: number) => {
-        return await getHistoryOrders('FV6KteJ9KjODzkKHA998', page); // Assume getHistoryOrders supports pagination
+        return await getMyHistoryOrders(page); // Assume getHistoryOrders supports pagination
     };
 
     const renderHeader = () => (

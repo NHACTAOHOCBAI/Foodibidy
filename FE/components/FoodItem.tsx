@@ -16,7 +16,7 @@ const FoodItem = ({ food }: { food: Food }) => {
     const { mutate: addToCart, isLoading, isSuccess } = useAddDishToCart();
     const onAddToCart = () => {
         addToCart(
-            { idCart: "ENzhNl05Rc45pBp3ZhHb", idDish: food.id, quantity: 1 },
+            { idDish: food.id, quantity: 1 },
             {
                 onSuccess: () => {
                     showSuccessToast(`You just have added ${food.dishName} successfully`)

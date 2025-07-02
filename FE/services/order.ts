@@ -1,11 +1,15 @@
 import axiosInstance from "@/configs/axiosConfig"
 
-const getOngoingOrders = async (accountId: string, page?: number, limit?: number) => {
-    const res = await axiosInstance.get(`/orders/Ongoing/${accountId}?limit=${limit}&page=${page}`)
+const getMyHistoryOrders = async (page?: number, limit?: number) => {
+    const res = await axiosInstance.get(`/orders/myHistoryOrders?limit=${limit}&page=${page}`)
+    return res.data.data
+}
+const getMyOngoingOrders = async (page?: number, limit?: number) => {
+    const res = await axiosInstance.get(`/orders/myOngoingOrders?limit=${limit}&page=${page}`)
+    return res.data.data
+}
+const placeOrder = async (address: string, order: any) => {
+    const res = await axiosInstance.post(`/orders`, { address, order })
     return res.data
 }
-const getHistoryOrders = async (accountId: string, page?: number, limit?: number) => {
-    const res = await axiosInstance.get(`/orders/history/${accountId}?limit=${limit}&page=${page}`)
-    return res.data
-}
-export { getOngoingOrders, getHistoryOrders }
+export { getMyOngoingOrders, getMyHistoryOrders, placeOrder }

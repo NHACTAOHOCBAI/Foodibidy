@@ -1,180 +1,100 @@
-import SearchInput from '@/components/SearchInput'
-import SuggestedItem from '@/components//SuggestedItem'
-import { icons } from '@/constants/icons'
-import { FlatList, ScrollView, Text, View, Image, ActivityIndicator, Pressable } from 'react-native'
-import { useState } from 'react'
-import FoodItem from '@/components/FoodItem'
-import { Link, useRouter } from 'expo-router'
-import { useGetRestaurant } from '@/hooks/useRestaurants'
-const PAGE_SIZE = 4;
+import React, { useState, useEffect, useCallback } from 'react';
+import { FlatList, TextInput, View, Text, ActivityIndicator, Image } from 'react-native';
+import { debounce } from 'lodash';
+import FoodItem from '@/components/FoodItem';
+import { getDish } from '@/services/dish';
+import { icons } from '@/constants/icons';
+
 const SearchScreen = () => {
-    const { data: restaurants } = useGetRestaurant()
-    const handleSearch = (value: string) => {
-        console.log(value)
-    }
+    const [searchQuery, setSearchQuery] = useState('');
+    const [foods, setFoods] = useState<Food[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+
+    const fetchDishes = useCallback(async (query: string, pageNum: number) => {
+        if (!hasMore && pageNum !== 1) return;
+
+        try {
+            setIsLoading(true);
+            const data = await getDish(pageNum, 10, query);
+            setFoods(prev => pageNum === 1 ? data : [...prev, ...data]);
+            setHasMore(data.length === 10);
+        } catch (error) {
+            console.error('Error fetching dishes:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [hasMore]);
+
+    const debouncedSearch = useCallback(
+        debounce((query: string) => {
+            setPage(1);
+            fetchDishes(query, 1);
+        }, 500),
+        [fetchDishes]
+    );
+
+    useEffect(() => {
+        debouncedSearch(searchQuery);
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [searchQuery, debouncedSearch]);
+
+    const handleLoadMore = () => {
+        if (!isLoading && hasMore) {
+            setPage(prev => prev + 1);
+            fetchDishes(searchQuery, page + 1);
+        }
+    };
+
+    const renderItem = ({ item }: { item: Food }) => <FoodItem food={item} />;
+
     return (
-        <View className="bg-slate-300 flex-1">
-            {/* <Header /> */}
-            <Header
-                handleSearch={handleSearch}
-            />
-            <ScrollView
-                className='bg-white flex-1 z-[1]'
-                contentContainerStyle={{
-                    paddingBottom: 400
-                }}>
-                <RecentKeyword />
-                <SuggestedRestaurant
-                    restaurants={restaurants}
-                /> *
-                {/* <Foods foods={foods} />  */}
-            </ScrollView>
-        </View>
-    )
-}
-
-const Header = ({ handleSearch }: any) => (
-    <View className='pt-[123px] px-[24px] pb-[10px] bg-white'>
-        <SearchInput
-            handleSubmit={handleSearch}
-            autoFocus={true}
-            placeholder=' Search for food, groceries, drinks...' />
-    </View>
-)
-
-const RecentKeyword = () => (
-    <View className='pt-[24px]'>
-        <Text className='text-[#32343E] text-[20px] px-[24px]'>Recent Keywords</Text>
-        <FlatList className='py-[12px] '
-            data={recentKeywords}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{
-                gap: 10,
-                paddingLeft: 24,
-                paddingRight: 40,
-            }}
-            renderItem={({ item }) => (
-                <SuggestedItem
-                    type='recentKeywords'
-                    recentKeywords={item}
-                />
-            )}
-        />
-    </View>
-)
-
-const SuggestedRestaurant = ({ restaurants }: { restaurants: Restaurant[] }) => (
-    <View className='pt-[20px]  px-[24px]'>
-        <Text className='text-[#32343E] text-[20px]'>Suggested Restaurants</Text>
-        <FlatList className='py-[20px]'
-            data={restaurants}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-                gap: 14,
-            }}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-                <SuggestedRestaurantItem
-                    item={item}
-                />
-            )}
-        />
-    </View>
-)
-
-const SuggestedRestaurantItem = ({ item }: { item: Restaurant }) => {
-    const router = useRouter();
-    const onPress = () => router.push({
-        pathname: '/restaurants/[id]',
-        params: {
-            id: item.id,
-            data: JSON.stringify(item),
-        },
-    })
-    return (
-        <Pressable onPress={onPress}>
-            <View className='flex-row gap-[10px] pb-[14px] w-full border-b-[1px] border-b-[#EBEBEB]'>
+        <View className="flex-1 bg-white p-4 pt-[120px]">
+            <View
+                className={`rounded-[10px] gap-[12px] px-[20px] w-full h-[65px] bg-[#F6F6F6] flex-row items-center `}>
                 <Image
-                    className='bg-accent w-[60px] h-[50px] rounded-[8px]'
+                    tintColor="#A0A5BA"
+                    source={icons.search}
+                    resizeMode="contain"
+                    className="w-[15px] h-[15px]"
                 />
-                <View className='gap-[6px] flex-1' >
-                    <Text
-                        numberOfLines={1}
-                        className='text-[16px]'>
-                        {item.restaurantName}
-                    </Text>
-                    <View className='flex-row gap-[2px] items-center'>
-                        <Image
-                            resizeMode='contain'
-                            source={icons.star}
-                            className='w-7 h-5'
-                        />
-                        <Text className='text-[16px]'>{item.rating}</Text>
-                    </View>
-                </View>
+                <TextInput
+
+                    placeholder="Search for dishes..."
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                />
             </View>
-        </Pressable>
-    )
-}
+            {isLoading && page === 1 ? (
+                <View className="flex-1 justify-center items-center">
+                    <ActivityIndicator size="large" color="#FF7622" />
+                </View>
+            ) : foods.length === 0 ? (
+                <View className="flex-1 justify-center items-center">
+                    <Text className="text-gray-500">No dishes found</Text>
+                </View>
+            ) : (
+                <FlatList
+                    className='mt-[10px]'
+                    data={foods}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id}
+                    numColumns={2}
+                    columnWrapperStyle={{ justifyContent: 'space-between' }}
+                    onEndReached={handleLoadMore}
+                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={
+                        isLoading && page > 1 ? (
+                            <ActivityIndicator size="small" color="#FF7622" />
+                        ) : null
+                    }
+                />
+            )}
+        </View>
+    );
+};
 
-// const Foods = ({ foods }: { foods: Food[] }) => {
-//     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-//     const [loadingMore, setLoadingMore] = useState(false);
-
-//     // Hàm load thêm dữ liệu
-//     const handleLoadMore = () => {
-//         if (visibleCount >= foods.length || loadingMore) return;
-
-//         setLoadingMore(true);
-
-//         // Mô phỏng delay tải dữ liệu (API call)
-//         setTimeout(() => {
-//             setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, foods.length));
-//             setLoadingMore(false);
-//         }, 2000);
-//     };
-
-//     return (
-//         <View className="mt-[12px] px-[24px]">
-//             <Text className="text-[#32343E] text-[20px]">Popular Foods</Text>
-
-//             <FlatList
-//                 className="py-[20px]"
-//                 data={foods.slice(0, visibleCount)} // Chỉ hiển thị phần tử từ 0 đến visibleCount
-//                 scrollEnabled={false}
-//                 showsVerticalScrollIndicator={false}
-//                 contentContainerStyle={{ gap: 28 }}
-//                 columnWrapperStyle={{ justifyContent: 'space-between' }}
-//                 numColumns={2}
-//                 keyExtractor={(item) => item.id.toString()}
-//                 renderItem={({ item }) => <FoodItem food={item} />}
-
-//                 // Lazy loading props
-//                 onEndReached={handleLoadMore} // Gọi khi cuộn tới cuối danh sách
-//                 onEndReachedThreshold={0.8} // Khi cuộn đến 50% cuối danh sách
-//                 initialNumToRender={PAGE_SIZE} // Render ban đầu
-//                 maxToRenderPerBatch={PAGE_SIZE} // Tối đa render mỗi batch
-
-//                 ListFooterComponent={loadingMore ? (
-//                     <ActivityIndicator size="small" color="#999" style={{ marginVertical: 10 }} />
-//                 ) : null} // Hiển thị loader khi đang tải thêm
-//             />
-//         </View>
-//     );
-// };
-export default SearchScreen
-// data
-const recentKeywords = [
-    "Burger",
-    "Sandwich",
-    "Pizza",
-    "Burger",
-    "Sandwich",
-    "Pizza",
-    "Burger",
-    "Sandwich",
-    "Pizza"
-]
-
+export default SearchScreen;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getToken } from '@/configs/accessTokent';
 
-const BASE_URL = "http://192.168.129.126:3000/api/v1"; // Sửa lại IP này
+const BASE_URL = "http://192.168.210.126:3000/api/v1"; // Sửa lại IP này
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL, // URL gốc của API
@@ -17,6 +17,7 @@ axiosInstance.interceptors.request.use(
     async (config) => {
         // Lấy accessToken từ AsyncStorage
         const token = await getToken();
+        console.log(token)
         if (token) {
             // Thêm accessToken vào header Authorization
             config.headers.Authorization = `Bearer ${token}`;
