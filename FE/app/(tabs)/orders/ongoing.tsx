@@ -33,7 +33,7 @@ const Ongoing = () => {
                 fetchData={fetchOngoingOrders}
                 pageSize={PAGE_SIZE}
                 renderItem={({ item }) => <OrderItem order={item} />}
-                keyExtractor={(item) => item.restaurant.id}
+                keyExtractor={(item) => item.id}
                 ListHeaderComponent={renderHeader()}
                 // Truyền ref để gọi loadInitial
                 setLoadInitialRef={(ref) => (loadInitialRef.current = ref)}

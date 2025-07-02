@@ -71,6 +71,10 @@ const OrderItem = ({ order }: { order: Order }) => {
     const orderQuantity = order.items.reduce((total, value) => (
         total + value.quantity
     ), 0)
+    const totalPrice = order.items.reduce(
+        (sum, item) => sum + item.dish.price * item.quantity,
+        0
+    );
     return (
         <TouchableOpacity
             activeOpacity={1}
@@ -99,7 +103,7 @@ const OrderItem = ({ order }: { order: Order }) => {
                         <Text className='text-[14px] font-medium'>{orderTitle}</Text>
                     </View>
                     <View className='flex-row gap-[14px]'>
-                        <Text className='text-[14px] font-bold'>{`$${order.totalPrice}`}</Text>
+                        <Text className='text-[14px] font-bold'>{`$${totalPrice}`}</Text>
                         <View className='w-[1px] h-full bg-gray-100'></View>
                         <Text className='text-[14px] text-[#6B6E82]'>{`${orderQuantity} Items`}</Text>
                     </View>
@@ -107,12 +111,12 @@ const OrderItem = ({ order }: { order: Order }) => {
             </View>
 
             <View className='flex-row justify-between mt-[24px]'>
-                <Button
+                {/* <Button
                     title='Track Order'
                     size='small'
-                />
+                /> */}
                 <Button
-                    title='Cancel'
+                    title='Rebuy'
                     size='small'
                     outline={true}
                 />
