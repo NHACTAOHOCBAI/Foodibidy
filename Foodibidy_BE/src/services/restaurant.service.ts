@@ -130,9 +130,9 @@ class RestaurantService {
       //xoa user
       const userDoc = await this.userCollection.doc(doc.data()?.user.id as string).get()
 
-      if (!userDoc.exists) {
-        throw new ErrorWithStatus({ message: USER_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
-      }
+      // if (!userDoc.exists) {
+      //   throw new ErrorWithStatus({ message: USER_MESSAGES.NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+      // }
 
       const userData = userDoc.data()
 
@@ -179,7 +179,10 @@ class RestaurantService {
   }
   async deleteRestaurantByUserId(userId: string) {
     const snapshot = await this.restaurantCollection.where('user.id', '==', userId).limit(1).get()
-
+    if (snapshot.empty) {
+      console.log(`No restaurant found for userId ${userId}, skipping deletion.`)
+      return null // hoặc return undefined tùy bạn muốn
+    }
     const doc = snapshot.docs[0]
     //  delete restaurant trong dishes
     const dishesSnapshot = await databaseService.dishes.where('restaurant.id', '==', doc.id).get()
