@@ -29,9 +29,9 @@ const Login = () => {
                         try {
                             const response = await login(values.email, values.password);
                             console.log(response)
-                            const { idToken, email, avatar, fullName, phoneNumber, address } = response;
+                            const { idToken, email, avatar, fullName, phoneNumber, address, uid } = response;
                             console.log(response)
-                            setAccountInfo({ avatar, phoneNumber, fullName, email, address }) // Giả sử API trả về accessToken
+                            setAccountInfo({ id: uid, avatar, phoneNumber, fullName, email, address }) // Giả sử API trả về accessToken
                             await storeToken(idToken); // Lưu token
                             showSuccessToast('Login successful!'); // Hiển thị toast thành công
                             router.push('/(tabs)'); // Chuyển hướng sau khi đăng nhập thành công

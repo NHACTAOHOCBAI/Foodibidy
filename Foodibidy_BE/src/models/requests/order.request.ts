@@ -1,8 +1,5 @@
-import { ParamsDictionary, Query } from 'express-serve-static-core'
-import { OrderStatus } from '~/constants/enums'
-import { DishType } from '../schemas/dish.schema'
+import { ParamsDictionary } from 'express-serve-static-core'
 import { RestaurantType } from '../schemas/restaurant.schema'
-import { UserType } from '../schemas/user.schema'
 
 export interface OrderParams extends ParamsDictionary {
   orderId: string
