@@ -7,7 +7,7 @@ import { MyProfileContext } from "../../context/MyProfileContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setMyProfile } = useContext(MyProfileContext);
+  const { setMyProfile, setRestaurantId } = useContext(MyProfileContext);
 
   const [isPending, setIsPending] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -23,13 +23,13 @@ const Login = () => {
       const res = await login(email, password);
       localStorage.setItem("accessToken", res.idToken);
       const value = {
-        restaurantId: res.restaurantId,
         email: res.email,
         fullName: res.fullName,
         role: res.role,
         avatar: res.avatar,
         phoneNumber: res.phoneNumber,
       };
+      setRestaurantId(res.restaurantId);
       setMyProfile(value);
       localStorage.setItem("profile", JSON.stringify(value));
       navigate("/dashboard");

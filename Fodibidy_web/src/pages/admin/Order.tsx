@@ -22,7 +22,7 @@ const Order = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const { myProfile } = useContext(MyProfileContext);
+  const { myProfile, restaurantId } = useContext(MyProfileContext);
 
   // Column definitions
   const columns: TableProps<Order>["columns"] = [
@@ -200,7 +200,7 @@ const Order = () => {
 
     const q =
       myProfile?.role === "restaurant"
-        ? query(ordersRef, where("restaurant.id", "==", myProfile.restaurantId))
+        ? query(ordersRef, where("restaurant.id", "==", restaurantId))
         : ordersRef;
 
     const unsubscribe = onSnapshot(
