@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getToken } from "@/configs/accessTokent";
 
-const BASE_URL = "http://192.168.210.126:3000/api/v1"; // Sửa lại IP này
+const BASE_URL = "http://192.168.83.126:3000/api/v1"; // Sửa lại IP này
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL, // URL gốc của API

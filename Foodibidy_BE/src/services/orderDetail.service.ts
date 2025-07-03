@@ -139,7 +139,8 @@ class OrderDetailService {
     try {
       let query = this.OrderDetailCollection.where('user.id', '==', userId).where('status', 'in', [
         OrderStatus.PROCESSING,
-        OrderStatus.PENDING
+        OrderStatus.PENDING,
+        OrderStatus.PREPARING
       ])
       const offset = (page - 1) * pageSize
       if (offset > 0) query = query.offset(offset)

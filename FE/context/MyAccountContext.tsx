@@ -4,12 +4,13 @@ interface Address {
     addressName: string
 }
 interface MyAccountContextProps {
+    id?: string;
     avatar?: string;
     phoneNumber?: string;
     fullName?: string;
     email?: string;
     address?: Address[]
-    setAccountInfo: (info: { avatar?: string; phoneNumber?: string; fullName?: string; email?: string, address?: Address[] }) => void;
+    setAccountInfo: (info: { id?: string, avatar?: string; phoneNumber?: string; fullName?: string; email?: string, address?: Address[] }) => void;
 }
 
 const MyAccountContext = createContext<MyAccountContextProps | undefined>(undefined);
@@ -20,19 +21,21 @@ export const MyAccountProvider = ({ children }: { children: ReactNode }) => {
     const [fullName, setFullName] = useState<string | undefined>(undefined);
     const [email, setEmail] = useState<string | undefined>(undefined);
     const [address, setAddress] = useState<Address[] | undefined>(undefined);
+    const [id, setId] = useState<string | undefined>(undefined);
 
-
-    const setAccountInfo = (info: { avatar?: string; phoneNumber?: string; fullName?: string; email?: string, address?: Address[] }) => {
+    const setAccountInfo = (info: { id?: string, avatar?: string; phoneNumber?: string; fullName?: string; email?: string, address?: Address[] }) => {
         if (info.avatar !== undefined) setAvatar(info.avatar);
         if (info.phoneNumber !== undefined) setPhoneNumber(info.phoneNumber);
         if (info.fullName !== undefined) setFullName(info.fullName);
         if (info.email !== undefined) setEmail(info.email);
         if (info.address !== undefined) setAddress(info.address);
+        if (info.id !== undefined) setId(info.id);
     };
 
     return (
         <MyAccountContext.Provider
             value={{
+                id,
                 avatar,
                 phoneNumber,
                 fullName,
