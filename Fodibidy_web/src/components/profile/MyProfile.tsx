@@ -2,7 +2,6 @@
 import { Button, Form, Input, message, Spin, type UploadFile } from "antd"
 import UploadImage from "../UploadImage";
 import { useContext, useEffect, useState } from "react";
-import convertDateFormat from "../../utils/convertDateFormat";
 import { getMyProfile, updateMyAccount } from "../../services/auth";
 import { MyProfileContext } from "../../context/MyProfileContext";
 interface UserProfile {
@@ -124,7 +123,7 @@ const MyProfile = () => {
                         <div>
                             <p>Email : {myProfile?.email}</p>
                             <p>Role : {myProfile?.role}</p>
-                            <p>Created : {convertDateFormat(myProfile?.createdAt || "")}</p>
+
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: 20 }}>

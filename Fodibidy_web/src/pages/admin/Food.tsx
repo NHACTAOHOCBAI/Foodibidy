@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Table, Tag, Image, Popconfirm, Button, message, Input } from 'antd';
+import { Table, Image, Popconfirm, Button, message, Input } from 'antd';
 import type { TableProps } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useEffect, useState, useMemo, useContext } from 'react';
@@ -63,11 +63,6 @@ const Food = () => {
         {
             title: 'Sold Quantity',
             dataIndex: 'soldQuantity',
-        },
-        {
-            title: 'Available',
-            dataIndex: 'available',
-            render: (available) => <Tag color={available ? 'green' : 'red'}>{available ? 'Yes' : 'No'}</Tag>,
         },
         {
             title: 'Created At',

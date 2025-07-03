@@ -1,49 +1,174 @@
 import Button from '@/components/Button';
-import LazyFlatList from '@/components/LazyFlatList';
-import { getMyOngoingOrders } from '@/services/order';
+import { showSuccessToast } from '@/components/Toast';
+import { db } from '@/configs/firebaseConfig';
+import { useMyAccount } from '@/context/MyAccountContext';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
-import { View, ScrollView, FlatList, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { useCallback, useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { formatTimestamp } from '@/utils/formatTime';
 
-const PAGE_SIZE = 4;
 const Ongoing = () => {
-    const fetchOngoingOrders = async (page: number) => {
-        return await getMyOngoingOrders(page);
-    };
+    const router = useRouter();
+    const { id: userID } = useMyAccount();
+    const [ordersData, setOrdersData] = useState<Order[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const renderHeader = () => (
-        <View className='mt-[20px]' />
-    );
+    // Firestore real-time listener
+    useEffect(() => {
+        if (!userID) return; // Prevent query if userID is undefined
+        setIsLoading(true);
 
-    // Thêm useFocusEffect để refetch khi focus
+        const ordersRef = collection(db, 'Order_details');
+        console.log('User ID:', userID);
+
+        const q = query(
+            ordersRef,
+            where('user.id', '==', userID),
+            where('status', 'in', ['ongoing', 'preparing', 'pending'])
+        );
+
+        const unsubscribe = onSnapshot(
+            q,
+            (snapshot) => {
+                const orders = snapshot.docs.map((doc) => {
+                    const data = doc.data();
+                    return {
+                        ...data,
+                        id: doc.id,
+                        createdAt: formatTimestamp(data.createdAt), // Convert Timestamp to string
+                    } as Order;
+                });
+                setOrdersData(orders);
+                console.log('Orders Data:', orders);
+                if (isLoading) {
+                    showSuccessToast('Orders fetched successfully');
+                }
+                setIsLoading(false);
+                setIsRefreshing(false);
+            },
+            (error) => {
+                console.error('Error fetching orders:', error);
+                setIsLoading(false);
+                setIsRefreshing(false);
+            }
+        );
+
+        return () => unsubscribe();
+    }, [userID]);
+    // Handle pull-to-refresh
+    const onRefresh = useCallback(() => {
+        setIsRefreshing(true);
+        // Data will refresh automatically via onSnapshot
+    }, []);
+
+    // Refresh data when screen is focused
     useFocusEffect(
         useCallback(() => {
-            // Gọi lại loadInitial từ LazyFlatList
-            loadInitialRef.current(); // Sử dụng ref để gọi hàm loadInitial
+            // onSnapshot handles real-time updates, no need to refetch
         }, [])
     );
 
-    // Tạo ref để gọi loadInitial từ LazyFlatList
-    const loadInitialRef = useRef(() => { });
+    const renderHeader = () => <View className="mt-[20px]" />;
 
     return (
-        <View className='flex-1 bg-white'>
-            <LazyFlatList<Order>
-                numColumns={1}
-                fetchData={fetchOngoingOrders}
-                pageSize={PAGE_SIZE}
-                renderItem={({ item }) => <OrderItem order={item} />}
-                keyExtractor={(item) => item.restaurant.id}
-                ListHeaderComponent={renderHeader()}
-                // Truyền ref để gọi loadInitial
-                setLoadInitialRef={(ref) => (loadInitialRef.current = ref)}
-            />
+        <View className="flex-1 bg-white">
+            {isLoading && !ordersData.length ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : (
+                <FlatList
+                    data={ordersData}
+                    numColumns={1}
+                    renderItem={({ item }) => <OrderItem order={item} />}
+                    keyExtractor={(item) => item.id}
+                    ListHeaderComponent={renderHeader()}
+                    ListEmptyComponent={<Text className="text-center text-gray-500">No orders found.</Text>}
+                    refreshing={isRefreshing}
+                    onRefresh={onRefresh}
+                />
+            )}
         </View>
     );
 };
+
+// OrderItem component (unchanged)
+const OrderItem = ({ order }: { order: Order }) => {
+    const router = useRouter();
+    const [isCancelling, setIsCancelling] = useState(false);
+
+    const totalPrice = order.items.reduce(
+        (sum, item) => sum + item.dish.price * item.quantity,
+        0
+    );
+
+    const orderTitle = order.items
+        .slice(0, 2)
+        .map((value) => `${value.dish.dishName} (${value.quantity})`)
+        .join(', ') + (order.items.length > 2 ? '...' : '');
+
+    const orderQuantity = order.items.reduce((total, value) => total + value.quantity, 0);
+
+    const handleTrackOrder = () => {
+        // Implement track order logic
+    };
+
+    return (
+        <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => router.push(`/orders/${order.id}`)}
+            disabled={order.status === 'cancelled'}
+        >
+            <View className="pb-[16px] border-b-[1px] border-b-gray-100">
+                <Text className="text-[14px] font-medium">{order.restaurant.restaurantName}</Text>
+                <Text className="text-[12px] text-gray-500">{order.createdAt}</Text>
+            </View>
+
+            <View className="mt-[16px] flex-row items-center">
+                {order.items.length > 0 ? (
+                    <Image
+                        source={{ uri: order.items[0].dish.dishImage || 'https://via.placeholder.com/150' }}
+                        className="w-[60px] h-[60px] rounded-[8px] border-[1px] border-gray-200"
+                    />
+                ) : (
+                    <View className="w-[60px] h-[60px] rounded-[8px] bg-gray-200" />
+                )}
+
+                <View className="ml-[14px] flex-1 gap-[10px]">
+                    <View className="flex-row justify-between">
+                        <Text className="text-[14px] font-medium" numberOfLines={2}>
+                            {orderTitle || 'No items'}
+                        </Text>
+                    </View>
+                    <View className="flex-row gap-[14px]">
+                        <Text className="text-[14px] font-bold">${totalPrice.toFixed(2)}</Text>
+                        <View className="w-[1px] h-full bg-gray-100" />
+                        <Text className="text-[14px] text-[#6B6E82]">{`${orderQuantity} Item${orderQuantity !== 1 ? 's' : ''
+                            }`}</Text>
+                    </View>
+                    <Text className="text-[12px] text-gray-500 capitalize">
+                        {order.status} | {order.deliveryPhone || 'No phone'}
+                    </Text>
+                </View>
+            </View>
+
+            <View className="flex-row justify-between mt-[24px]">
+                <Button title="Track Order" size="small" onPress={handleTrackOrder} />
+                <Button
+                    title="Cancel"
+                    size="small"
+                    outline={true}
+                    loading={isCancelling}
+                // onPress={handleCancel}
+                />
+            </View>
+        </TouchableOpacity>
+    );
+};
+
 interface Order {
     address: string;
-    id: number;
+    id: string;
     user: Pick<Account, 'id' | 'fullName'>;
     restaurant: Pick<Restaurant, 'id' | 'restaurantName'>;
     status: 'pending' | 'preparing' | 'delivered' | 'cancelled';
@@ -51,106 +176,25 @@ interface Order {
     items: {
         dish: Pick<Food, 'id' | 'dishName' | 'price' | 'dishImage'>;
         quantity: number;
-    }[]
-    createdAt: string
+    }[];
+    createdAt: string;
 }
-const OrderItem = ({ order }: { order: Order }) => {
-    const router = useRouter();
-    const [isCancelling, setIsCancelling] = useState(false);
 
-    // Tính tổng giá
-    const totalPrice = order.items.reduce(
-        (sum, item) => sum + item.dish.price * item.quantity,
-        0
-    );
+interface Account {
+    id: string;
+    fullName: string;
+}
 
-    // Tạo tiêu đề đơn hàng (giới hạn 2 món, thêm "..." nếu có nhiều hơn)
-    const orderTitle = order.items
-        .slice(0, 2)
-        .map((value) => `${value.dish.dishName} (${value.quantity})`)
-        .join(', ') + (order.items.length > 2 ? '...' : '');
+interface Restaurant {
+    id: string;
+    restaurantName: string;
+}
 
-    // Tính tổng số lượng món
-    const orderQuantity = order.items.reduce((total, value) => total + value.quantity, 0);
+interface Food {
+    id: string;
+    dishName: string;
+    price: number;
+    dishImage: string;
+}
 
-    // Xử lý hủy đơn hàng
-    // const handleCancel = async () => {
-    //     if (order.status !== 'pending' && order.status !== 'preparing') {
-    //         showErrorToast('Cannot cancel order: Already delivered or cancelled');
-    //         return;
-    //     }
-    //     setIsCancelling(true);
-    //     try {
-    //         await cancelOrder(order.id);
-    //         showSuccessToast('Order cancelled successfully');
-    //     } catch {
-    //         showErrorToast('Error cancelling order');
-    //     } finally {
-    //         setIsCancelling(false);
-    //     }
-    // };
-
-    // Xử lý theo dõi đơn hàng
-    const handleTrackOrder = () => {
-
-    };
-
-    return (
-        <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => router.push(`/orders/${order.id}`)} // Sửa route từ /foods sang /orders
-            disabled={order.status === 'cancelled'} // Vô hiệu hóa nếu đơn đã hủy
-        >
-            <View className='pb-[16px] border-b-[1px] border-b-gray-100'>
-                <Text className='text-[14px] font-medium'>{order.restaurant.restaurantName}</Text>
-                <Text className='text-[12px] text-gray-500'>{order.createdAt}</Text>
-            </View>
-
-            <View className='mt-[16px] flex-row items-center'>
-                {order.items.length > 0 ? (
-                    <Image
-                        source={{ uri: order.items[0].dish.dishImage || 'https://via.placeholder.com/150' }}
-                        className='w-[60px] h-[60px] rounded-[8px] border-[1px] border-gray-200'
-                    />
-                ) : (
-                    <View className='w-[60px] h-[60px] rounded-[8px] bg-gray-200' />
-                )}
-
-                <View className='ml-[14px] flex-1 gap-[10px]'>
-                    <View className='flex-row justify-between'>
-                        <Text className='text-[14px] font-medium' numberOfLines={2}>
-                            {orderTitle || 'No items'}
-                        </Text>
-                    </View>
-                    <View className='flex-row gap-[14px]'>
-                        <Text className='text-[14px] font-bold'>${totalPrice.toFixed(2)}</Text>
-                        <View className='w-[1px] h-full bg-gray-100' />
-                        <Text className='text-[14px] text-[#6B6E82]'>{`${orderQuantity} Item${orderQuantity !== 1 ? 's' : ''}`}</Text>
-                    </View>
-                    <Text className='text-[12px] text-gray-500 capitalize'>
-                        {order.status}|{order.deliveryPhone}</Text>
-                </View>
-            </View>
-
-            <View className='flex-row justify-between mt-[24px]'>
-                <Button
-                    title='Track Order'
-                    size='small'
-                    onPress={handleTrackOrder}
-
-                />
-                <Button
-                    title='Cancel'
-                    size='small'
-                    outline={true}
-                    // onPress={handleCancel}
-                    loading={isCancelling}
-
-                />
-            </View>
-        </TouchableOpacity>
-    );
-};
-
-
-export default Ongoing
+export default Ongoing;

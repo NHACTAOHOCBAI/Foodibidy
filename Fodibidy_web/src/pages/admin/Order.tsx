@@ -107,13 +107,13 @@ const Order = () => {
     },
     ...(myProfile?.role === "admin"
       ? [
-          {
-            title: "Restaurant",
-            render: (_: any, record: Order) => (
-              <div>{record.restaurant?.restaurantName || "N/A"}</div>
-            ),
-          },
-        ]
+        {
+          title: "Restaurant",
+          render: (_: any, record: Order) => (
+            <div>{record.restaurant?.restaurantName || "N/A"}</div>
+          ),
+        },
+      ]
       : []),
     {
       title: "Actions",
@@ -195,9 +195,9 @@ const Order = () => {
   // Firestore live update
   useEffect(() => {
     setIsPending(true);
-    const ordersRef = collection(db, "Order_details");
-    console.log(myProfile);
 
+    console.log(myProfile);
+    const ordersRef = collection(db, "Order_details");
     const q =
       myProfile?.role === "restaurant"
         ? query(ordersRef, where("restaurant.id", "==", restaurantId))
@@ -231,6 +231,7 @@ const Order = () => {
 
   return (
     <>
+      h
       <div
         style={{
           boxShadow:

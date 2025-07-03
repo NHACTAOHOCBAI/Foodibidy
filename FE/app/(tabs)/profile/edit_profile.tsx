@@ -97,10 +97,8 @@ const EditProfile = () => {
 
                     console.log('Profile updated with file object:', selectedAvatar);
                     showSuccessToast('Profile updated successfully.');
-                } catch (error) {
-                    console.error('Update profile error:', error);
-                    showErrorToast('An error occurred while updating the profile.');
-                } finally {
+                }
+                finally {
                     setLoading(false);
                     setSubmitting(false);
                 }

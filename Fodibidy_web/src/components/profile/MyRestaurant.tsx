@@ -5,8 +5,8 @@ import type { UploadFile } from "antd/es/upload/interface";
 import TextArea from "antd/es/input/TextArea";
 import UploadImage from "../UploadImage";
 import { MdOutlineStar } from "react-icons/md";
-import convertDateFormat from "../../utils/convertDateFormat";
 import { getMyProfile, updateMyRestaurant } from "../../services/auth";
+import convertDateFormat from "../../utils/convertDateFormat";
 
 const MyRestaurant = () => {
   const [myProfile, setMyProfile] = useState<Restaurant | null>(null);
